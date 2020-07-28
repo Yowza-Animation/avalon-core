@@ -10,7 +10,7 @@ def install():
 
     This function is called automatically on calling `api.install(photoshop)`.
     """
-    print("Installing Avalon Photoshop...")
+    print("Installing Yowza Photoshop...")
     pyblish.api.register_host("photoshop")
 
 
