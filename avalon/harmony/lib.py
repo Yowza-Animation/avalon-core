@@ -70,8 +70,7 @@ def launch(application_path):
                 self.log.warning(
                     "Failed to copy {0} to {1}! "
                     "Defaulting to Avalon TOONBOOM_GLOBAL_SCRIPT_LOCATION."
-                        .format(avalon_harmony_startup,
-                                env_harmony_startup))
+                        .format(avalon_harmony_startup, env_harmony_startup))
                 os.environ["TOONBOOM_GLOBAL_SCRIPT_LOCATION"] = current_dir
     else:
         os.environ["TOONBOOM_GLOBAL_SCRIPT_LOCATION"] = current_dir
