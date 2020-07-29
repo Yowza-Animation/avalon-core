@@ -9,10 +9,12 @@ import threading
 import subprocess
 import importlib
 import logging
+import filecmp
 
 from .server import Server
 from ..tools import workfiles
 from ..vendor.Qt import QtWidgets
+from ..harmony.lib import setup_startup_scripts
 
 self = sys.modules[__name__]
 self.server = None
@@ -62,7 +64,7 @@ def launch(application_path, zip_file):
     self.extension = extension_mapping[self.application_name]
 
     # Launch Harmony.
-    os.environ["TOONBOOM_GLOBAL_SCRIPT_LOCATION"] = os.path.dirname(__file__)
+    setup_startup_scripts()
 
     if os.environ.get("AVALON_TOONBOOM_WORKFILES_ON_LAUNCH", False):
         workfiles.show(save=False)
@@ -80,7 +82,7 @@ def get_local_path(filepath):
     """From the provided path get the equivalent local path."""
     basename = os.path.splitext(os.path.basename(filepath))[0]
     harmony_path = os.path.join(
-        os.path.expanduser("~"), ".avalon", self.application_name
+        os.path.expanduser("~"), ".yowza", self.application_name
     )
     return os.path.join(harmony_path, basename)
 
