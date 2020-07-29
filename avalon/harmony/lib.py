@@ -64,8 +64,7 @@ def launch(application_path):
             os.getenv("TOONBOOM_GLOBAL_SCRIPT_LOCATION"), startup_js)
         if not filecmp.cmp(avalon_harmony_startup, env_harmony_startup):
             try:
-                shutil.copy(avalon_harmony_startup,
-                            env_harmony_startup)
+                shutil.copy(avalon_harmony_startup, env_harmony_startup)
             except Exception as e:
                 self.log.error(e)
                 self.log.warning(
