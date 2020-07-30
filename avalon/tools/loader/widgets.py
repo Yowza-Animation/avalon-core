@@ -49,8 +49,8 @@ class SubsetWidget(QtWidgets.QWidget):
         proxy = SubsetFilterProxyModel()
         family_proxy = FamiliesFilterProxyModel()
         family_proxy.setSourceModel(proxy)
-        list_proxy = CollectionsFilterProxyModel()
-        list_proxy.setSourceModel(proxy)
+        collection_proxy = CollectionsFilterProxyModel()
+        collection_proxy.setSourceModel(proxy)
 
         filter = QtWidgets.QLineEdit()
         filter.setPlaceholderText("Filter subsets..")
@@ -108,7 +108,7 @@ class SubsetWidget(QtWidgets.QWidget):
         self.view = view
         self.filter = filter
         self.family_proxy = family_proxy
-        self.list_proxy = list_proxy
+        self.collection_proxy = collection_proxy
 
         # settings and connections
         self.proxy.setSourceModel(self.model)
@@ -136,6 +136,7 @@ class SubsetWidget(QtWidgets.QWidget):
 
         # Expose this from the widget as a method
         self.set_family_filters = self.family_proxy.setFamiliesFilter
+        self.set_collection_filters = self.collection_proxy.setCollectionsFilter
 
     def is_groupable(self):
         return self.data["state"]["groupable"].checkState()

@@ -109,7 +109,7 @@ class Window(QtWidgets.QDialog):
         }
 
         families.active_changed.connect(subsets.set_family_filters)
-        collections.active_changed.connect(subsets.set_collections_filters)
+        collections.active_changed.connect(subsets.set_collection_filters)
         assets.selection_changed.connect(self.on_assetschanged)
         assets.view.clicked.connect(self.on_assetview_click)
         subsets.active_changed.connect(self.on_subsetschanged)
