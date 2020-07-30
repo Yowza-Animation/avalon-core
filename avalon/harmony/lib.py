@@ -13,6 +13,7 @@ import json
 import signal
 import time
 import filecmp
+import getpass
 
 from .server import Server
 from ..vendor.Qt import QtWidgets
@@ -109,7 +110,7 @@ def get_local_harmony_path(filepath):
     harmony_path = os.path.join(
         os.getenv("YOWZA_PIPE_PATH"),
         "users",
-        os.getenv("USER"),
+        getpass.getuser(),
         "harmony")
     return os.path.join(harmony_path, basename)
 

@@ -9,7 +9,8 @@ import threading
 import subprocess
 import importlib
 import logging
-import filecmp
+import getpass
+
 
 from .server import Server
 from ..tools import workfiles
@@ -84,7 +85,7 @@ def get_local_path(filepath):
     harmony_path = os.path.join(
         os.getenv("YOWZA_PIPE_PATH"),
         "users",
-        os.getenv("USER"),
+        getpass.getuser(),
         self.application_name)
     return os.path.join(harmony_path, basename)
 
