@@ -106,7 +106,7 @@ def launch(application_path):
 def get_local_harmony_path(filepath):
     """From the provided path get the equivalent local Harmony path."""
     basename = os.path.splitext(os.path.basename(filepath))[0]
-    harmony_path = os.path.join(os.path.expanduser("~"), ".yowza", "harmony")
+    harmony_path = os.path.join(os.path.expanduser("~"), ".avalon", "harmony")
     return os.path.join(harmony_path, basename)
 
 
