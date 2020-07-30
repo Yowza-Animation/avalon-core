@@ -564,3 +564,52 @@ class FamiliesFilterProxyModel(loader_models.FamiliesFilterProxyModel):
             self.setSortRole(model.SortDescendingRole)
 
         super(FamiliesFilterProxyModel, self).sort(column, order)
+
+class CollectionsFilterProxyModel(loader_models.FamiliesFilterProxyModel):
+    """Filters to specified collections"""
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionsFilterProxyModel, self).__init__(*args, **kwargs)
+
+    def filterAcceptsRow(self, row=0, parent=QtCore.QModelIndex()):
+
+        if not self._families:
+            return False
+
+        model = self.sourceModel()
+        index = model.index(row, 0, parent=parent)
+
+        # Ensure index is valid
+        if not index.isValid() or index is None:
+            return True
+
+        # Get the node data and validate
+        item = model.data(index, TreeModel.ItemRole)
+
+        if item.get("isGroup"):
+            return self.filter_accepts_group(index, model)
+
+        collections = item.get("collections", [])
+
+        filterable_collections = set()
+        for name in collections:
+            collection_config = lib.get_family_cached_config(name)
+            if not collection_config.get("hideFilter"):
+                filterable_collections.add(name)
+
+        if not filterable_collections:
+            return True
+
+        # We want to keep the families which are not in the list
+        return filterable_collections.issubset(self._families)
+
+    def sort(self, column, order):
+        proxy = self.sourceModel()
+        model = proxy.sourceModel()
+        # We need to know the sorting direction for pinning groups on top
+        if order == QtCore.Qt.AscendingOrder:
+            self.setSortRole(model.SortAscendingRole)
+        else:
+            self.setSortRole(model.SortDescendingRole)
+
+        super(CollectionsFilterProxyModel, self).sort(column, order)

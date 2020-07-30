@@ -721,7 +721,7 @@ class FamiliesFilterProxyModel(GroupMemberFilterProxyModel):
         super(FamiliesFilterProxyModel, self).sort(column, order)
 
 class CollectionsFilterProxyModel(GroupMemberFilterProxyModel):
-    """Filters to specified lists"""
+    """Filters to specified Collections"""
 
     def __init__(self, *args, **kwargs):
         super(CollectionsFilterProxyModel, self).__init__(*args, **kwargs)
