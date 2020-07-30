@@ -593,7 +593,7 @@ class CollectionsFilterProxyModel(loader_models.FamiliesFilterProxyModel):
 
         filterable_collections = set()
         for name in collections:
-            collection_config = lib.get_family_cached_config(name)
+            collection_config = lib.get_collection_cached_config(name)
             if not collection_config.get("hideFilter"):
                 filterable_collections.add(name)
 
