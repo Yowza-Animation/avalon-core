@@ -82,8 +82,10 @@ def get_local_path(filepath):
     """From the provided path get the equivalent local path."""
     basename = os.path.splitext(os.path.basename(filepath))[0]
     harmony_path = os.path.join(
-        os.path.expanduser("~"), ".avalon", self.application_name
-    )
+        os.getenv("YOWZA_PIPE_PATH"),
+        "users",
+        os.getenv("USER"),
+        self.application_name)
     return os.path.join(harmony_path, basename)
 
 
