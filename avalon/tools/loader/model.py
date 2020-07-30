@@ -719,3 +719,62 @@ class FamiliesFilterProxyModel(GroupMemberFilterProxyModel):
             self.setSortRole(model.SortDescendingRole)
 
         super(FamiliesFilterProxyModel, self).sort(column, order)
+
+class CollectionsFilterProxyModel(GroupMemberFilterProxyModel):
+    """Filters to specified lists"""
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionsFilterProxyModel, self).__init__(*args, **kwargs)
+        self._collections = set()
+
+    def collectionFilter(self):
+        return self._collections
+
+    def setCollectionsFilter(self, values):
+        """Set the collections to include"""
+        assert isinstance(values, (tuple, list, set))
+        self._collections = set(values)
+        self.invalidateFilter()
+
+    def filterAcceptsRow(self, row=0, parent=None):
+
+        if not self._collections:
+            return False
+
+        model = self.sourceModel()
+        index = model.index(row, 0, parent=parent or QtCore.QModelIndex())
+
+        # Ensure index is valid
+        if not index.isValid() or index is None:
+            return True
+
+        # Get the item data and validate
+        item = model.data(index, TreeModel.ItemRole)
+
+        if item.get("isGroup"):
+            return self.filter_accepts_group(index, model)
+
+        collections = item.get("collections", [])
+
+        filterable_lists = set()
+        for name in collections:
+            list_config = lib.get_family_cached_config(name)
+            if not list_config.get("hideFilter"):
+                filterable_lists.add(name)
+
+        if not filterable_lists:
+            return True
+
+        # We want to keep the lists which are not in the list
+        return filterable_lists.issubset(self._collections)
+
+    def sort(self, column, order):
+        proxy = self.sourceModel()
+        model = proxy.sourceModel()
+        # We need to know the sorting direction for pinning groups on top
+        if order == QtCore.Qt.AscendingOrder:
+            self.setSortRole(model.SortAscendingRole)
+        else:
+            self.setSortRole(model.SortDescendingRole)
+
+        super(CollectionsFilterProxyModel, self).sort(column, order)

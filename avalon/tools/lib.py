@@ -293,6 +293,8 @@ def preserve_selection(tree_view,
 
 FAMILY_ICON_COLOR = "#0091B2"
 FAMILY_CONFIG_CACHE = {}
+COLLECTION_ICON_COLOR = "#0091B2"
+COLLECTION_CONFIG_CACHE = {}
 GROUP_CONFIG_CACHE = {}
 
 
@@ -302,6 +304,11 @@ def get_family_cached_config(name):
     config = FAMILY_CONFIG_CACHE
     return config.get(name, config.get("__default__", None))
 
+def get_collection_cached_config(name):
+    """Get value from config with fallback to default"""
+    # We assume the default fallback key in the config is `__default__`
+    config = COLLECTION_CONFIG_CACHE
+    return config.get(name, config.get("__default__", None))
 
 def refresh_family_config_cache():
     """Get the family configurations from the database
@@ -364,6 +371,66 @@ def refresh_family_config_cache():
 
     return families
 
+def refresh_collection_config_cache():
+    """Get the 'collection' configurations from the database
+
+    The configuration must be stored on the project under `config`.
+    For example:
+
+    {
+        "config": {
+            "collections": [
+                {"name": "master.design.pack", label: "Master Design Pack", "icon": "photo"},
+                {"name": "sprints", label: "Sprints", "icon": "male"},
+            ]
+        }
+    }
+
+    It is possible to override the default behavior and set specific lists
+    checked. For example we only want the lists Deliveries and Sprint
+    to be visible in the Loader.
+
+    # This will turn every item off
+    api.data["collectionStateDefault"] = False
+
+    # Only allow the deliveries and sprints
+    api.data["collectionStateToggled"] = ["deliveries", "sprints"]
+
+    """
+    # Update the icons from the project configuration
+    project = io.find_one({"type": "project"},
+                          projection={"config.collections": True})
+
+    assert project, "Project not found!"
+    collections = project["config"].get("collections", [])
+    collections = {collections["name"]: collections for collections in collections}
+
+    # Check if any collection state are being overwritten by the configuration
+    default_state = api.data.get("collectionsStateDefault", True)
+    toggled = set(api.data.get("collectionsStateToggled", []))
+
+    # Replace icons with a Qt icon we can use in the user interfaces
+    default_icon = qtawesome.icon("fa.folder", color=COLLECTION_ICON_COLOR)
+    for name, collection in collections.items():
+        # Set collection icon
+        icon = collection.get("icon", None)
+        if icon:
+            collection["icon"] = qtawesome.icon("fa.{}".format(icon),
+                                            color=COLLECTION_ICON_COLOR)
+        else:
+            collection["icon"] = default_icon
+
+        # Update state
+        state = not default_state if name in toggled else default_state
+        collection["state"] = state
+
+    # Default configuration
+    collections["__default__"] = {"icon": default_icon}
+
+    FAMILY_CONFIG_CACHE.clear()
+    FAMILY_CONFIG_CACHE.update(collections)
+
+    return collections
 
 def refresh_group_config_cache():
     """Get subset group configurations from the database

@@ -66,6 +66,19 @@
                 "required": ["name"]
             }
         },
+        "collections": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "icon": {"type": "string"},
+                    "label": {"type": "string"},
+                    "hideFilter": {"type": "boolean"}
+                },
+                "required": ["name"]
+            }
+        },
         "groups": {
             "type": "array",
             "items": {

@@ -15,6 +15,7 @@
         "author",
         "loader",
         "families",
+        "collections",
         "time",
         "subset",
         "asset",
@@ -55,6 +56,11 @@
             "description": "Families associated with the this subset",
             "type": "string",
             "example": "mindbender.model"
+        },
+        "collections": {
+            "description": "Collections associated with the this Asset",
+            "type": "string",
+            "example": "sprints"
         },
         "time": {
             "description": "File-system safe, formatted time",

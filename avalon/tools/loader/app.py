@@ -9,7 +9,7 @@ from ..widgets import AssetWidget
 from .. import lib
 
 from .widgets import (
-    SubsetWidget, VersionWidget, FamilyListWidget, ThumbnailWidget
+    SubsetWidget, VersionWidget, FamilyListWidget, CollectionListWidget, ThumbnailWidget
 )
 
 module = sys.modules[__name__]
@@ -40,6 +40,7 @@ class Window(QtWidgets.QDialog):
 
         assets = AssetWidget(multiselection=True, parent=self)
         families = FamilyListWidget()
+        collections = CollectionListWidget()
         subsets = SubsetWidget(parent=self)
         version = VersionWidget()
         thumbnail = ThumbnailWidget()
@@ -50,11 +51,16 @@ class Window(QtWidgets.QDialog):
         thumb_ver_layout.addWidget(thumbnail)
         thumb_ver_layout.addWidget(version)
 
-        # Create splitter to show / hide family filters
+        # Add families and lists widgets to tabs
+        filter_tabs = QtWidgets.QTabWidget()
+        filter_tabs.addTab(families, "Family")
+        filter_tabs.addTab(collections, "Collections")
+
+        # Create splitter to show / hide family and list filters
         asset_filter_splitter = QtWidgets.QSplitter()
         asset_filter_splitter.setOrientation(QtCore.Qt.Vertical)
         asset_filter_splitter.addWidget(assets)
-        asset_filter_splitter.addWidget(families)
+        asset_filter_splitter.addWidget(filter_tabs)
         asset_filter_splitter.setStretchFactor(0, 65)
         asset_filter_splitter.setStretchFactor(1, 35)
 
@@ -86,6 +92,7 @@ class Window(QtWidgets.QDialog):
         self.data = {
             "widgets": {
                 "families": families,
+                "collections": collections,
                 "thumbnail": thumbnail
             },
             "model": {
@@ -102,12 +109,14 @@ class Window(QtWidgets.QDialog):
         }
 
         families.active_changed.connect(subsets.set_family_filters)
+        collections.active_changed.connect(subsets.set_collections_filters)
         assets.selection_changed.connect(self.on_assetschanged)
         assets.view.clicked.connect(self.on_assetview_click)
         subsets.active_changed.connect(self.on_subsetschanged)
         subsets.version_changed.connect(self.on_versionschanged)
 
         lib.refresh_family_config_cache()
+        lib.refresh_collection_config_cache()
         lib.refresh_group_config_cache()
 
         self._refresh()
