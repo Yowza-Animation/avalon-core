@@ -51,7 +51,7 @@ def launch(application_path):
 
     api.install(harmony)
 
-    self.port = os.getenv("AVALON_HARMONY_PORT", 5656)
+    self.port = os.getenv("AVALON_HARMONY_PORT", 5009)
     self.application_path = application_path
 
     # Launch Harmony.
