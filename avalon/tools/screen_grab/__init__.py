@@ -1,4 +1,4 @@
-from .app import (
+from .screen_grab import (
     show,
 )
 

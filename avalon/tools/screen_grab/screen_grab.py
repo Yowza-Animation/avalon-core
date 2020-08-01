@@ -146,42 +146,11 @@ class ScreenGrabber(QtGui.QDialog):
         :returns: Captured screen
         :rtype: :class:`~PySide.QtGui.QPixmap`
         """
-        bundle = sgtk.platform.current_bundle()
 
         if cls.SCREEN_GRAB_CALLBACK:
             # use an external callback for screen grabbing
             return cls.SCREEN_GRAB_CALLBACK()
 
-        elif sgtk.util.is_linux():
-            # there are known issues with the QT based screen grabbing
-            # on linux - some distros don't have a X11 compositing manager
-            # so transparent windows aren't supported. In
-            # these cases, fall back onto a traditional approach where
-            # an external application is used to grab the screenshot.
-            #
-            # if the external application does not exist,
-            # try using the QT based approach as a fallback.
-            #
-            # by using import first, we can advise users who have issues
-            # with the qt approach to simply install imagemagick and things
-            # should start to work.
-            #
-            pixmap = _external_screenshot()
-
-            if pixmap is None or pixmap.isNull():
-                bundle.log_debug("Falling back on internal screen grabber.")
-                tool = ScreenGrabber()
-                tool.exec_()
-                pixmap = get_desktop_pixmap(tool.capture_rect)
-
-            return pixmap
-
-        elif sgtk.util.is_macos():
-            # With macosx there are known issues with some
-            # multi-diplay setups, so better to use built-in tool
-            return _external_screenshot()
-
-        else:
             # on windows, just use the QT solution.
             tool = ScreenGrabber()
             tool.exec_()
@@ -246,32 +215,6 @@ class ExternalCaptureThread(QtCore.QThread):
         """
         return self._error
 
-    def run(self):
-        try:
-            if sgtk.util.is_macos():
-                # use built-in screenshot command on the mac
-                ret_code = os.system("screencapture -m -i -s %s" % self._path)
-                if ret_code != 0:
-                    raise sgtk.TankError(
-                        "Screen capture tool returned error code %s" % ret_code
-                    )
-
-            elif sgtk.util.is_linux():
-                # use image magick
-                ret_code = os.system("import %s" % self._path)
-                if ret_code != 0:
-                    raise sgtk.TankError(
-                        "Screen capture tool returned error code %s. "
-                        "For screen capture to work on Linux, you need to have "
-                        "the imagemagick 'import' executable installed and "
-                        "in your PATH." % ret_code
-                    )
-
-            else:
-                raise sgtk.TankError("Unsupported platform.")
-        except Exception as e:
-            self._error = str(e)
-
 
 def _external_screenshot():
     """
@@ -294,8 +237,8 @@ def _external_screenshot():
             QtGui.QApplication.processEvents()
 
         if screenshot_thread.error_message:
-            bundle = sgtk.platform.current_bundle()
-            bundle.log_debug(
+
+            print(
                 "Failed to capture " "screenshot: %s" % screenshot_thread.error_message
             )
         else:
