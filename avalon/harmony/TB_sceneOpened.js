@@ -226,6 +226,23 @@ function start()
     action.triggered.connect(self.on_load);
 	}
 
+  self.on_screengrab = function()
+  {
+    app.avalon_client.send(
+        {
+          "module": "avalon.harmony.lib",
+          "method": "show",
+          "args": ["avalon.tools.screen_grab"]
+        },
+        false
+    );
+  };
+	if (app.avalon_menu == null)
+	{
+    action = menu.addAction("ScreenGrab...");
+    action.triggered.connect(self.on_publish);
+	}
+
   self.on_publish = function()
   {
     app.avalon_client.send(
