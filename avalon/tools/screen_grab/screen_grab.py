@@ -3,9 +3,9 @@ import sys
 import os
 
 import Qt
-from Qt import QtCore, QtGui
+from Qt import QtCore, QtGui, QtWidgets
 
-class ScreenGrabber(QtGui.QDialog):
+class ScreenGrabber(QtWidgets.QDialog):
     """
     A transparent tool dialog for selecting an area (QRect) on the screen.
     This tool does not by itself perform a screen capture. The resulting
