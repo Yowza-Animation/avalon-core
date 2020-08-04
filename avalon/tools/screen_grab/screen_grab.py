@@ -252,7 +252,7 @@ def _external_screenshot():
         screenshot_thread.start()
         while not screenshot_thread.isFinished():
             screenshot_thread.wait(100)
-            QtGui.QApplication.processEvents()
+            QtWidgets.QApplication.processEvents()
 
         if screenshot_thread.error_message:
 
@@ -278,7 +278,7 @@ def get_desktop_pixmap(rect):
     :returns: Captured image
     :rtype: :class:`~PySide.QtGui.QPixmap`
     """
-    desktop = QtGui.QApplication.desktop()
+    desktop = QtWidgets.QApplication.desktop()
     return QtGui.QPixmap.grabWindow(
         desktop.winId(), rect.x(), rect.y(), rect.width(), rect.height()
     )
