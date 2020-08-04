@@ -52,7 +52,7 @@ class ScreenGrabber(QtWidgets.QDialog):
         self.setCursor(QtCore.Qt.CrossCursor)
         self.setMouseTracking(True)
 
-        desktop = QtCore.QApplication.desktop()
+        desktop = QtWidgets.QApplication.desktop()
         desktop.resized.connect(self._fit_screen_geometry)
         desktop.screenCountChanged.connect(self._fit_screen_geometry)
 
