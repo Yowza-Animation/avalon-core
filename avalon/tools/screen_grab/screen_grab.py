@@ -30,7 +30,7 @@ class ScreenGrabber(QtWidgets.QDialog):
     # If set to a callable, it will be used when performing a
     # screen grab in place of the default behavior defined in
     # this module.
-    SCREEN_GRAB_CALLBACK = None
+    SCREEN_GRAB_CALLBACK = True
 
     def __init__(self, parent=None):
         """
@@ -301,9 +301,12 @@ def screen_capture_file(output_path=None):
             suffix=".png", prefix="screencapture_", delete=False
         ).name
     pixmap = screen_capture()
+
     pixmap.save(output_path)
     return output_path
 
+def callback(*args):
+    print(args)
 
 def show(root=None, debug=False, parent=None):
     """Display Scene Inventory GUI
@@ -315,6 +318,7 @@ def show(root=None, debug=False, parent=None):
             to this QObject.
 
     """
+
     screen_capture_file()
     # try:
     #     module.window.close()
