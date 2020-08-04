@@ -202,7 +202,7 @@ class ScreenGrabber(QtWidgets.QDialog):
 
     def _fit_screen_geometry(self):
         # Compute the union of all screen geometries, and resize to fit.
-        desktop = QtGui.QApplication.desktop()
+        desktop = QtWidgets.QApplication.desktop()
         workspace_rect = QtCore.QRect()
         for i in range(desktop.screenCount()):
             workspace_rect = workspace_rect.united(desktop.screenGeometry(i))
