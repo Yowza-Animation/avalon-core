@@ -208,10 +208,13 @@ def get_scene_data():
     try:
         return self.send({"function": func})["result"]
     except json.decoder.JSONDecodeError:
-        # Means no sceen metadata has been made before.
+        # Means no scene metadata has been made before.
         return {}
     except KeyError:
         # Means no existing scene metadata has been made.
+        return {}
+    except Exception as err:
+        self.log.warning(err)
         return {}
 
 
