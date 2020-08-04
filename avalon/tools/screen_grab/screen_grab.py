@@ -12,14 +12,12 @@ from ...vendor.Qt import QtWidgets, QtCore, QtGui
 from ...vendor import qtawesome
 from ... import io, api, style
 
-
 from .. import lib as tools_lib
-
-
-
 
 module = sys.modules[__name__]
 module.window = None
+module.root = api.registered_root()
+
 
 class ScreenGrabber(QtWidgets.QDialog):
     """
@@ -335,7 +333,7 @@ def show(root=None, debug=False, parent=None):
         api.Session["AVALON_PROJECT"] = any_project["name"]
 
     with tools_lib.application():
-        window = Window(parent)
+        window = ScreenGrabber(parent)
         window.setStyleSheet(style.load_stylesheet())
         window.show()
         window.refresh()
