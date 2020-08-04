@@ -70,7 +70,7 @@ class ScreenGrabber(QtWidgets.QDialog):
         Paint event
         """
         # Convert click and current mouse positions to local space.
-        mouse_pos = self.mapFromGlobal(QtCore.QCursor.pos())
+        mouse_pos = self.mapFromGlobal(QtGui.QCursor.pos())
         click_pos = None
         if self._click_pos is not None:
             click_pos = self.mapFromGlobal(self._click_pos)
