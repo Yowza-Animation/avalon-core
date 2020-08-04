@@ -2,8 +2,24 @@ import tempfile
 import sys
 import os
 
-import Qt
-from Qt import QtCore, QtGui, QtWidgets
+import os
+import sys
+import logging
+import collections
+from functools import partial
+
+from ...vendor.Qt import QtWidgets, QtCore, QtGui
+from ...vendor import qtawesome
+from ... import io, api, style
+
+
+from .. import lib as tools_lib
+
+
+
+
+module = sys.modules[__name__]
+module.window = None
 
 class ScreenGrabber(QtWidgets.QDialog):
     """
@@ -38,9 +54,11 @@ class ScreenGrabber(QtWidgets.QDialog):
         self.setCursor(QtCore.Qt.CrossCursor)
         self.setMouseTracking(True)
 
-        desktop = QtGui.QApplication.desktop()
+        desktop = QtCore.QApplication.desktop()
         desktop.resized.connect(self._fit_screen_geometry)
         desktop.screenCountChanged.connect(self._fit_screen_geometry)
+
+
 
     @property
     def capture_rect(self):
@@ -54,12 +72,12 @@ class ScreenGrabber(QtWidgets.QDialog):
         Paint event
         """
         # Convert click and current mouse positions to local space.
-        mouse_pos = self.mapFromGlobal(QtGui.QCursor.pos())
+        mouse_pos = self.mapFromGlobal(QtCore.QCursor.pos())
         click_pos = None
         if self._click_pos is not None:
             click_pos = self.mapFromGlobal(self._click_pos)
 
-        painter = QtGui.QPainter(self)
+        painter = QtCore.QPainter(self)
 
         # Draw background. Aside from aesthetics, this makes the full
         # tool region accept mouse events.
@@ -287,3 +305,43 @@ def screen_capture_file(output_path=None):
     pixmap = screen_capture()
     pixmap.save(output_path)
     return output_path
+
+
+def show(root=None, debug=False, parent=None):
+    """Display Scene Inventory GUI
+
+    Arguments:
+        debug (bool, optional): Run in debug-mode,
+            defaults to False
+        parent (QtCore.QObject, optional): When provided parent the interface
+            to this QObject.
+
+    """
+
+    try:
+        module.window.close()
+        del module.window
+    except (RuntimeError, AttributeError):
+        pass
+
+    if debug is True:
+        io.install()
+
+        any_project = next(
+            project for project in io.projects()
+            if project.get("active", True) is not False
+        )
+
+        api.Session["AVALON_PROJECT"] = any_project["name"]
+
+    with tools_lib.application():
+        window = Window(parent)
+        window.setStyleSheet(style.load_stylesheet())
+        window.show()
+        window.refresh()
+
+        module.window = window
+
+        # Pull window to the front.
+        module.window.raise_()
+        module.window.activateWindow()
