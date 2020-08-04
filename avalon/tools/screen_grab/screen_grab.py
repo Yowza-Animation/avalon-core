@@ -336,7 +336,7 @@ def show(root=None, debug=False, parent=None):
         window = ScreenGrabber(parent)
         window.setStyleSheet(style.load_stylesheet())
         window.show()
-        window.refresh()
+        # window.refresh()
 
         module.window = window
 
