@@ -164,15 +164,15 @@ class ScreenGrabber(QtWidgets.QDialog):
         :returns: Captured screen
         :rtype: :class:`~PySide.QtGui.QPixmap`
         """
+        #
+        # if cls.SCREEN_GRAB_CALLBACK:
+        #     # use an external callback for screen grabbing
+        #     return cls.SCREEN_GRAB_CALLBACK()
 
-        if cls.SCREEN_GRAB_CALLBACK:
-            # use an external callback for screen grabbing
-            return cls.SCREEN_GRAB_CALLBACK()
-
-            # on windows, just use the QT solution.
-            tool = ScreenGrabber()
-            tool.exec_()
-            return get_desktop_pixmap(tool.capture_rect)
+        # on windows, just use the QT solution.
+        tool = ScreenGrabber()
+        tool.exec_()
+        return get_desktop_pixmap(tool.capture_rect)
 
     def showEvent(self, event):
         """
@@ -302,6 +302,7 @@ def screen_capture_file(output_path=None):
         output_path = tempfile.NamedTemporaryFile(
             suffix=".png", prefix="screencapture_", delete=False
         ).name
+
     pixmap = screen_capture()
 
     pixmap.save(output_path)
