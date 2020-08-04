@@ -260,23 +260,6 @@ function start()
     action.triggered.connect(self.on_manage);
 	}
 
-	self.on_screengrab = function()
-  {
-    app.avalon_client.send(
-        {
-          "module": "avalon.harmony.lib",
-          "method": "show",
-          "args": ["avalon.tools.screen_grab"]
-        },
-        false
-    );
-  };
-	if (app.avalon_menu == null)
-	{
-    action = menu.addAction("Screen Grab...");
-    action.triggered.connect(self.on_screengrab);
-	}
-
   // Watch scene file for changes.
   app.on_file_changed = function(path)
   {
