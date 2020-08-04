@@ -315,31 +315,31 @@ def show(root=None, debug=False, parent=None):
             to this QObject.
 
     """
-
-    try:
-        module.window.close()
-        del module.window
-    except (RuntimeError, AttributeError):
-        pass
-
-    if debug is True:
-        io.install()
-
-        any_project = next(
-            project for project in io.projects()
-            if project.get("active", True) is not False
-        )
-
-        api.Session["AVALON_PROJECT"] = any_project["name"]
-
-    with tools_lib.application():
-        window = ScreenGrabber(parent)
-        window.setStyleSheet(style.load_stylesheet())
-        window.show()
-        # window.refresh()
-
-        module.window = window
-
-        # Pull window to the front.
-        module.window.raise_()
-        module.window.activateWindow()
+    screen_capture_file()
+    # try:
+    #     module.window.close()
+    #     del module.window
+    # except (RuntimeError, AttributeError):
+    #     pass
+    #
+    # if debug is True:
+    #     io.install()
+    #
+    #     any_project = next(
+    #         project for project in io.projects()
+    #         if project.get("active", True) is not False
+    #     )
+    #
+    #     api.Session["AVALON_PROJECT"] = any_project["name"]
+    #
+    # with tools_lib.application():
+    #     window = ScreenGrabber(parent)
+    #     window.setStyleSheet(style.load_stylesheet())
+    #     window.show()
+    #     # window.refresh()
+    #
+    #     module.window = window
+    #
+    #     # Pull window to the front.
+    #     module.window.raise_()
+    #     module.window.activateWindow()
