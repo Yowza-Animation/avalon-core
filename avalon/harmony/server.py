@@ -39,7 +39,7 @@ class Server(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = ("127.0.0.1", port)
+        server_address = ("10.10.29.150", port)
         self.log.debug("Starting up on {}".format(server_address))
         self.socket.bind(server_address)
 
@@ -159,7 +159,7 @@ class Server(object):
             self.log.debug("Connect to shutdown.")
             socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM
-            ).connect(("127.0.0.1", self.port))
+            ).connect(("10.10.29.150", self.port))
 
         self.connection.close()
         self.connection = None
