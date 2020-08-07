@@ -876,4 +876,4 @@ def show(root=None, debug=False, parent=None, use_context=True, save=True):
         module.window.raise_()
         module.window.activateWindow()
 
-        return module.window
+        return window
