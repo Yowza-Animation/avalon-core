@@ -866,7 +866,9 @@ def show(root=None, debug=False, parent=None, use_context=True, save=True):
             window.set_context(context)
 
         window.widgets["files"].widgets["save"].setEnabled(save)
-
+        print(parent)
+        if not parent:
+            window.widgets["files"].widgets["save"].setText("New File")
         window.show()
         window.setStyleSheet(style.load_stylesheet())
 
