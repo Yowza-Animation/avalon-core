@@ -88,6 +88,6 @@ class thread_server(WSGIRefServer):
 
 def start_server(port):
     """Starts the Bottle server at 'http://localhost:{port}'"""
-    server = thread_server(host="localhost", port=port)
+    server = thread_server(host="127.0.0.1", port=port)
     Thread(target=run, kwargs={"server": server}).start()
     return server
