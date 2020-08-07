@@ -93,7 +93,7 @@ def launch(application_path, zip_file):
         zip_file (str): Path to application scene file zipped.
         application_name (str): Application identifier.
     """
-    self.port = random.randrange(5000, 5010)
+    self.port = random.randrange(5000, 6000)
     os.environ["AVALON_TOONBOOM_PORT"] = str(self.port)
     self.application_path = application_path
 

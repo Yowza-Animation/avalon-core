@@ -51,7 +51,7 @@ def launch(application_path):
 
     api.install(harmony)
 
-    self.port = random.randrange(5000, 5010)
+    self.port = random.randrange(5000, 6000)
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
     self.application_path = application_path
 

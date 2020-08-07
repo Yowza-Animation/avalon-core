@@ -38,7 +38,7 @@ python -c "from avalon.tools import html_server;html_server.app.start_server(500
 
 ## Usage
 
-The Photoshop extension can be found under `Window > Extensions > Yowza`. Once launched you should be presented with a panel like this:
+The Photoshop extension can be found under `Window > Extensions > Avalon`. Once launched you should be presented with a panel like this:
 
 ![Avalon Panel](panel.PNG "Avalon Panel")
 

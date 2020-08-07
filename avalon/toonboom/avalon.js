@@ -159,7 +159,7 @@ function start()
   }
 
   var menu_bar = QApplication.activeWindow().menuBar();
-  var menu = menu_bar.addMenu("Avalon");
+  var menu = menu_bar.addMenu("Yowza");
 
   self.on_creator = function()
   {
