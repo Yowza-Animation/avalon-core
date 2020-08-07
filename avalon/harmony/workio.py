@@ -46,7 +46,8 @@ def save_file(filepath):
             {"function": func, "args": [scene_path]}
         )
     else:
-        os.environ["HARMONY_NEW_WORKFILE_PATH"] = filepath.replace("\\", "/")
+        os.environ["HARMONY_NEW_WORKFILE_PATH"] = os.path.normpath(
+            filepath).replace("\\", "/")
 
 def open_file(filepath):
     lib.launch_zip_file(filepath)
