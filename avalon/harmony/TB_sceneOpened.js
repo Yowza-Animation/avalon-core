@@ -146,7 +146,7 @@ function Client()
 function start()
 {
   var self = this;
-  var host = "10.10.29.150";
+  var host = System.getenv("LOCALHOST_IP");
   var port = parseInt(System.getenv("AVALON_HARMONY_PORT"));
 
   // Attach the client to the QApplication to preserve.

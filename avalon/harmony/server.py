@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Server-side implementation of Toon Boon Harmony communication."""
+import os
 import socket
 import logging
 import json
@@ -39,7 +40,7 @@ class Server(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = ("10.10.29.150", port)
+        server_address = (os.getenv("LOCALHOST_IP"), port)
         self.log.debug("Starting up on {}".format(server_address))
         self.socket.bind(server_address)
 
@@ -159,7 +160,7 @@ class Server(object):
             self.log.debug("Connect to shutdown.")
             socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM
-            ).connect(("10.10.29.150", self.port))
+            ).connect((os.getenv("LOCALHOST_IP"), self.port))
 
         self.connection.close()
         self.connection = None

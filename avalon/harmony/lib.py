@@ -1,3 +1,4 @@
+import socket
 import subprocess
 import threading
 import os
@@ -53,6 +54,10 @@ def launch(application_path):
 
     self.port = random.randrange(5000, 6000)
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
+
+    # set IP address env using socket.gethostbyname() method
+    os.environ["LOCALHOST_IP"] = socket.gethostbyname(socket.gethostname())
+
     self.application_path = application_path
 
     # Launch Harmony.
