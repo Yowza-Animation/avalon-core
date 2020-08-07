@@ -64,7 +64,7 @@ def launch(application_path):
     setup_startup_scripts()
 
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
-        workfiles.show(save=False)
+        workfiles.show(save=True)
 
     # No launch through Workfiles happened.
     if not self.workfile_path:
