@@ -12,3 +12,5 @@ _site
 build
 *.patch
 *.diff
+.idea/
+venv/
