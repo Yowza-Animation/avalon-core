@@ -875,3 +875,5 @@ def show(root=None, debug=False, parent=None, use_context=True, save=True):
         # Pull window to the front.
         module.window.raise_()
         module.window.activateWindow()
+
+        return module.window
