@@ -72,16 +72,13 @@ def launch(application_path):
     # No launch through Workfiles happened or Save As was clicked.
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
-
+        launch_zip_file(zip_file)
         if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
             print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
-            new_file = get_local_harmony_path(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
-            shutil.copy(zip_file, new_file)
-            launch_zip_file(new_file)
-            os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
-        else:
+            save_scene_as(get_local_harmony_path(
+                os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/"))
 
-            launch_zip_file(zip_file)
+            os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
 
     self.callback_queue = queue.Queue()
     while True:
