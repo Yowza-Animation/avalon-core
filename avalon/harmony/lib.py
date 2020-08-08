@@ -71,13 +71,13 @@ def launch(application_path):
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
 
-    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-        print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
-
-        save_scene_as(get_local_harmony_path(
-            os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/"))
-
-        os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
+    # if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+    #     print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
+    #
+    #     save_scene_as(get_local_harmony_path(
+    #         os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/"))
+    #
+    #     os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
 
     self.callback_queue = queue.Queue()
     while True:
