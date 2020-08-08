@@ -77,10 +77,11 @@ def launch(application_path):
         print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
         new_file = get_local_harmony_path(
             os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-        print(new_file)
-        # save_scene_as(new_file)
-
         os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
+        print(new_file)
+        save_scene_as(new_file)
+
+
 
     self.callback_queue = queue.Queue()
     while True:

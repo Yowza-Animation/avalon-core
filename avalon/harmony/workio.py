@@ -46,8 +46,6 @@ def save_file(filepath):
             {"function": func, "args": [scene_path]}
         )
     else:
-        print("-"*80)
-        print(filepath.replace("\\", "/"))
         os.environ["HARMONY_NEW_WORKFILE_PATH"] = filepath.replace("\\", "/")
 
 
