@@ -92,7 +92,7 @@ def get_local_harmony_path(filepath):
         "users",
         getpass.getuser(),
         "harmony")
-    os.makedirs(harmony_path)
+    os.makedirs(harmony_path, exist_ok=True)
     return os.path.join(harmony_path, basename)
 
 
