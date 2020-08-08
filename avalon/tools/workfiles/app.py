@@ -868,10 +868,6 @@ def show(root=None, debug=False, parent=None, use_context=True, save=True):
 
         window.widgets["files"].widgets["save"].setEnabled(save)
 
-        print("PARENT:{}".format(parent))
-        if not parent:
-            window.widgets["files"].widgets["save"].setText("New File")
-
         window.show()
         window.setStyleSheet(style.load_stylesheet())
 

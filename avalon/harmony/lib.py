@@ -1,25 +1,24 @@
-import contextlib
-import getpass
-import importlib
-import json
-import logging
-import os
-import queue
-import random
-import shutil
-import signal
 import socket
 import subprocess
 import threading
+import os
+import random
 import zipfile
-
 import sys
+import importlib
+import queue
+import shutil
+import logging
+import contextlib
+import json
+import signal
 import time
+import getpass
 
 from .server import Server
+from ..vendor.Qt import QtWidgets
 from ..tools import workfiles
 from ..toonboom import setup_startup_scripts
-from ..vendor.Qt import QtWidgets
 
 self = sys.modules[__name__]
 self.server = None
@@ -41,7 +40,6 @@ def execute_in_main_thread(func_to_call_from_main_thread):
 def main_thread_listen():
     callback = self.callback_queue.get()
     callback()
-
 
 def launch(application_path):
     """Setup for Harmony launch.
@@ -66,7 +64,7 @@ def launch(application_path):
     setup_startup_scripts()
 
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
-        workfiles.show(save=True)
+        workfiles.show(save=False)
 
     # No launch through Workfiles happened.
     if not self.workfile_path:
@@ -131,36 +129,26 @@ def launch_zip_file(filepath):
     process = subprocess.Popen([self.application_path, scene_path])
     self.pid = process.pid
 
-    # if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-    #     new_path = get_local_harmony_path(
-    #         os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-    #
-    #     send(
-    #         {"function": "scene.saveAs", "args": [new_path]}
-    #     )
-
 
 def on_file_changed(path, threaded=True):
     """Threaded zipping and move of the project directory.
 
     This method is called when the `.xstage` file is changed.
     """
-    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-        os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
+
+    self.log.debug("File changed: " + path)
+
+    if self.workfile_path is None:
+        return
+
+    if threaded:
+        thread = threading.Thread(
+            target=zip_and_move,
+            args=(os.path.dirname(path), self.workfile_path)
+        )
+        thread.start()
     else:
-        self.log.debug("File changed: " + path)
-
-        if self.workfile_path is None:
-            return
-
-        if threaded:
-            thread = threading.Thread(
-                target=zip_and_move,
-                args=(os.path.dirname(path), self.workfile_path)
-            )
-            thread.start()
-        else:
-            zip_and_move(os.path.dirname(path), self.workfile_path)
+        zip_and_move(os.path.dirname(path), self.workfile_path)
 
 
 def zip_and_move(source, destination):
