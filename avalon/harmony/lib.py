@@ -73,16 +73,6 @@ def launch(application_path):
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
 
-    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-        print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
-        new_file = get_local_harmony_path(
-            os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-        os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
-        print(new_file)
-        save_scene_as(new_file)
-
-
-
     self.callback_queue = queue.Queue()
     while True:
         main_thread_listen()
@@ -140,6 +130,16 @@ def launch_zip_file(filepath):
     print("Launching {}".format(scene_path))
     process = subprocess.Popen([self.application_path, scene_path])
     self.pid = process.pid
+
+    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+        print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
+        new_path = get_local_harmony_path(
+            os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
+        os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
+        print(new_path)
+        send(
+            {"function": "scene.saveAs", "args": [new_path]}
+        )["result"]
 
 
 def on_file_changed(path, threaded=True):
