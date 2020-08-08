@@ -49,7 +49,8 @@ def save_file(filepath):
         print("-"*80)
         print(filepath)
         os.environ["HARMONY_NEW_WORKFILE_PATH"] = os.path.normpath(
-            filepath).replace("\\", "/")
+            filepath.replace("\\", "/"))
+
 
 def open_file(filepath):
     lib.launch_zip_file(filepath)

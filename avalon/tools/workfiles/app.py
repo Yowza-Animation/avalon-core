@@ -597,6 +597,9 @@ class FilesWidget(QtWidgets.QWidget):
         self.set_asset_task(self._asset, self._task)
         self.refresh()
 
+        if not self.parent:
+            self.window().close()
+
     def initialize_work_directory(self):
         """Initialize Work Directory.
 
@@ -866,9 +869,10 @@ def show(root=None, debug=False, parent=None, use_context=True, save=True):
             window.set_context(context)
 
         window.widgets["files"].widgets["save"].setEnabled(save)
-        print(parent)
+
         if not parent:
             window.widgets["files"].widgets["save"].setText("New File")
+
         window.show()
         window.setStyleSheet(style.load_stylesheet())
 

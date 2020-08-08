@@ -67,17 +67,17 @@ def launch(application_path):
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
         window = workfiles.show(save=True)
 
-    # No launch through Workfiles happened.
+    # No launch through Workfiles happened or Save As was clicked.
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
+
         if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-            
             print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
             save_scene_as(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
             os.environ["HARMONY_NEW_WORKFILE_PATH"] = None
-            print(window)
-            window.close()
+
+
 
     self.callback_queue = queue.Queue()
     while True:
