@@ -1,25 +1,24 @@
-import contextlib
-import getpass
-import importlib
-import json
-import logging
-import os
-import queue
-import random
-import shutil
-import signal
 import socket
 import subprocess
 import threading
+import os
+import random
 import zipfile
-
 import sys
+import importlib
+import queue
+import shutil
+import logging
+import contextlib
+import json
+import signal
 import time
+import getpass
 
 from .server import Server
+from ..vendor.Qt import QtWidgets
 from ..tools import workfiles
 from ..toonboom import setup_startup_scripts
-from ..vendor.Qt import QtWidgets
 
 self = sys.modules[__name__]
 self.server = None
@@ -41,7 +40,6 @@ def execute_in_main_thread(func_to_call_from_main_thread):
 def main_thread_listen():
     callback = self.callback_queue.get()
     callback()
-
 
 def launch(application_path):
     """Setup for Harmony launch.
@@ -65,16 +63,17 @@ def launch(application_path):
     # Launch Harmony.
     setup_startup_scripts()
 
-    window = None
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
-        window = workfiles.show(save=True)
+        workfiles.show(save=True)
 
-    # No launch through Workfiles happened or Save As was clicked.
+    # No launch through Workfiles happened.
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
         if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+
             print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
+
             save_scene_as(get_local_harmony_path(
                 os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/"))
 
@@ -93,6 +92,7 @@ def get_local_harmony_path(filepath):
         "users",
         getpass.getuser(),
         "harmony")
+    os.makedirs(harmony_path)
     return os.path.join(harmony_path, basename)
 
 
