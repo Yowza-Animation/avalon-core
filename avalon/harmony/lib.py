@@ -1,24 +1,25 @@
+import contextlib
+import getpass
+import importlib
+import json
+import logging
+import os
+import queue
+import random
+import shutil
+import signal
 import socket
 import subprocess
 import threading
-import os
-import random
 import zipfile
+
 import sys
-import importlib
-import queue
-import shutil
-import logging
-import contextlib
-import json
-import signal
 import time
-import getpass
 
 from .server import Server
-from ..vendor.Qt import QtWidgets
 from ..tools import workfiles
 from ..toonboom import setup_startup_scripts
+from ..vendor.Qt import QtWidgets
 
 self = sys.modules[__name__]
 self.server = None
@@ -40,6 +41,7 @@ def execute_in_main_thread(func_to_call_from_main_thread):
 def main_thread_listen():
     callback = self.callback_queue.get()
     callback()
+
 
 def launch(application_path):
     """Setup for Harmony launch.
@@ -75,8 +77,8 @@ def launch(application_path):
         print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
         new_file = get_local_harmony_path(
             os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-        print( new_file )
-        save_scene_as()
+        print(new_file)
+        # save_scene_as(new_file)
 
         os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
 
