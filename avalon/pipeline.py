@@ -610,7 +610,7 @@ class Application(Action):
             # Get platform folder name
             os_plat = platform.system().lower()
             # Path to folder with launchers
-            path = os.path.join(pype_config_path, "launchers", os_plat)
+            path = os.path.join(os.environ["YOWZA_PIPE_PATH"], "launchers", os_plat)
             if os.path.exists(path):
                 executable_path = os.path.join(path, executable_path)
         executable = lib.which(executable_path)
