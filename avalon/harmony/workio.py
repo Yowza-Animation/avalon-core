@@ -20,9 +20,11 @@ def has_unsaved_changes():
 def save_file(filepath):
     temp_path = lib.get_local_harmony_path(filepath)
 
-    if os.path.exists(temp_path):
-        shutil.rmtree(temp_path)
     if lib.server:
+
+        if os.path.exists(temp_path):
+            shutil.rmtree(temp_path)
+
         lib.server.send(
             {"function": "scene.saveAs", "args": [temp_path]}
         )["result"]
