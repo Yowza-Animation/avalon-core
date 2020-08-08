@@ -131,13 +131,13 @@ def launch_zip_file(filepath):
     process = subprocess.Popen([self.application_path, scene_path])
     self.pid = process.pid
 
-    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-        new_path = get_local_harmony_path(
-            os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-
-        send(
-            {"function": "scene.saveAs", "args": [new_path]}
-        )
+    # if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+    #     new_path = get_local_harmony_path(
+    #         os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
+    #
+    #     send(
+    #         {"function": "scene.saveAs", "args": [new_path]}
+    #     )
 
 
 def on_file_changed(path, threaded=True):
