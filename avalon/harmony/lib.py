@@ -135,6 +135,8 @@ def launch_zip_file(filepath):
         new_path = get_local_harmony_path(
             os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
 
+        self.workfile_path = new_path
+
         send(
             {"function": "scene.saveAs", "args": [new_path]}
         )["result"]
