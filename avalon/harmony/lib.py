@@ -74,8 +74,8 @@ def launch(application_path):
 
         if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
             print(os.getenv("HARMONY_NEW_WORKFILE_PATH"))
-            save_scene_as(str(os.getenv("HARMONY_NEW_WORKFILE_PATH")))
-            os.environ["HARMONY_NEW_WORKFILE_PATH"] = None
+            save_scene_as(get_local_harmony_path(os.getenv("HARMONY_NEW_WORKFILE_PATH")))
+            os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
 
     self.callback_queue = queue.Queue()
     while True:
