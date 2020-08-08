@@ -137,7 +137,7 @@ def launch_zip_file(filepath):
 
         send(
             {"function": "scene.saveAs", "args": [new_path]}
-        )["result"]
+        )
 
 
 def on_file_changed(path, threaded=True):
