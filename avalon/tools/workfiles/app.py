@@ -596,9 +596,7 @@ class FilesWidget(QtWidgets.QWidget):
         self.host.save_file(file_path)
         self.set_asset_task(self._asset, self._task)
         self.refresh()
-
-        if not self.parent:
-            self.window().close()
+        self.window().close()
 
     def initialize_work_directory(self):
         """Initialize Work Directory.

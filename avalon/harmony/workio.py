@@ -47,9 +47,8 @@ def save_file(filepath):
         )
     else:
         print("-"*80)
-        print(filepath)
-        os.environ["HARMONY_NEW_WORKFILE_PATH"] = os.path.normpath(
-            filepath.replace("\\", "/"))
+        print(filepath.replace("\\", "/"))
+        os.environ["HARMONY_NEW_WORKFILE_PATH"] = filepath.replace("\\", "/")
 
 
 def open_file(filepath):
