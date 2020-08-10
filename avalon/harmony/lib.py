@@ -41,11 +41,6 @@ def main_thread_listen():
     callback = self.callback_queue.get()
     callback()
 
-def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    return s.getsockname()[0]
-
 def launch(application_path):
     """Setup for Harmony launch.
 
@@ -61,7 +56,7 @@ def launch(application_path):
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
 
     # set IP address env using socket.gethostbyname() method
-    os.environ["LOCALHOST_IP"] = get_ip_address()
+    os.environ["LOCALHOST_IP"] = socket.gethostbyname(socket.gethostname())
 
     self.application_path = application_path
 

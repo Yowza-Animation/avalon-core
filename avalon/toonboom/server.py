@@ -9,11 +9,6 @@ import functools
 from . import lib
 
 
-def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    return s.getsockname()[0]
-
 class Server(object):
 
     def __init__(self, port):
@@ -29,7 +24,7 @@ class Server(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = (get_ip_address(), port)
+        server_address = (os.getenv("LOCALHOST_IP"), port)
         self.log.debug("Starting up on {}".format(server_address))
         self.socket.bind(server_address)
 
