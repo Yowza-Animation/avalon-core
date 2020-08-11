@@ -356,7 +356,7 @@ class Window(QtWidgets.QDialog):
                 #     family,
                 #     subset_name
                 # ))
-                result.setText(family)
+                result.setText(subset_name)
 
             # Indicate subset existence
             if not subset_name:
