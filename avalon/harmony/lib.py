@@ -56,7 +56,7 @@ def launch(application_path):
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
 
     # set IP address env using socket.gethostbyname() method
-    os.environ["LOCALHOST_IP"] = "10.10.29.76" #"127.0.0.1" #socket.gethostbyname(socket.gethostname())
+    os.environ["LOCALHOST_IP"] = "127.0.0.1" #socket.gethostbyname(socket.gethostname())
 
     self.application_path = application_path
 

@@ -342,8 +342,8 @@ class Window(QtWidgets.QDialog):
             self._build_menu(defaults)
 
             # Update the result
-            # if subset_name:
-            #     subset_name = subset_name[0].upper() + subset_name[1:]
+            if subset_name:
+                subset_name = subset_name[0].upper() + subset_name[1:]
 
             if family in self.taskSubsetFamilies:
                 result.setText("{}{}{}".format(
@@ -352,11 +352,10 @@ class Window(QtWidgets.QDialog):
                     subset_name
                 ))
             else:
-                # result.setText("{}{}".format(
-                #     family,
-                #     subset_name
-                # ))
-                result.setText(subset_name)
+                result.setText("{}{}".format(
+                    family,
+                    subset_name
+                ))
 
             # Indicate subset existence
             if not subset_name:
@@ -405,7 +404,7 @@ class Window(QtWidgets.QDialog):
         if plugin.defaults and isinstance(plugin.defaults, list):
             default = plugin.defaults[0]
         else:
-            default = "main"
+            default = "Main"
 
         name.setText(default)
 
