@@ -150,7 +150,7 @@ class Server(object):
         self.connection, client_address = self.socket.accept()
 
         self.log.debug("Connection from: {}".format(client_address))
-
+        self._send("Initial Send!")
         self.receive()
 
     def stop(self):
