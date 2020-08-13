@@ -165,6 +165,11 @@ class IconicFont(QtCore.QObject):
         id_ = QtGui.QFontDatabase.addApplicationFont(
             os.path.join(directory, ttf_filename))
 
+        if ttf_filename in ("fontawesome-webfont.ttf"):
+            font = QtGui.QFont(id_)
+            font.setStyleStrategy(QtGui.QFont.NoFontMerging)
+
+
         loadedFontFamilies = QtGui.QFontDatabase.applicationFontFamilies(id_)
 
         if(loadedFontFamilies):
