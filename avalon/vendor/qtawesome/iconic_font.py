@@ -168,9 +168,9 @@ class IconicFont(QtCore.QObject):
         if ttf_filename in ("fontawesome-webfont.ttf"):
             font = QtGui.QFont("fontAwesomeRegular")
             font.setStyleStrategy(QtGui.QFont.NoFontMerging)
-
-
-        loadedFontFamilies = QtGui.QFontDatabase.applicationFontFamilies(id_)
+            loadedFontFamilies = QtGui.QFontDatabase.applicationFontFamilies(0)
+        else:
+            loadedFontFamilies = QtGui.QFontDatabase.applicationFontFamilies(id_)
 
         if(loadedFontFamilies):
             self.fontname[prefix] = loadedFontFamilies[0]
