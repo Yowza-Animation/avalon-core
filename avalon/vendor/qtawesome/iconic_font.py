@@ -166,7 +166,7 @@ class IconicFont(QtCore.QObject):
             os.path.join(directory, ttf_filename))
 
         if ttf_filename in ("fontawesome-webfont.ttf"):
-            font = QtGui.QFont(id_)
+            font = QtGui.QFont("fontAwesomeRegular")
             font.setStyleStrategy(QtGui.QFont.NoFontMerging)
 
 
