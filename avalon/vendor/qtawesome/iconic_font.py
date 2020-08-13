@@ -165,12 +165,7 @@ class IconicFont(QtCore.QObject):
         id_ = QtGui.QFontDatabase.addApplicationFont(
             os.path.join(directory, ttf_filename))
 
-        if ttf_filename in ("fontawesome-webfont.ttf"):
-            font = QtGui.QFont("fontAwesomeRegular")
-            font.setStyleStrategy(QtGui.QFont.NoFontMerging)
-            loadedFontFamilies = QtGui.QFontDatabase.applicationFontFamilies(0)
-        else:
-            loadedFontFamilies = QtGui.QFontDatabase.applicationFontFamilies(id_)
+        loadedFontFamilies = QtGui.QFontDatabase.applicationFontFamilies(id_)
 
         if(loadedFontFamilies):
             self.fontname[prefix] = loadedFontFamilies[0]
@@ -259,6 +254,8 @@ class IconicFont(QtCore.QObject):
             size for the font
         """
         font = QtGui.QFont(self.fontname[prefix])
+        if prefix[-1] == 's':  # solid style
+            font.setWeight(900)
         font.setPixelSize(size)
         return font
 
