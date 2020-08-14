@@ -1,3 +1,5 @@
+include("openHarmony.js");
+
 function Client()
 {
   var self = this;
