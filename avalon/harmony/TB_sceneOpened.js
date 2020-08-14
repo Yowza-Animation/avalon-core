@@ -1,7 +1,7 @@
-include("openHarmony.js");
-
 function Client()
 {
+  include("openHarmony.js");
+
   var self = this;
   self.socket = new QTcpSocket(this);
   self.received = "";
