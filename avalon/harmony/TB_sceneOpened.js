@@ -38,27 +38,22 @@ function Client()
     self.log_debug("Processing: \n" + jsonPretty);
     var result = null;
 
-    if (request["function"] != null)
+    with($)
     {
-      try
-      {
-        var func = eval(request["function"]);
+      if (request["function"] != null) {
+        try {
+          var func = eval(request["function"]);
 
-        if (request.args == null)
-        {
-          result = func();
-        }else
-        {
-          result = func(request.args);
+          if (request.args == null) {
+            result = (func()).call($);
+          } else {
+            result = (func(request.args)).call($);
+          }
+        } catch (error) {
+          result = "\nError processing request.\nError:\n" + error;
         }
       }
-
-      catch (error)
-      {
-        result = "\nError processing request.\nError:\n" + error;
-      }
     }
-
     return result;
   };
 
