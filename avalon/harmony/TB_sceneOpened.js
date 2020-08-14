@@ -57,7 +57,7 @@ function Client()
 
       catch (error)
       {
-        result = "Error processing request.\nError:\n" + error;
+        result = "\nError processing request.\nError:\n" + error;
       }
     }
 
