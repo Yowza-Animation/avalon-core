@@ -37,7 +37,7 @@ function Client()
   {
     var jsonString = JSON.stringify(request);
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Processing: " + jsonPretty);
+    self.log_debug("Processing: \n" + jsonPretty);
     var result = null;
 
     if (request["function"] != null)
@@ -77,12 +77,12 @@ function Client()
       }
     }
 
-    self.log_debug("Received: " + self.received);
+    var jsonString = JSON.stringify(self.received);
+    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
+    self.log_debug("Processing: \n" + jsonPretty);
 
     request = JSON.parse(self.received);
-    var jsonString = JSON.stringify(request);
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Request: " + jsonPretty);
+    self.log_debug("Request: \n" + jsonPretty);
 
     request.result = self.process_request(request);
 
@@ -103,7 +103,7 @@ function Client()
 
   self._send = function(message)
   {
-    self.log_debug("Sending: " + message);
+    self.log_debug("Sending: \n" + message);
 
     var data = new QByteArray();
     outstr = new QDataStream(data, QIODevice.WriteOnly);
