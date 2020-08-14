@@ -62,7 +62,8 @@ class Server(object):
         """
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Processing request [{}]: {}".format(timestamp, request))
+            "Processing request [{}]: {}"
+                .format(timestamp, json.dumps(request, indent=4)))
 
         try:
             module = importlib.import_module(request["module"])
@@ -104,7 +105,8 @@ class Server(object):
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
-                    "Received [{}]: {}".format(timestamp, self.received))
+                    "Received [{}]: {}"
+                        .format(timestamp, json.dumps(self.received, indent=4)))
 
                 try:
                     request = json.loads(self.received)
