@@ -57,7 +57,7 @@ function Client()
 
       catch (error)
       {
-        result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
+        result = "Error processing request.\nRequest:\n" + jsonPretty + "\nError:\n" + error;
       }
     }
 
@@ -77,11 +77,8 @@ function Client()
       }
     }
 
-    var jsonString = JSON.stringify(self.received);
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Processing: \n" + jsonPretty);
-
     request = JSON.parse(self.received);
+    var jsonPretty = JSON.stringify(request,null,2);
     self.log_debug("Request: \n" + jsonPretty);
 
     request.result = self.process_request(request);
