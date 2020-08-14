@@ -8,34 +8,36 @@ function Client()
 
   self.log_debug = function(data)
   {
-      message = typeof(data.message) != "undefined" ? data.message : data;
-      MessageLog.trace("(DEBUG): " + message.toString());
+    message = typeof(data.message) != "undefined" ? data.message : data;
+    MessageLog.trace("(DEBUG): " + message.toString());
   };
 
 
   self.log_info = function(data)
   {
-      message = typeof(data.message) != "undefined" ? data.message : data;
-      MessageLog.trace("(INFO): " + message.toString());
+    message = typeof(data.message) != "undefined" ? data.message : data;
+    MessageLog.trace("(INFO): " + message.toString());
   };
 
 
   self.log_warning = function(data)
   {
-      message = typeof(data.message) != "undefined" ? data.message : data;
-      MessageLog.trace("(WARNING): " + message.toString());
+    message = typeof(data.message) != "undefined" ? data.message : data;
+    MessageLog.trace("(WARNING): " + message.toString());
   };
 
 
   self.log_error = function(data)
   {
-      message = typeof(data.message) != "undefined" ? data.message : data;
-      MessageLog.trace("(ERROR): " + message.toString());
+    message = typeof(data.message) != "undefined" ? data.message : data;
+    MessageLog.trace("(ERROR): " + message.toString());
   };
 
   self.process_request = function(request)
   {
-    self.log_debug("Processing: " + JSON.stringify(request));
+    var jsonString = JSON.stringify(request);
+    var jsonPretty = JSON.stringify(jsonString,null,2);
+    self.log_debug("Processing: " + jsonPretty);
     var result = null;
 
     if (request["function"] != null)
@@ -78,7 +80,9 @@ function Client()
     self.log_debug("Received: " + self.received);
 
     request = JSON.parse(self.received);
-    self.log_debug("Request: " + JSON.stringify(request));
+    var jsonString = JSON.stringify(request);
+    var jsonPretty = JSON.stringify(jsonString,null,2);
+    self.log_debug("Request: " + jsonPretty);
 
     request.result = self.process_request(request);
 
@@ -160,11 +164,11 @@ function start()
     app.avalon_client.socket.connectToHost(host, port);
   }
 
-	var menu_bar = QApplication.activeWindow().menuBar();
-	var actions = menu_bar.actions();
-	app.avalon_menu = null;
-	for (var i = 0 ; i < actions.length; i++)
-	{
+  var menu_bar = QApplication.activeWindow().menuBar();
+  var actions = menu_bar.actions();
+  app.avalon_menu = null;
+  for (var i = 0 ; i < actions.length; i++)
+  {
     if (actions[i].text == "Yowza")
     {
       app.avalon_menu = true;
@@ -172,8 +176,8 @@ function start()
   }
 
   var menu = null;
-	if (app.avalon_menu == null)
-	{
+  if (app.avalon_menu == null)
+  {
     var menu = menu_bar.addMenu("Yowza");
   }
 
@@ -188,11 +192,11 @@ function start()
       false
     );
   };
-	if (app.avalon_menu == null)
-	{
+  if (app.avalon_menu == null)
+  {
     var action = menu.addAction("Create...");
     action.triggered.connect(self.on_creator);
-	}
+  }
 
   self.on_workfiles = function()
   {
@@ -205,62 +209,62 @@ function start()
       false
     );
   };
-	if (app.avalon_menu == null)
-	{
+  if (app.avalon_menu == null)
+  {
     action = menu.addAction("Workfiles");
     action.triggered.connect(self.on_workfiles);
-	}
+  }
 
   self.on_load = function()
   {
     app.avalon_client.send(
-        {
-          "module": "avalon.harmony.lib",
-          "method": "show",
-          "args": ["avalon.tools.loader"]
-        },
-        false
+      {
+        "module": "avalon.harmony.lib",
+        "method": "show",
+        "args": ["avalon.tools.loader"]
+      },
+      false
     );
   };
-	if (app.avalon_menu == null)
-	{
+  if (app.avalon_menu == null)
+  {
     action = menu.addAction("Load...");
     action.triggered.connect(self.on_load);
-	}
+  }
 
   self.on_publish = function()
   {
     app.avalon_client.send(
-        {
-          "module": "avalon.harmony.lib",
-          "method": "show",
-          "args": ["avalon.tools.publish"]
-        },
-        false
+      {
+        "module": "avalon.harmony.lib",
+        "method": "show",
+        "args": ["avalon.tools.publish"]
+      },
+      false
     );
   };
-	if (app.avalon_menu == null)
-	{
+  if (app.avalon_menu == null)
+  {
     action = menu.addAction("Publish...");
     action.triggered.connect(self.on_publish);
-	}
+  }
 
   self.on_manage = function()
   {
     app.avalon_client.send(
-        {
-          "module": "avalon.harmony.lib",
-          "method": "show",
-          "args": ["avalon.tools.sceneinventory"]
-        },
-        false
+      {
+        "module": "avalon.harmony.lib",
+        "method": "show",
+        "args": ["avalon.tools.sceneinventory"]
+      },
+      false
     );
   };
-	if (app.avalon_menu == null)
-	{
+  if (app.avalon_menu == null)
+  {
     action = menu.addAction("Manage...");
     action.triggered.connect(self.on_manage);
-	}
+  }
 
   // Watch scene file for changes.
   app.on_file_changed = function(path)
@@ -280,10 +284,10 @@ function start()
     app.watcher.addPath(path);
   };
 
-	app.watcher = new QFileSystemWatcher();
-	scene_path = scene.currentProjectPath() +"/" + scene.currentVersionName() + ".xstage";
-	app.watcher.addPath(scene_path);
-	app.watcher.fileChanged.connect(app.on_file_changed);
+  app.watcher = new QFileSystemWatcher();
+  scene_path = scene.currentProjectPath() +"/" + scene.currentVersionName() + ".xstage";
+  app.watcher.addPath(scene_path);
+  app.watcher.fileChanged.connect(app.on_file_changed);
   app.avalon_on_file_changed = true;
 
   app.avalon_client.send(
