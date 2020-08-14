@@ -36,7 +36,7 @@ function Client()
   self.process_request = function(request)
   {
     var jsonString = JSON.stringify(request);
-    var jsonPretty = JSON.stringify(jsonString,null,2);
+    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
     self.log_debug("Processing: " + jsonPretty);
     var result = null;
 
@@ -81,7 +81,7 @@ function Client()
 
     request = JSON.parse(self.received);
     var jsonString = JSON.stringify(request);
-    var jsonPretty = JSON.stringify(jsonString,null,2);
+    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
     self.log_debug("Request: " + jsonPretty);
 
     request.result = self.process_request(request);
