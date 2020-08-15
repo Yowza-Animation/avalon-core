@@ -235,7 +235,7 @@ function start()
           "method": "show",
           "args": ["avalon.tools.publish"]
         },
-        false
+        true
     );
   };
 	if (app.avalon_menu == null)
