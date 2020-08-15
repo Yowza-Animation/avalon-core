@@ -45,7 +45,7 @@ class Server(object):
         server_address = (os.getenv("LOCALHOST_IP"), port)
         self.log.debug("Starting Pype server up on {}".format(server_address))
         # Bind the socket to the port
-        # self.socket.bind(server_address)
+        self.socket.bind(server_address)
 
         # Listen for incoming connections
         self.socket.listen(1)
