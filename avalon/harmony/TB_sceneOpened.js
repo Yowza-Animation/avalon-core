@@ -83,8 +83,12 @@ function Client()
     self.log_debug("Received reply from Pype server: \n" + jsonPretty);
 
     request.result = self.process_request(request);
-    request.reply = true;
-    self._send(JSON.stringify(request));
+
+    if (!request.reply)
+    {
+      request.reply = true;
+      self._send(JSON.stringify(request));
+    }
 
     self.received = "";
   };

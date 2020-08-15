@@ -41,10 +41,11 @@ class Server(object):
         # Create a TCP/IP socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # Bind the socket to the port
+
         server_address = (os.getenv("LOCALHOST_IP"), port)
         self.log.debug("Starting Pype server up on {}".format(server_address))
-        self.socket.bind(server_address)
+        # Bind the socket to the port
+        # self.socket.bind(server_address)
 
         # Listen for incoming connections
         self.socket.listen(1)
@@ -90,7 +91,7 @@ class Server(object):
             # Receive the data in small chunks and retransmit it
             request = None
             while True:
-                time.sleep(2)
+                time.sleep(1)
                 if time.time() > current_time + 30:
                     self.log.error("Connection timeout.")
                     break

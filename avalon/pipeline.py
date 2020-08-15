@@ -1424,6 +1424,11 @@ def load(Loader, representation, namespace=None, name=None, options=None,
     )
 
     loader = Loader(context)
+    log.debug(context)
+    log.debug(name)
+    log.debug(namespace)
+    log.debug(options)
+    
     return loader.load(context, name, namespace, options)
 
 
