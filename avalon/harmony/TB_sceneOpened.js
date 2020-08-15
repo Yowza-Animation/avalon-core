@@ -123,7 +123,7 @@ function Client()
 
     while (wait)
     {
-      self.socket.waitForReadyRead(5000);
+
       try
       {
         if(self.socket.bytesAvailable() > 0) {
