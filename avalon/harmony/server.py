@@ -181,7 +181,11 @@ class Server(object):
 
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Sending [{}][{}]: {}".format(self.message_id, timestamp, message))
+            "Sending [{}][{}]: {}"
+                .format(json.dumps(self.message_id, indent=4),
+                        timestamp,
+                        message)
+        )
         self.connection.sendall(message.encode("utf-8"))
         self.message_id += 1
 

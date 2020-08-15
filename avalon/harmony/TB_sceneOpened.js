@@ -45,9 +45,9 @@ function Client()
           var func = eval(request["function"]);
 
           if (request.args == null) {
-            result = (func()).call($);
+            result = func();
           } else {
-            result = (func(request.args)).call($);
+            result = func(request.args);
           }
         } catch (error) {
           result = "\nError processing request.\nError:\n" + error;
