@@ -218,7 +218,7 @@ function start()
           "method": "show",
           "args": ["avalon.tools.loader"]
         },
-        false
+        true
     );
   };
 	if (app.avalon_menu == null)
@@ -252,7 +252,7 @@ function start()
           "method": "show",
           "args": ["avalon.tools.sceneinventory"]
         },
-        false
+        true
     );
   };
 	if (app.avalon_menu == null)
@@ -272,7 +272,7 @@ function start()
           "method": "on_file_changed",
           "args": [path]
         },
-        false
+        true
       );
     }
 
