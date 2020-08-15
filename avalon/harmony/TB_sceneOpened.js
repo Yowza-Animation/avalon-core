@@ -36,7 +36,7 @@ function Client()
   {
     var jsonString = JSON.stringify(JSON.parse(request), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Processing: \n" + jsonPretty);
+    self.log_debug("Processing Request from Pype: \n" + jsonPretty);
 
     var result = null;
 
@@ -44,7 +44,8 @@ function Client()
     {
       try
       {
-        var func = eval("with ($) {var result = (" + request["function"] + ")}");
+        var func = eval("with (" + $ + ") {var result = (" + request["function"] + ")}");
+
         if (request.args == null)
         {
           result = func();
@@ -56,7 +57,7 @@ function Client()
 
       catch (error)
       {
-        result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
+        result = "Error processing request from Pype.\nRequest:\n" + jsonPretty  + "\nError:\n" + error;
       }
     }
 
@@ -65,7 +66,7 @@ function Client()
 
   self.on_ready_read = function()
   {
-    self.log_debug("Receiving data...");
+    self.log_debug("Receiving data from Pype...");
     data = self.socket.readAll();
 
     if (data.size() != 0)
@@ -79,7 +80,7 @@ function Client()
     var jsonString = JSON.stringify(JSON.parse(self.received), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
     request = JSON.parse(self.received);
-    self.log_debug("Request: \n" + jsonPretty);
+    self.log_debug("Request from Pype server: \n" + jsonPretty);
 
     request.result = self.process_request(request);
 
@@ -94,7 +95,7 @@ function Client()
 
   self.on_connected = function()
   {
-    self.log_debug("Connected to server.");
+    self.log_debug("Connected to Pype server.");
     self.socket.readyRead.connect(self.on_ready_read);
   };
 
@@ -102,7 +103,7 @@ function Client()
   {
     var jsonString = JSON.stringify(JSON.parse(message), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Sending: \n" + jsonPretty);
+    self.log_debug("Sending to Pype server: \n" + jsonPretty);
 
     var data = new QByteArray();
     outstr = new QDataStream(data, QIODevice.WriteOnly);
