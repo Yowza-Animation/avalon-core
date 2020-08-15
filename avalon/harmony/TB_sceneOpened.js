@@ -33,27 +33,30 @@ function Client()
 
   self.process_request = function(request)
   {
-    var jsonString = JSON.stringify(request);
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Processing: \n" + jsonPretty);
+    self.log_debug("Processing: " + JSON.stringify(request));
     var result = null;
 
-    with($)
+    if (request["function"] != null)
     {
-      if (request["function"] != null) {
-        try {
-          var func = eval(request["function"]);
+      try
+      {
+        var func = eval(request["function"]);
 
-          if (request.args == null) {
-            result = func();
-          } else {
-            result = func(request.args);
-          }
-        } catch (error) {
-          result = "\nError processing request.\nError:\n" + error;
+        if (request.args == null)
+        {
+          result = func();
+        }else
+        {
+          result = func(request.args);
         }
       }
+
+      catch (error)
+      {
+        result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
+      }
     }
+
     return result;
   };
 
@@ -70,12 +73,10 @@ function Client()
       }
     }
 
-    var jsonString = JSON.stringify(self.received);
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Processing: \n" + jsonPretty);
+    self.log_debug("Received: " + self.received);
 
     request = JSON.parse(self.received);
-    self.log_debug("Request: \n" + jsonPretty);
+    self.log_debug("Request: " + JSON.stringify(request));
 
     request.result = self.process_request(request);
 
@@ -96,7 +97,7 @@ function Client()
 
   self._send = function(message)
   {
-    self.log_debug("Sending: \n" + message);
+    self.log_debug("Sending: " + message);
 
     var data = new QByteArray();
     outstr = new QDataStream(data, QIODevice.WriteOnly);
@@ -121,6 +122,7 @@ function Client()
       }
       catch(err)
       {
+        MessageLog.trace(err)
         self.socket.waitForReadyRead(5000);
       }
     }

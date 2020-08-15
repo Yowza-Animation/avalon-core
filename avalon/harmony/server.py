@@ -62,8 +62,7 @@ class Server(object):
         """
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Processing request [{}]: {}"
-                .format(timestamp, json.dumps(request, indent=4)))
+            "Processing request [{}]: {}".format(timestamp, request))
 
         try:
             module = importlib.import_module(request["module"])
@@ -105,8 +104,7 @@ class Server(object):
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
-                    "Received [{}]: {}"
-                        .format(timestamp, json.dumps(self.received, indent=4)))
+                    "Received [{}]: {}".format(timestamp, self.received))
 
                 try:
                     request = json.loads(self.received)
@@ -181,11 +179,7 @@ class Server(object):
 
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Sending [{}][{}]: {}"
-                .format(json.dumps(self.message_id, indent=4),
-                        timestamp,
-                        message)
-        )
+            "Sending [{}][{}]: {}".format(self.message_id, timestamp, message))
         self.connection.sendall(message.encode("utf-8"))
         self.message_id += 1
 
