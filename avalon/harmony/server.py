@@ -213,16 +213,16 @@ class Server(object):
         current_time = time.time()
         try_index = 1
         while True:
-            time.sleep(1)
-            # if time.time() > current_time + 30:
-            #     timestamp = datetime.now().strftime("%H:%M:%S.%f")
-            #     self.log.error(("[{}][{}] No reply from Harmony in 30s. "
-            #                     "Retrying {}").format(request["message_id"],
-            #                                           timestamp, try_index))
-            #     try_index += 1
-            #     current_time = time.time()
-            # if try_index > 4:
-            #     break
+            time.sleep(3)
+            if time.time() > current_time + 30:
+                timestamp = datetime.now().strftime("%H:%M:%S.%f")
+                self.log.error(("[{}][{}] No reply from Harmony in 30s. "
+                                "Retrying {}").format(request["message_id"],
+                                                      timestamp, try_index))
+                try_index += 1
+                current_time = time.time()
+            if try_index > 4:
+                break
             try:
                 result = self.queue[request["message_id"]]
                 self.log.debug(("  - got request id {}, "
