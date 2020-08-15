@@ -41,7 +41,6 @@ class Server(object):
         # Create a TCP/IP socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-
         # Bind the socket to the port
         server_address = (os.getenv("LOCALHOST_IP"), port)
         self.log.debug("Starting up on {}".format(server_address))
@@ -86,7 +85,6 @@ class Server(object):
         processing of the request.
         """
         current_time = time.time()
-        self.socket.setblocking(0)
         while True:
 
             # Receive the data in small chunks and retransmit it
@@ -98,11 +96,7 @@ class Server(object):
                     break
                 if self.connection is None:
                     break
-                data = None
-                ready = select.select([self.socket], [], [], 120)
-                if ready[0]:
-                    data = self.connection.recv(4096)
-
+                data = self.connection.recv(1024)
                 if data:
                     self.received += data.decode("utf-8")
                     current_time = time.time()
