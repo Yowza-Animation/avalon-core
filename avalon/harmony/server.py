@@ -45,7 +45,7 @@ class Server(object):
         self.socket.bind(server_address)
 
         # Listen for incoming connections
-        self.socket.listen(5)
+        self.socket.listen(1)
         self.queue = {}
 
     def process_request(self, request):
@@ -104,10 +104,7 @@ class Server(object):
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
-                    "Received [{}]: \n{}"
-                        .format(timestamp, json.dumps(self.received,
-                                                      sort_keys=True, indent=4)
-                ))
+                    "Received [{}]: {}".format(timestamp, self.received))
 
                 try:
                     request = json.loads(self.received)
@@ -182,8 +179,7 @@ class Server(object):
 
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Sending [{}][{}]: \n{}".format(
-                self.message_id, timestamp, message))
+            "Sending [{}][{}]: {}".format(self.message_id, timestamp, message))
         self.connection.sendall(message.encode("utf-8"))
         self.message_id += 1
 
