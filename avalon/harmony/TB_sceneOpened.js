@@ -80,15 +80,11 @@ function Client()
     var jsonString = JSON.stringify(JSON.parse(self.received), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
     request = JSON.parse(self.received);
-    self.log_debug("Request from Pype server: \n" + jsonPretty);
+    self.log_debug("Received reply from Pype server: \n" + jsonPretty);
 
     request.result = self.process_request(request);
-
-    if (!request.reply)
-    {
-      request.reply = true;
-      self._send(JSON.stringify(request));
-    }
+    request.reply = true;
+    self._send(JSON.stringify(request));
 
     self.received = "";
   };
