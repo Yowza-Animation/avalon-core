@@ -44,7 +44,7 @@ function Client()
     {
       try
       {
-        var func = eval("with (" + $ + ") {var result = (" + request["function"] + ")}");
+        var func = eval(request["function"]);
 
         if (request.args == null)
         {
@@ -79,9 +79,9 @@ function Client()
 
     var jsonString = JSON.stringify(JSON.parse(self.received), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    request = JSON.parse(self.received);
     self.log_debug("Received reply from Python server: \n" + jsonPretty);
 
+    request = JSON.parse(self.received);
     request.result = self.process_request(request);
 
     if (!request.reply)
@@ -119,12 +119,17 @@ function Client()
   {
     self._send(JSON.stringify(request));
 
+
+
     while (wait)
     {
+      self.socket.waitForReadyRead(5000);
       try
       {
-        JSON.parse(self.received);
-        break;
+        if(self.socket.bytesAvailable() > 0) {
+          JSON.parse(self.received);
+          break;
+        }
       }
       catch(err)
       {
