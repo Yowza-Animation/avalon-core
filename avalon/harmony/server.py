@@ -38,7 +38,7 @@ class Server(object):
 
         # Create a TCP/IP socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setblocking(0)
+
         # Bind the socket to the port
         server_address = (os.getenv("LOCALHOST_IP"), port)
         self.log.debug("Starting up on {}".format(server_address))
