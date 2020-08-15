@@ -119,21 +119,22 @@ function Client()
   {
     self._send(JSON.stringify(request));
 
-
-
     while (wait)
     {
-
+      if(self.socket.bytesAvailable() > 0)
+      {
+        self.socket.waitForReadyRead(5000);
+      }
       try
       {
-        if(self.socket.bytesAvailable() > 0) {
+
           JSON.parse(self.received);
           break;
-        }
+
       }
       catch(err)
       {
-        self.socket.waitForReadyRead(5000);
+        self.log_error(err)
       }
     }
 
