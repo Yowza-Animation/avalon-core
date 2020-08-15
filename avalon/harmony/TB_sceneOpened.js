@@ -100,7 +100,9 @@ function Client()
 
   self._send = function(message)
   {
-    self.log_debug("Sending: \n" + message);
+    var jsonString = JSON.stringify(JSON.parse(message), null, '\t');
+    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
+    self.log_debug("Sending: \n" + jsonPretty);
 
     var data = new QByteArray();
     outstr = new QDataStream(data, QIODevice.WriteOnly);
