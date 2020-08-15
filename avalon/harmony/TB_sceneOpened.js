@@ -40,7 +40,7 @@ function Client()
     {
       try
       {
-        var func = eval(request["function"]);
+        var func = eval.call($, request["function"]);
 
         if (request.args == null)
         {
