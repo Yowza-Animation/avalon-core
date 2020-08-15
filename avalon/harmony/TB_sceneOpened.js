@@ -33,7 +33,7 @@ function Client()
 
   self.process_request = function(request)
   {
-    var jsonString = JSON.stringify(request);
+    var jsonString = JSON.stringify(JSON.parse(request), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
     self.log_debug("Processing: \n" + jsonPretty);
 
