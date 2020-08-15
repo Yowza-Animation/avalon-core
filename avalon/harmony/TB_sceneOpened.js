@@ -76,7 +76,7 @@ function Client()
       }
     }
 
-    var jsonString = JSON.stringify(self.received);
+    var jsonString = JSON.stringify(JSON.parse(self.received), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
     request = JSON.parse(self.received);
     self.log_debug("Request: \n" + jsonPretty);

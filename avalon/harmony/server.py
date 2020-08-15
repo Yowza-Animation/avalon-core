@@ -38,14 +38,14 @@ class Server(object):
 
         # Create a TCP/IP socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+        self.socket.setblocking(0)
         # Bind the socket to the port
         server_address = (os.getenv("LOCALHOST_IP"), port)
         self.log.debug("Starting up on {}".format(server_address))
         self.socket.bind(server_address)
 
         # Listen for incoming connections
-        self.socket.listen(1)
+        self.socket.listen(5)
         self.queue = {}
 
     def process_request(self, request):
