@@ -90,13 +90,13 @@ class Server(object):
             # Receive the data in small chunks and retransmit it
             request = None
             while True:
-                time.sleep(0.1)
+                time.sleep(1)
                 if time.time() > current_time + 30:
                     self.log.error("Connection timeout.")
                     break
                 if self.connection is None:
                     break
-                data = self.connection.recv(1024)
+                data = self.connection.recv(4096)
                 if data:
                     self.received += data.decode("utf-8")
                     current_time = time.time()
