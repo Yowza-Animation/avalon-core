@@ -237,7 +237,7 @@ def set_scene_data(data):
     }
     func
     """
-    self.send({"function": func, "args": [data]})
+    self.send({"function": func, "args": [data]})["result"]
 
 
 def read(node_id):
