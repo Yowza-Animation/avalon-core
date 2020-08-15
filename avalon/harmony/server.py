@@ -104,7 +104,10 @@ class Server(object):
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
-                    "Received [{}]: {}".format(timestamp, self.received))
+                    "Received [{}]: \n{}"
+                        .format(timestamp, json.dumps(self.received,
+                                                      sort_keys=True, indent=4)
+                ))
 
                 try:
                     request = json.loads(self.received)
@@ -179,7 +182,8 @@ class Server(object):
 
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Sending [{}][{}]: {}".format(self.message_id, timestamp, message))
+            "Sending [{}][{}]: \n{}".format(
+                self.message_id, timestamp, message))
         self.connection.sendall(message.encode("utf-8"))
         self.message_id += 1
 
