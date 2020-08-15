@@ -121,6 +121,7 @@ function Client()
     {
       try
       {
+        self.socket.waitForReadyRead(5000);
         JSON.parse(self.received);
         break;
       }
