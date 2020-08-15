@@ -97,7 +97,7 @@ class Server(object):
                 if self.connection is None:
                     break
                 data = self.connection.recv(4096)
-                self.log.debug(data)
+
                 if data:
                     self.received += data.decode("utf-8")
                     current_time = time.time()
@@ -106,7 +106,11 @@ class Server(object):
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
-                    "Received [{}]: {}".format(timestamp, self.received))
+                    "Received [{}]: \n{}"
+                        .format(timestamp,
+                                json.dumps(self.received,
+                                           indent=4, sort_keys=True))
+                )
 
                 try:
                     request = json.loads(self.received)
@@ -181,7 +185,10 @@ class Server(object):
 
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Sending [{}][{}]: {}".format(self.message_id, timestamp, message))
+            "Sending [{}][{}]: {}".format(self.message_id, timestamp,
+                                          json.dumps(message,
+                                                     indent=4, sort_keys=True))
+        )
         self.connection.sendall(message.encode("utf-8"))
         self.message_id += 1
 
