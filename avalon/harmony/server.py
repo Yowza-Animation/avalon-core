@@ -40,7 +40,7 @@ class Server(object):
 
         # Create a TCP/IP socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setblocking(0)
+
 
         # Bind the socket to the port
         server_address = (os.getenv("LOCALHOST_IP"), port)
@@ -86,6 +86,7 @@ class Server(object):
         processing of the request.
         """
         current_time = time.time()
+        self.socket.setblocking(0)
         while True:
 
             # Receive the data in small chunks and retransmit it
