@@ -1424,10 +1424,10 @@ def load(Loader, representation, namespace=None, name=None, options=None,
     )
 
     loader = Loader(context)
-    sys.stdout.write(context)
-    sys.stdout.write(name)
-    sys.stdout.write(namespace)
-    sys.stdout.write(options)
+    sys.stdout.write(str(context))
+    sys.stdout.write(str(name))
+    sys.stdout.write(str(namespace))
+    sys.stdout.write(str(options))
 
     return loader.load(context, name, namespace, options)
 

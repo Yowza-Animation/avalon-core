@@ -36,7 +36,7 @@ function Client()
   {
     var jsonString = JSON.stringify(JSON.parse(request), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Processing Request from Pype: \n" + jsonPretty);
+    self.log_debug("Processing Request from Python: \n" + jsonPretty);
 
     var result = null;
 
@@ -57,7 +57,7 @@ function Client()
 
       catch (error)
       {
-        result = "Error processing request from Pype.\nRequest:\n" + jsonPretty  + "\nError:\n" + error;
+        result = "Error processing request from Python.\nRequest:\n" + jsonPretty  + "\nError:\n" + error;
       }
     }
 
@@ -66,7 +66,7 @@ function Client()
 
   self.on_ready_read = function()
   {
-    self.log_debug("Receiving data from Pype...");
+    self.log_debug("Receiving data from Python server...");
     data = self.socket.readAll();
 
     if (data.size() != 0)
@@ -80,22 +80,22 @@ function Client()
     var jsonString = JSON.stringify(JSON.parse(self.received), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
     request = JSON.parse(self.received);
-    self.log_debug("Received reply from Pype server: \n" + jsonPretty);
+    self.log_debug("Received reply from Python server: \n" + jsonPretty);
 
     request.result = self.process_request(request);
 
     if (!request.reply)
     {
       request.reply = true;
-
+      self._send(JSON.stringify(request));
     }
-    self._send(JSON.stringify(request));
+
     self.received = "";
   };
 
   self.on_connected = function()
   {
-    self.log_debug("Connected to Pype server.");
+    self.log_debug("Connected to Python server.");
     self.socket.readyRead.connect(self.on_ready_read);
   };
 
@@ -103,7 +103,7 @@ function Client()
   {
     var jsonString = JSON.stringify(JSON.parse(message), null, '\t');
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Sending to Pype server: \n" + jsonPretty);
+    self.log_debug("Sending to Python server: \n" + jsonPretty);
 
     var data = new QByteArray();
     outstr = new QDataStream(data, QIODevice.WriteOnly);
