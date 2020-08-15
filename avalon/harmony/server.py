@@ -94,10 +94,6 @@ class Server(object):
                     break
                 if self.connection is None:
                     break
-                if self.socket.bytesAvailable() > 0:
-
-                    self.socket.waitForReadyRead(5000)
-
                 data = self.connection.recv(4096)
                 if data:
                     self.received += data.decode("utf-8")
