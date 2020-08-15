@@ -96,7 +96,11 @@ class Server(object):
                     break
                 if self.connection is None:
                     break
-                data = self.connection.recv(4096)
+                data = None
+                ready = select.select([self.connection], [], [], 10)
+                if ready[0]:
+                    data = self.connection.recv(4096)
+                # data = self.connection.recv(4096)
 
                 if data:
                     self.received += data.decode("utf-8")
