@@ -1,16 +1,19 @@
 include("OpenHarmony.js")
 
-function evalInContext(js, context) {
-    return function(str){
-        return eval(str);
-    }.call(context, ' with(this) { return ' + js + ' } ');
-}
+
 
 function Client()
 {
   var self = this;
   self.socket = new QTcpSocket(this);
   self.received = "";
+  self.$ = $;
+
+  self.evalInContext =function(js, context) {
+    return function(str){
+        return eval(str);
+    }.call(context, ' with(this) { return ' + js + ' } ');
+  }
 
   self.log_debug = function(data)
   {
@@ -49,7 +52,7 @@ function Client()
       try
       {
         // var func = eval.call(request["function"]).bind(scope);
-        var func = evalInContext(request["function"], this);
+        var func = self.evalInContext(request["function"], this);
         if (request.args == null)
         {
           result = func();
