@@ -1,3 +1,4 @@
+include("OpenHarmony.js");
 function Client()
 {
   var self = this;
@@ -40,7 +41,8 @@ function Client()
     {
       try
       {
-        var func = eval(request["function"]);
+        var func = eval("with (" + $ + ") {var result = (" + request["function"] + ")}");
+
 
         if (request.args == null)
         {
@@ -163,7 +165,7 @@ function start()
 	app.avalon_menu = null;
 	for (var i = 0 ; i < actions.length; i++)
 	{
-    if (actions[i].text == "Avalon")
+    if (actions[i].text == "Yowza")
     {
       app.avalon_menu = true;
     }
@@ -172,7 +174,7 @@ function start()
   var menu = null;
 	if (app.avalon_menu == null)
 	{
-    var menu = menu_bar.addMenu("Avalon");
+    var menu = menu_bar.addMenu("Yowza");
   }
 
   self.on_creator = function()
