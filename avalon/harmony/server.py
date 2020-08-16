@@ -99,6 +99,7 @@ class Server(object):
                 if data:
                     self.received += data.decode("utf-8")
                     current_time = time.time()
+                    self.socket.close()
                 else:
                     break
 
