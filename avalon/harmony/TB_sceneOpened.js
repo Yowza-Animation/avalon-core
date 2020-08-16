@@ -41,7 +41,7 @@ function Client()
     {
       try
       {
-        var func = eval(request["function"]);
+        var func = eval.call(this, request["function"]);
 
         if (request.args == null)
         {
