@@ -47,10 +47,10 @@ function Client()
 
         if (request.args == null)
         {
-          result = func().call({$:$});
+          result = func().bind({$:$});
         }else
         {
-          result = func(request.args, null).call({$:$});
+          result = func(request.args, null).bind({$:$});
         }
       }
 
