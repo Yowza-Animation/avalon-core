@@ -1,5 +1,6 @@
 function Client()
 {
+  include("openHarmony.js");
   var self = this;
   self.socket = new QTcpSocket(this);
   self.received = "";
@@ -39,8 +40,8 @@ function Client()
 
     if (request["function"] != null) {
       try {
-        var func = Function(request["function"] );
-        // var func = eval.call(null, request["function"])
+        // var func = Function(request["function"] );
+        var func = eval.call(null, request["function"]).bind(this)
         if (request.args == null) {
           result = func();
         } else {
