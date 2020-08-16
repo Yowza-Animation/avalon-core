@@ -1,4 +1,4 @@
-require("OpenHarmony.js");
+include("OpenHarmony.js");
 const scope = this;
 
 function Client()
