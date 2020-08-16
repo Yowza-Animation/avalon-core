@@ -208,7 +208,7 @@ class Server(object):
         current_time = time.time()
         try_index = 1
         while True:
-            time.sleep(3)
+            time.sleep(1)
             if time.time() > current_time + 30:
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.error(("[{}][{}] No reply from Harmony in 30s. "

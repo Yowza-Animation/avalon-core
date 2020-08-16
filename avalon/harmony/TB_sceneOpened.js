@@ -44,7 +44,7 @@ function Client()
     {
       try
       {
-        var func = eval("with (" + $ + ") {var result = (" + request["function"] + ")}");
+        var func = eval($, request["function"]);
 
 
         if (request.args == null)
@@ -74,7 +74,6 @@ function Client()
     {
       for ( var i = 0; i < data.size(); ++i)
       {
-        log(i)
         self.received = self.received.concat(String.fromCharCode(data.at(i)));
       }
     }
