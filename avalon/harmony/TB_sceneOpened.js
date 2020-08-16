@@ -1,19 +1,11 @@
 include("OpenHarmony.js")
-
-
+const scope = this;
 
 function Client()
 {
   var self = this;
   self.socket = new QTcpSocket(this);
   self.received = "";
-  self.$ = $;
-
-  self.evalInContext =function(js, context) {
-    return function(str){
-        return eval(str);
-    }.call(context, ' with(this) { return ' + js + ' } ');
-  }
 
   self.log_debug = function(data)
   {
@@ -51,14 +43,14 @@ function Client()
     {
       try
       {
-        // var func = eval.call(request["function"]).bind(scope);
-        var func = self.evalInContext(request["function"], this);
+        var func = eval(request["function"]);
+
         if (request.args == null)
         {
-          result = func();
+          result = func().call({$:$});
         }else
         {
-          result = func(request.args, null);
+          result = func(request.args, null).call({$:$});
         }
       }
 
