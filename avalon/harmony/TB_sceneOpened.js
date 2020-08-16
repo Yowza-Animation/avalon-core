@@ -68,18 +68,13 @@ function Client()
   self.on_ready_read = function()
   {
     self.log_debug("Receiving data from Python server...");
-    do
-    {
-       data = socket.readline();
-       // Process your data
-    }
-    while (data > 0);
-    //data = self.socket.readAll();
+    data = self.socket.readAll();
 
     if (data.size() != 0)
     {
       for ( var i = 0; i < data.size(); ++i)
       {
+        log(i)
         self.received = self.received.concat(String.fromCharCode(data.at(i)));
       }
     }
