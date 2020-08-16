@@ -124,7 +124,7 @@ class Server(object):
                 except json.decoder.JSONDecodeError:
                     pass
 
-            if request is None:
+            if not request:
                 break
 
             self.received = ""
