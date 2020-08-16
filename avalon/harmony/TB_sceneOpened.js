@@ -1,5 +1,5 @@
 include("OpenHarmony.js");
-const scope = this;
+this.__proto__["$"] = $;
 
 function Client()
 {
