@@ -36,26 +36,25 @@ function Client()
 
   self.process_request = function(request)
   {
-    with($) {
-      self.log_debug("Processing: " + JSON.stringify(request));
-      var result = null;
 
-      if (request["function"] != null) {
-        try {
-          var func = eval(request["function"]);
+    self.log_debug("Processing: " + JSON.stringify(request));
+    var result = null;
 
-          if (request.args == null) {
-            result = func();
-          } else {
-            result = func(request.args, null);
-          }
-        } catch (error) {
-          result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
+    if (request["function"] != null) {
+      try {
+        var func = Function('"use strict";return (' +  request["function"]   + ')')
+        if (request.args == null) {
+          result = func();
+        } else {
+          result = func(request.args, null);
         }
+      } catch (error) {
+        result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
       }
-
-      return result;
     }
+
+    return result;
+
   };
 
   self.on_ready_read = function()
