@@ -1,5 +1,10 @@
 include("OpenHarmony.js")
-const scope = this;
+
+function evalInContext(js, context) {
+    return function(str){
+        return eval(str);
+    }.call(context, ' with(this) { return ' + js + ' } ');
+}
 
 function Client()
 {
@@ -43,8 +48,8 @@ function Client()
     {
       try
       {
-        var func = eval.call(request["function"]).bind(scope);
-
+        // var func = eval.call(request["function"]).bind(scope);
+        var func = evalInContext(request["function"], this);
         if (request.args == null)
         {
           result = func();
