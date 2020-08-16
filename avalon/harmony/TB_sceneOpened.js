@@ -48,7 +48,7 @@ function Client()
           result = func();
         }else
         {
-          result = func(request.args, $);
+          result = func(request.args, null);
         }
       }
 
