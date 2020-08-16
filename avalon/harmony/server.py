@@ -36,10 +36,10 @@ class Server(object):
         self.log.setLevel(logging.DEBUG)
 
         # Create a TCP/IP socket
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM | socket.TCP_FASTOPEN)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = ("localhost", port)
+        server_address = ("127.0.0.1", port)
         self.log.debug("Starting up on {}".format(server_address))
         self.socket.bind(server_address)
 
@@ -159,7 +159,7 @@ class Server(object):
             self.log.debug("Connect to shutdown.")
             socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM
-            ).connect(("localhost", self.port))
+            ).connect(("127.0.0.1", self.port))
 
         self.connection.close()
         self.connection = None
