@@ -1,4 +1,4 @@
-include("openHarmony.js");
+include( System.getenv('LIB_OPENHARMONY_PATH') +"\\openHarmony.js");
 function Client()
 {
 
