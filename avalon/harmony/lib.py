@@ -208,7 +208,7 @@ def get_scene_data():
             return {};
         }
     }
-    //func
+    func
     """
     try:
         return self.send({"function": func})["result"]
@@ -235,7 +235,7 @@ def set_scene_data(data):
           "value"      : JSON.stringify(args[0])
         });
     }
-    //func
+    func
     """
     self.send({"function": func, "args": [data]})
 
@@ -304,7 +304,7 @@ def maintained_selection():
         }
         return selected_nodes
     }
-    //get_selection_nodes
+    get_selection_nodes
     """
     selected_nodes = self.send({"function": func})["result"]
 
@@ -316,7 +316,7 @@ def maintained_selection():
             selection.addNodeToSelection(node_paths[i]);
         }
     }
-    //select_nodes
+    select_nodes
     """
     try:
         yield selected_nodes
@@ -351,7 +351,7 @@ def maintained_nodes_state(nodes):
             node.setEnable(nodes[i], false);
         }
     }
-    //func
+    func
     """
     self.send({"function": func, "args": [nodes]})
 
@@ -365,7 +365,7 @@ def maintained_nodes_state(nodes):
             node.setEnable(nodes[i], states[i]);
         }
     }
-    //func
+    func
     """
 
     try:
@@ -407,7 +407,7 @@ def save_scene():
         var app = QCoreApplication.instance();
         app.avalon_on_file_changed = true;
     }
-    //func
+    func
     """
     self.send({"function": func})
 
@@ -437,7 +437,7 @@ def save_scene_as(filepath):
         var app = QCoreApplication.instance();
         app.watcher.addPath(path);
     }
-    //add_path
+    add_path
     """
     send(
         {"function": func, "args": [filepath]}
