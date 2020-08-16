@@ -43,6 +43,7 @@ function Client()
       try {
         // var func = new Function("return (" +request["function"] + ");" );
         this.__proto__["foo"] = "bar";
+        MessageLog.trace(this.__proto__)
         var func = eval.call(null, request["function"])
         if (request.args == null) {
           result = func();
