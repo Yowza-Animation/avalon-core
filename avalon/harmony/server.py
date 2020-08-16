@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Server-side implementation of Toon Boon Harmony communication."""
-import os
 import socket
 import logging
 import json
@@ -40,8 +39,8 @@ class Server(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = (os.getenv("LOCALHOST_IP"), port)
-        self.log.debug("Starting Pype server up on {}".format(server_address))
+        server_address = ("localhost", port)
+        self.log.debug("Starting up on {}".format(server_address))
         self.socket.bind(server_address)
 
         # Listen for incoming connections
@@ -62,7 +61,7 @@ class Server(object):
         """
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Processing request from Harmony [{}]: {}".format(timestamp, request))
+            "Processing request [{}]: {}".format(timestamp, request))
 
         try:
             module = importlib.import_module(request["module"])
@@ -99,17 +98,12 @@ class Server(object):
                 if data:
                     self.received += data.decode("utf-8")
                     current_time = time.time()
-
                 else:
                     break
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
-                    "Received from Harmony [{}]: \n{}"
-                        .format(timestamp,
-                                json.dumps(self.received,
-                                           indent=4, sort_keys=True))
-                )
+                    "Received [{}]: {}".format(timestamp, self.received))
 
                 try:
                     request = json.loads(self.received)
@@ -122,16 +116,16 @@ class Server(object):
 
             self.received = ""
             timestamp = datetime.now().strftime("%H:%M:%S.%f")
-            self.log.debug("Request from Harmony [{}]: {}".format(timestamp, request))
+            self.log.debug("Request [{}]: {}".format(timestamp, request))
             if "message_id" in request.keys():
                 self.log.debug("--- storing request as {}".format(
                     request["message_id"]))
                 self.queue[request["message_id"]] = request
             if "reply" not in request.keys():
                 request["reply"] = True
-                self.log.debug("Sending reply to Harmony...")
+                self.log.debug("Sending reply ...")
                 self._send(json.dumps(request))
-                self.log.debug("Processing request from Harmony...")
+                self.log.debug("Processing request ...")
                 self.process_request(request)
 
                 if "message_id" in request.keys():
@@ -143,7 +137,7 @@ class Server(object):
                         self.log.debug("{} is no longer in queue".format(
                             request["message_id"]))
             else:
-                self.log.debug("Received data from Harmony was just reply.")
+                self.log.debug("Recieved data was just reply.")
 
     def start(self):
         """Entry method for server.
@@ -151,21 +145,21 @@ class Server(object):
         Waits for a connection on `self.port` before going into listen mode.
         """
         # Wait for a connection
-        self.log.debug("Waiting for a connection from Harmony.")
+        self.log.debug("Waiting for a connection.")
         self.connection, client_address = self.socket.accept()
 
-        self.log.debug("Connection from Harmony : {}".format(client_address))
+        self.log.debug("Connection from: {}".format(client_address))
 
         self.receive()
 
     def stop(self):
         """Shutdown socket server gracefully."""
-        self.log.debug("Shutting down Pype server.")
+        self.log.debug("Shutting down server.")
         if self.connection is None:
             self.log.debug("Connect to shutdown.")
             socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM
-            ).connect((os.getenv("LOCALHOST_IP"), self.port))
+            ).connect(("localhost", self.port))
 
         self.connection.close()
         self.connection = None
@@ -184,12 +178,8 @@ class Server(object):
 
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Sending to Harmony [{}][{}]: {}".format(self.message_id, timestamp,
-                                          json.dumps(message,
-                                                     indent=4, sort_keys=True))
-        )
+            "Sending [{}][{}]: {}".format(self.message_id, timestamp, message))
         self.connection.sendall(message.encode("utf-8"))
-
         self.message_id += 1
 
     def send(self, request):
@@ -209,7 +199,7 @@ class Server(object):
         current_time = time.time()
         try_index = 1
         while True:
-            time.sleep(1)
+            time.sleep(0.1)
             if time.time() > current_time + 30:
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.error(("[{}][{}] No reply from Harmony in 30s. "
