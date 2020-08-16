@@ -53,7 +53,7 @@ class Creator(api.Creator):
         {
             node.setTextAttr(args[0], "COMPOSITE_MODE", 1, "Pass Through");
         }
-        func
+        //func
         """
         lib.send(
             {"function": func, "args": [node]}
@@ -70,7 +70,7 @@ class Creator(api.Creator):
             }
             return node_names
         }
-        func
+        //func
         """
 
         existing_node_names = lib.send(
@@ -103,7 +103,7 @@ class Creator(api.Creator):
             }
             return result_node
         }
-        func
+        //func
         """
 
         with lib.maintained_selection() as selection:
