@@ -164,7 +164,7 @@ function start()
   {
     app.avalon_client = new Client();
     app.avalon_client.socket.connectToHost(host, port);
-    app.processEvents();
+    QCoreApplication.processEvents();
   }
 
 	var menu_bar = QApplication.activeWindow().menuBar();
@@ -194,7 +194,7 @@ function start()
       },
       false
     );
-    app.processEvents();
+    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -212,7 +212,7 @@ function start()
       },
       false
     );
-    app.processEvents();
+    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -230,7 +230,7 @@ function start()
         },
         false
     );
-    app.processEvents();
+    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -248,7 +248,7 @@ function start()
         },
         false
     );
-    app.processEvents();
+    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -266,7 +266,7 @@ function start()
         },
         false
     );
-    app.processEvents();
+    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -287,7 +287,7 @@ function start()
         },
         false
       );
-      app.processEvents();
+      QCoreApplication.processEvents();
     }
 
     app.watcher.addPath(path);
@@ -307,7 +307,7 @@ function start()
     },
     false
   );
-  app.processEvents();
+  QCoreApplication.processEvents();
 }
 
 function TB_sceneOpened()
