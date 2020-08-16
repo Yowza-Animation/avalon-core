@@ -1,4 +1,3 @@
-include("OpenHarmony.js");
 function Client()
 {
   var self = this;
@@ -34,18 +33,14 @@ function Client()
 
   self.process_request = function(request)
   {
-    var jsonString = JSON.stringify(JSON.parse(request), null, '\t');
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Processing Request from Python: \n" + jsonPretty);
-
+    self.log_debug("Processing: " + JSON.stringify(request));
     var result = null;
 
     if (request["function"] != null)
     {
       try
       {
-        var func = eval($, request["function"]);
-
+        var func = eval(request["function"]);
 
         if (request.args == null)
         {
@@ -58,7 +53,7 @@ function Client()
 
       catch (error)
       {
-        result = "Error processing request from Python.\nRequest:\n" + jsonPretty  + "\nError:\n" + error;
+        result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
       }
     }
 
@@ -67,10 +62,10 @@ function Client()
 
   self.on_ready_read = function()
   {
-    self.log_debug("Receiving data from Python server...");
+    self.log_debug("Receiving data...");
     data = self.socket.readAll();
 
-    if (data.size() < 0)
+    if (data.size() != 0)
     {
       for ( var i = 0; i < data.size(); ++i)
       {
@@ -78,11 +73,11 @@ function Client()
       }
     }
 
-    var jsonString = JSON.stringify(JSON.parse(self.received), null, '\t');
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Received reply from Python server: \n" + jsonPretty);
+    self.log_debug("Received: " + self.received);
 
     request = JSON.parse(self.received);
+    self.log_debug("Request: " + JSON.stringify(request));
+
     request.result = self.process_request(request);
 
     if (!request.reply)
@@ -96,15 +91,13 @@ function Client()
 
   self.on_connected = function()
   {
-    self.log_debug("Connected to Python server.");
+    self.log_debug("Connected to server.");
     self.socket.readyRead.connect(self.on_ready_read);
   };
 
   self._send = function(message)
   {
-    var jsonString = JSON.stringify(JSON.parse(message), null, '\t');
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    self.log_debug("Sending to Python server: \n" + jsonPretty);
+    self.log_debug("Sending: " + message);
 
     var data = new QByteArray();
     outstr = new QDataStream(data, QIODevice.WriteOnly);
@@ -124,8 +117,8 @@ function Client()
     {
       try
       {
-          JSON.parse(self.received);
-          break;
+        JSON.parse(self.received);
+        break;
       }
       catch(err)
       {
@@ -153,7 +146,7 @@ function Client()
 function start()
 {
   var self = this;
-  var host = System.getenv("LOCALHOST_IP");
+  var host = "127.0.0.1";
   var port = parseInt(System.getenv("AVALON_HARMONY_PORT"));
 
   // Attach the client to the QApplication to preserve.
@@ -170,7 +163,7 @@ function start()
 	app.avalon_menu = null;
 	for (var i = 0 ; i < actions.length; i++)
 	{
-    if (actions[i].text == "Yowza")
+    if (actions[i].text == "Avalon")
     {
       app.avalon_menu = true;
     }
@@ -179,7 +172,7 @@ function start()
   var menu = null;
 	if (app.avalon_menu == null)
 	{
-    var menu = menu_bar.addMenu("Yowza");
+    var menu = menu_bar.addMenu("Avalon");
   }
 
   self.on_creator = function()
