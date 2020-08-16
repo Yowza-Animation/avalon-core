@@ -101,7 +101,6 @@ class Server(object):
                     current_time = time.time()
 
                 else:
-                    self.socket.close()
                     break
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
@@ -209,7 +208,7 @@ class Server(object):
         current_time = time.time()
         try_index = 1
         while True:
-            time.sleep(0.1)
+            time.sleep(3)
             if time.time() > current_time + 30:
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.error(("[{}][{}] No reply from Harmony in 30s. "
