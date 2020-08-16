@@ -1,3 +1,4 @@
+include("OpenHarmony.js")
 function Client()
 {
   var self = this;
@@ -47,7 +48,7 @@ function Client()
           result = func();
         }else
         {
-          result = func(request.args);
+          result = func(request.args, $);
         }
       }
 

@@ -87,7 +87,7 @@ class Server(object):
             # Receive the data in small chunks and retransmit it
             request = None
             while True:
-                time.sleep(0.1)
+                time.sleep(1)
                 if time.time() > current_time + 30:
                     self.log.error("Connection timeout.")
                     break
