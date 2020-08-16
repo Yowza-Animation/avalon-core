@@ -1,4 +1,4 @@
-include("OpenHarmony.js")
+require("OpenHarmony.js");
 const scope = this;
 
 function Client()
@@ -36,31 +36,26 @@ function Client()
 
   self.process_request = function(request)
   {
-    self.log_debug("Processing: " + JSON.stringify(request));
-    var result = null;
+    with($) {
+      self.log_debug("Processing: " + JSON.stringify(request));
+      var result = null;
 
-    if (request["function"] != null)
-    {
-      try
-      {
-        var func = eval(request["function"]);
+      if (request["function"] != null) {
+        try {
+          var func = eval(request["function"]);
 
-        if (request.args == null)
-        {
-          result = func().bind({$:$});
-        }else
-        {
-          result = func(request.args, null).bind({$:$});
+          if (request.args == null) {
+            result = func();
+          } else {
+            result = func(request.args, null);
+          }
+        } catch (error) {
+          result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
         }
       }
 
-      catch (error)
-      {
-        result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
-      }
+      return result;
     }
-
-    return result;
   };
 
   self.on_ready_read = function()
