@@ -1,5 +1,5 @@
 include("openHarmony.js");
-this.__proto__["foo"] = "bar";
+this.__proto__["$"] = $;
 function Client()
 {
 
@@ -42,7 +42,6 @@ function Client()
     if (request["function"] != null) {
       try {
         // var func = new Function("return (" +request["function"] + ");" );
-
 
         var func = eval.call(null, request["function"])
         if (request.args == null) {
