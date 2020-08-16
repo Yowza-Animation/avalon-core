@@ -110,7 +110,7 @@ function Client()
     outstr.writeInt(0);
     data.append("UTF-8");
     outstr.device().seek(0);
-    outstr.writeInt(data.size() - 4);
+    outstr.writeInt(data.size() );
     var codec = QTextCodec.codecForUtfText(data);
     self.socket.write(codec.fromUnicode(message));
   };
