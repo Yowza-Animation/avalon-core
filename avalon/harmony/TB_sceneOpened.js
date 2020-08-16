@@ -46,7 +46,7 @@ function Client()
         if (request.args == null) {
           result = func();
         } else {
-          result = func(request.args, null).call(this);
+          result = func(request.args, this);
         }
       } catch (error) {
         result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
