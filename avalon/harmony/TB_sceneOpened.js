@@ -1,6 +1,3 @@
-include("OpenHarmony.js");
-this.__proto__ = {"$":$};
-
 function Client()
 {
   var self = this;
