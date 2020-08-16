@@ -42,11 +42,12 @@ function Client()
     if (request["function"] != null) {
       try {
         // var func = new Function(request["function"] );
+        var doc = $.scene;
         var func = eval.call(null, request["function"])
         if (request.args == null) {
-          result = func();
+          result = func(doc);
         } else {
-          result = func(request.args, $);
+          result = func(request.args, doc);
         }
       } catch (error) {
         result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
