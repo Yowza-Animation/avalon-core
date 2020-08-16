@@ -94,7 +94,7 @@ class Server(object):
                     break
                 if self.connection is None:
                     break
-                data = self.connection.recv(3)
+                data = self.connection.recv(8192)
                 if data:
                     self.received += data.decode("utf-8")
                     current_time = time.time()
