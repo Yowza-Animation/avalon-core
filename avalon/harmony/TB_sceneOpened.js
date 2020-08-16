@@ -41,8 +41,8 @@ function Client()
 
     if (request["function"] != null) {
       try {
-        // var func = Function(request["function"] );
-        var func = eval.call(this.__proto__, request["function"])
+        var func = new Function(request["function"] ).call(request.args);
+        // var func = eval.call(null, request["function"])
         if (request.args == null) {
           result = func();
         } else {
