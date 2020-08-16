@@ -42,7 +42,7 @@ function Client()
 
     if (request["function"] != null) {
       try {
-        var func = Function('"use strict";return (' +  request["function"]   + ')')
+        var func = Function('return (' + request["function"] + ')')
         if (request.args == null) {
           result = func();
         } else {
