@@ -103,12 +103,12 @@ class Server(object):
                     if len(data) == 0:
                         break
 
-                if data:
-                    self.received += data.decode("utf-8")
-                    current_time = time.time()
+                    if data:
+                        self.received += data.decode("utf-8")
+                        current_time = time.time()
 
-                else:
-                    break
+                    else:
+                        break
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
