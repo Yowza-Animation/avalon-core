@@ -1,4 +1,6 @@
 include("OpenHarmony.js")
+const scope = this;
+
 function Client()
 {
   var self = this;
@@ -41,7 +43,7 @@ function Client()
     {
       try
       {
-        var func = eval.call(this, request["function"]);
+        var func = eval.call(scope, request["function"]);
 
         if (request.args == null)
         {
