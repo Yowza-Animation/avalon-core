@@ -36,7 +36,7 @@ def save_file(filepath):
         var app = QCoreApplication.instance();
         app.watcher.addPath(path);
     }
-    //add_path
+    add_path
     """
 
     scene_path = os.path.join(
