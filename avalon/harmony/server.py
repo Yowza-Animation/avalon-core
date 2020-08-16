@@ -36,7 +36,7 @@ class Server(object):
         self.log.setLevel(logging.DEBUG)
 
         # Create a TCP/IP socket
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM | socket.SOCK_NONBLOCK)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM | socket.TCP_FASTOPEN)
 
         # Bind the socket to the port
         server_address = ("localhost", port)
