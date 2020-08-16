@@ -70,7 +70,7 @@ function Client()
     self.log_debug("Receiving data from Python server...");
     data = self.socket.readAll();
 
-    if (data.size() != 0)
+    if (data.size() < 0)
     {
       for ( var i = 0; i < data.size(); ++i)
       {

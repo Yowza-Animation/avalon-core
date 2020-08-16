@@ -9,7 +9,7 @@ import importlib
 import functools
 import time
 from datetime import datetime
-import select
+
 from . import lib
 
 
@@ -94,21 +94,14 @@ class Server(object):
                     break
                 if self.connection is None:
                     break
-                r, w, e = select.select((self.connection,), (), (), 0)
-                if r:
 
-                    data = self.connection.recv(4096)
+                data = self.connection.recv(4096)
+                if data:
+                    self.received += data.decode("utf-8")
+                    current_time = time.time()
 
-                    # Length of zero ==> connection closed.
-                    if len(data) == 0:
-                        break
-
-                    if data:
-                        self.received += data.decode("utf-8")
-                        current_time = time.time()
-
-                    else:
-                        break
+                else:
+                    break
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
@@ -124,7 +117,7 @@ class Server(object):
                 except json.decoder.JSONDecodeError:
                     pass
 
-            if not request:
+            if request is None:
                 break
 
             self.received = ""
