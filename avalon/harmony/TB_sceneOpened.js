@@ -1,3 +1,4 @@
+include("openHarmony.js");
 function Client()
 {
 
@@ -45,7 +46,7 @@ function Client()
         if (request.args == null) {
           result = func();
         } else {
-          result = func(request.args, null);
+          result = func(request.args, null).call(this);
         }
       } catch (error) {
         result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
