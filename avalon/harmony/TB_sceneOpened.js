@@ -42,11 +42,11 @@ function Client()
     if (request["function"] != null) {
       try {
         // var func = Function(request["function"] );
-        var func = eval.call(null, request["function"])
+        var func = eval.call(this.__proto__, request["function"])
         if (request.args == null) {
           result = func();
         } else {
-          result = func(request.args, this);
+          result = func(request.args, null);
         }
       } catch (error) {
         result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
