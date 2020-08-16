@@ -43,8 +43,8 @@ function Client()
     {
       try
       {
-        // var func = eval.call(scope, request["function"]);
-        var func = Function('"use strict";return (' + script + ')').bind(scope)();
+        var func = eval.call(request["function"]).bind(scope);
+
         if (request.args == null)
         {
           result = func();
