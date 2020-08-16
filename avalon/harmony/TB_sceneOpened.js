@@ -1,5 +1,5 @@
 include("OpenHarmony.js");
-this.__proto__["$"] = $;
+this.__proto__ = {"$":$};
 
 function Client()
 {
