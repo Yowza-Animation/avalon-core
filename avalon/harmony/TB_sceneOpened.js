@@ -1,4 +1,3 @@
-include("OpenHarmony.js");
 function Client()
 {
   var self = this;
@@ -41,7 +40,7 @@ function Client()
     {
       try
       {
-        var func = eval("with (" + $ + ") {var result = (" + request["function"] + ")}");
+        var func = eval(request["function"]);
 
 
         if (request.args == null)
