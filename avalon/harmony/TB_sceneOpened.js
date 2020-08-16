@@ -1,3 +1,4 @@
+include("OpenHarmony.js");
 function Client()
 {
   var self = this;
@@ -36,26 +37,21 @@ function Client()
     self.log_debug("Processing: " + JSON.stringify(request));
     var result = null;
 
-    if (request["function"] != null)
-    {
-      try
-      {
+    if (request["function"] != null) {
+    with($){
+      try {
         var func = eval(request["function"]);
 
 
-        if (request.args == null)
-        {
+        if (request.args == null) {
           result = func();
-        }else
-        {
+        } else {
           result = func(request.args);
         }
-      }
-
-      catch (error)
-      {
+      } catch (error) {
         result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
       }
+     }
     }
 
     return result;
