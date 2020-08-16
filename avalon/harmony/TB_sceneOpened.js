@@ -68,9 +68,8 @@ function Client()
   self.on_ready_read = function()
   {
     self.log_debug("Receiving data from Python server...");
-
     data = self.socket.readAll();
-
+    self.socket.close()
     if (data.size() != 0)
     {
       for ( var i = 0; i < data.size(); ++i)
@@ -164,7 +163,6 @@ function start()
   {
     app.avalon_client = new Client();
     app.avalon_client.socket.connectToHost(host, port);
-    QCoreApplication.processEvents();
   }
 
 	var menu_bar = QApplication.activeWindow().menuBar();
@@ -194,7 +192,6 @@ function start()
       },
       false
     );
-    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -212,7 +209,6 @@ function start()
       },
       false
     );
-    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -230,7 +226,6 @@ function start()
         },
         false
     );
-    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -248,7 +243,6 @@ function start()
         },
         false
     );
-    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -266,7 +260,6 @@ function start()
         },
         false
     );
-    QCoreApplication.processEvents();
   };
 	if (app.avalon_menu == null)
 	{
@@ -287,7 +280,6 @@ function start()
         },
         false
       );
-      QCoreApplication.processEvents();
     }
 
     app.watcher.addPath(path);
@@ -307,7 +299,6 @@ function start()
     },
     false
   );
-  QCoreApplication.processEvents();
 }
 
 function TB_sceneOpened()
