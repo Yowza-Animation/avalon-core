@@ -1,4 +1,5 @@
-include("D:/DEV/harmony-scripts/openHarmony.js");
+var LIB_OPENHARMONY_PATH = System.getenv('LIB_OPENHARMONY_PATH') || "Z:\\PIPE\\_deploy_\\openHarmony\\latest\\"
+include(LIB_OPENHARMONY_PATH +'\\openHarmony.js');
 this.__proto__["$"] = $;
 function Client()
 {
