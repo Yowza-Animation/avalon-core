@@ -9,7 +9,7 @@ import importlib
 import functools
 import time
 from datetime import datetime
-
+import select
 from . import lib
 
 
@@ -94,8 +94,15 @@ class Server(object):
                     break
                 if self.connection is None:
                     break
+                r, w, e = select.select((self.connection,), (), (), 0)
+                if r:
 
-                data = self.connection.recv(4096)
+                    data = self.connection.recv(4096)
+
+                    # Length of zero ==> connection closed.
+                    if len(data) == 0:
+                        break
+
                 if data:
                     self.received += data.decode("utf-8")
                     current_time = time.time()
@@ -189,6 +196,7 @@ class Server(object):
                                                      indent=4, sort_keys=True))
         )
         self.connection.sendall(message.encode("utf-8"))
+
         self.message_id += 1
 
     def send(self, request):
