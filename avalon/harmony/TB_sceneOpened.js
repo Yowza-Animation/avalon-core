@@ -1,11 +1,11 @@
-include( System.getenv('LIB_OPENHARMONY_PATH') +"\\openHarmony.js");
+include("openHarmony.js");
+
 function Client()
 {
 
   var self = this;
   self.socket = new QTcpSocket(this);
   self.received = "";
-
   self.log_debug = function(data)
   {
       message = typeof(data.message) != "undefined" ? data.message : data;
@@ -42,12 +42,12 @@ function Client()
     if (request["function"] != null) {
       try {
         // var func = new Function(request["function"] );
-        var doc = $.scene;
+
         var func = eval.call(null, request["function"])
         if (request.args == null) {
-          result = func(doc);
+          result = func();
         } else {
-          result = func(request.args, doc);
+          result = func(request.args);
         }
       } catch (error) {
         result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
