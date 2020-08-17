@@ -51,6 +51,8 @@ def launch(application_path):
     from avalon import api, harmony
 
     api.install(harmony)
+    self.app = QtWidgets.QApplication(sys.argv)
+    self.app.setQuitOnLastWindowClosed(False)
 
     self.port = random.randrange(5000, 6000)
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
@@ -188,9 +190,9 @@ def show(module_name):
     module = importlib.import_module(module_name)
 
     if "loader" in module_name:
-        module.show(use_context=True)
+        module.show(parent=self.app, use_context=True)
     else:
-        module.show()
+        module.show(parent=self.app)
 
     # QApplication needs to always execute.
     if "publish" in module_name:
