@@ -14,25 +14,25 @@ function Client() {
     self.received = "";
     self.log_debug = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(DEBUG): " + message.toString());
+        MessageLog.trace("(DEBUG): " + message.toString());
     };
 
 
     self.log_info = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(INFO): " + message.toString());
+        MessageLog.trace("(INFO): " + message.toString());
     };
 
 
     self.log_warning = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(WARNING): " + message.toString());
+        MessageLog.trace("(WARNING): " + message.toString());
     };
 
 
     self.log_error = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(ERROR): " + message.toString());
+        MessageLog.trace("(ERROR): " + message.toString());
     };
 
     self.process_request = function (request) {
