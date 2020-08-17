@@ -53,7 +53,7 @@ def launch(application_path):
     api.install(harmony)
     # Need to have an existing QApplication.
     self.app = QtWidgets.QApplication(sys.argv)
-    self.app.setQuitOnLastWindowClosed(False)
+    self.app.setQuitOnLastWindowClosed(True)
 
     self.port = random.randrange(5000, 6000)
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
