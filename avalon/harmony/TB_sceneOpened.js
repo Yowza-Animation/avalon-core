@@ -4,7 +4,7 @@ this.__proto__["$"] = $;
 
 function prettifyJson(request) {
     var jsonString = JSON.stringify(request)
-    return JSON.stringify(JSON.parse(jsonString),null,2)
+    return JSON.stringify(JSON.parse(jsonString),null,2);
 }
 
 function Client() {
@@ -37,8 +37,7 @@ function Client() {
 
     self.process_request = function (request) {
 
-        self.log_debug("Processing Request from Python server: \n"
-            + prettifyJson(request));
+        self.log_debug("Processing: " + JSON.stringify(request));
         var result = null;
 
         if (request["function"] != null) {
@@ -59,7 +58,7 @@ function Client() {
     };
 
     self.on_ready_read = function () {
-        self.log_debug("Receiving data from Python server...");
+        self.log_debug("Receiving data...");
         data = self.socket.readAll();
 
         if (data.size() != 0) {
@@ -69,13 +68,10 @@ function Client() {
             }
         }
 
-        self.log_debug("Received request from Python Server: "
-            + prettifyJson(self.received));
+        self.log_debug("Received: " + self.received);
 
         request = JSON.parse(self.received);
-
-        self.log_debug("Request from Python server: \n "
-            + prettifyJson(request));
+        self.log_debug("Request: " + JSON.stringify(request));
 
         request.result = self.process_request(request);
 
