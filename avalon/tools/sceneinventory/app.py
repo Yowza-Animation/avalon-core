@@ -39,7 +39,7 @@ class View(QtWidgets.QTreeView):
         self._selected = None
 
     def enter_hierarchy(self, items):
-        self._selected = set(i["objectName"] for i in items)
+        self._selected = set(i.get("objectName") for i in items)
         self._hierarchy_view = True
         self.hierarchy_view.emit(True)
         self.data_changed.emit()
