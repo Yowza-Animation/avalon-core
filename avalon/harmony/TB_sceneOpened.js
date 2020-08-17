@@ -43,9 +43,9 @@ function Client() {
             try {
                 var func = eval.call(null, request["function"])
                 if (request.args == null) {
-                    result = func();
+                    result = func(null);
                 } else {
-                    result = func(request.args);
+                    result = func(request.args, null);
                 }
             } catch (error) {
                 result = "Error processing request.\nRequest:\n" +
@@ -263,6 +263,7 @@ function start() {
     );
 }
 
-function TB_sceneOpened() {
+function TB_sceneOpened()
+{
     start();
 }
