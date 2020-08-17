@@ -192,8 +192,7 @@ def show(module_name):
     app.setQuitOnLastWindowClosed(False)
     if "loader" in module_name:
 
-        window = get_main_window()
-        module.show(parent=window,use_context=True)
+        module.show(use_context=True)
     else:
         module.show()
 
