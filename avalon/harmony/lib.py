@@ -51,7 +51,10 @@ def launch(application_path):
     from avalon import api, harmony
 
     api.install(harmony)
-    self.app = QtWidgets.QApplication(sys.argv)
+    # Need to have an existing QApplication.
+    self.app = QtWidgets.QApplication.instance()
+    if not self.app:
+        self.app = QtWidgets.QApplication(sys.argv)
     self.app.setQuitOnLastWindowClosed(False)
 
     self.port = random.randrange(5000, 6000)
@@ -180,11 +183,6 @@ def show(module_name):
     # Requests often get doubled up when showing tools, so we wait a second for
     # requests to be received properly.
     time.sleep(1)
-
-    # # Need to have an existing QApplication.
-    # app = QtWidgets.QApplication.instance()
-    # if not app:
-    #     app = QtWidgets.QApplication(sys.argv)
 
     # Import and show tool.
     module = importlib.import_module(module_name)
