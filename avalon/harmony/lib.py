@@ -181,10 +181,10 @@ def show(module_name):
     # requests to be received properly.
     time.sleep(1)
 
-    # Need to have an existing QApplication.
-    app = QtWidgets.QApplication.instance()
-    if not app:
-        app = QtWidgets.QApplication(sys.argv)
+    # # Need to have an existing QApplication.
+    # app = QtWidgets.QApplication.instance()
+    # if not app:
+    #     app = QtWidgets.QApplication(sys.argv)
 
     # Import and show tool.
     module = importlib.import_module(module_name)
@@ -198,7 +198,7 @@ def show(module_name):
     if "publish" in module_name:
         return
 
-    app.exec_()
+    # self.app.exec_()
 
 
 def get_scene_data():
