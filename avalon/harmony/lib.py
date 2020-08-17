@@ -182,8 +182,10 @@ def show(module_name):
     # Import and show tool.
     module = importlib.import_module(module_name)
 
+    # app = QtWidgets.QApplication(sys.argv)
+
     if "loader" in module_name:
-        module.show(parent=QtWidgets.QApplication(sys.argv), use_context=True)
+        module.show(parent=QtWidgets.QMainWindow(), use_context=True)
     else:
         module.show()
 
