@@ -14,44 +14,43 @@ function Client() {
     self.received = "";
     self.log_debug = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(DEBUG): " + message.toString());
+        MessageLog.trace("(DEBUG): " + message.toString());
     };
 
 
     self.log_info = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(INFO): " + message.toString());
+        MessageLog.trace("(INFO): " + message.toString());
     };
 
 
     self.log_warning = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(WARNING): " + message.toString());
+        MessageLog.trace("(WARNING): " + message.toString());
     };
 
 
     self.log_error = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log("(ERROR): " + message.toString());
+        MessageLog.trace("(ERROR): " + message.toString());
     };
 
     self.process_request = function (request) {
 
-        self.log_debug("Processing Request from Python server: \n"
-            + prettifyJson(request));
+        self.log_debug("Processing: " + JSON.stringify(request));
         var result = null;
 
         if (request["function"] != null) {
             try {
                 var func = eval.call(null, request["function"])
                 if (request.args == null) {
-                    result = func(null);
+                    result = func();
                 } else {
-                    result = func(request.args, null);
+                    result = func(request.args);
                 }
             } catch (error) {
                 result = "Error processing request.\nRequest:\n" +
-                    prettifyJson(request) + "\nError:\n" + error;
+                    JSON.stringify(request) + "\nError:\n" + error;
             }
         }
 
@@ -70,13 +69,10 @@ function Client() {
             }
         }
 
-        self.log_debug("Received request from Python Server: "
-            + prettifyJson(self.received));
+        self.log_debug("Received: " + self.received);
 
         request = JSON.parse(self.received);
-
-        self.log_debug("Request from Python server: \n "
-            + prettifyJson(request));
+        self.log_debug("Request: " + JSON.stringify(request));
 
         request.result = self.process_request(request);
 
@@ -94,7 +90,7 @@ function Client() {
     };
 
     self._send = function (message) {
-        self.log_debug("Sending to Python server: " + message);
+        self.log_debug("Sending: " + message);
 
         var data = new QByteArray();
         outstr = new QDataStream(data, QIODevice.WriteOnly);
@@ -253,8 +249,7 @@ function start() {
     };
 
     app.watcher = new QFileSystemWatcher();
-    scene_path = scene.currentProjectPath()
-        + "/" + scene.currentVersionName() + ".xstage";
+    scene_path = scene.currentProjectPath() + "/" + scene.currentVersionName() + ".xstage";
     app.watcher.addPath(scene_path);
     app.watcher.fileChanged.connect(app.on_file_changed);
     app.avalon_on_file_changed = true;
