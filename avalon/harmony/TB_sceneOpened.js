@@ -20,19 +20,19 @@ function Client() {
 
     self.log_info = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log.trace("(INFO): " + message.toString());
+        log("(INFO): " + message.toString());
     };
 
 
     self.log_warning = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log.trace("(WARNING): " + message.toString());
+        log("(WARNING): " + message.toString());
     };
 
 
     self.log_error = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        log.trace("(ERROR): " + message.toString());
+        log("(ERROR): " + message.toString());
     };
 
     self.process_request = function (request) {
