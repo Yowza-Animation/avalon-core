@@ -51,8 +51,6 @@ def launch(application_path):
     from avalon import api, harmony
 
     api.install(harmony)
-    app = QtWidgets.QApplication(sys.argv)
-    app.setQuitOnLastWindowClosed(False)
 
     self.port = random.randrange(5000, 6000)
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
@@ -191,9 +189,10 @@ def show(module_name):
     # Import and show tool.
     module = importlib.import_module(module_name)
 
-    window = get_main_window()
-
     if "loader" in module_name:
+        app = QtWidgets.QApplication(sys.argv)
+        app.setQuitOnLastWindowClosed(False)
+        window = get_main_window()
         module.show(parent=window, use_context=True)
     else:
         module.show()
