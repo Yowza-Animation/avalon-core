@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """Server-side implementation of Toon Boon Harmony communication."""
-import socket
-import logging
-import json
-import traceback
-import importlib
 import functools
-import time
+import importlib
+import json
+import logging
+import socket
+import traceback
 from datetime import datetime
+
+import time
 
 from . import lib
 
@@ -17,7 +18,7 @@ class Server(object):
 
     Attributes:
         connection (Socket): connection holding object.
-        recieved (str): recieved data buffer.any(iterable)
+        received (str): recieved data buffer.any(iterable)
         port (int): port number.
         message_id (int): index of last message going out.
         queue (dict): dictionary holding queue of incoming messages.
@@ -40,7 +41,8 @@ class Server(object):
 
         # Bind the socket to the port
         server_address = ("127.0.0.1", port)
-        self.log.debug("Starting up on {}".format(server_address))
+        self.log.debug("Starting up Harmony Python server on {}"
+                       .format(server_address))
         self.socket.bind(server_address)
 
         # Listen for incoming connections
@@ -61,7 +63,8 @@ class Server(object):
         """
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Processing request [{}]: {}".format(timestamp, request))
+            "Processing request from Harmony client [{}]: \n{}"
+                .format(timestamp, request))
 
         try:
             module = importlib.import_module(request["module"])
@@ -103,7 +106,9 @@ class Server(object):
 
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 self.log.debug(
-                    "Received [{}]: {}".format(timestamp, self.received))
+                    "Received from Harmony client [{}]: \n{}"
+                        .format(timestamp, self.received)
+                )
 
                 try:
                     request = json.loads(self.received)
@@ -116,16 +121,19 @@ class Server(object):
 
             self.received = ""
             timestamp = datetime.now().strftime("%H:%M:%S.%f")
-            self.log.debug("Request [{}]: {}".format(timestamp, request))
+            self.log.debug("Request from Harmony client [{}]: \n{}"
+                           .format(timestamp, request)
+                           )
             if "message_id" in request.keys():
                 self.log.debug("--- storing request as {}".format(
-                    request["message_id"]))
+                    request["message_id"])
+                )
                 self.queue[request["message_id"]] = request
             if "reply" not in request.keys():
                 request["reply"] = True
-                self.log.debug("Sending reply ...")
+                self.log.debug("Sending reply to Harmony client...")
                 self._send(json.dumps(request))
-                self.log.debug("Processing request ...")
+                self.log.debug("Processing request from Harmony client...")
                 self.process_request(request)
 
                 if "message_id" in request.keys():
@@ -137,7 +145,8 @@ class Server(object):
                         self.log.debug("{} is no longer in queue".format(
                             request["message_id"]))
             else:
-                self.log.debug("Recieved data was just reply.")
+                self.log.debug(
+                    "Received data from Harmony client was just reply.")
 
     def start(self):
         """Entry method for server.
@@ -145,16 +154,17 @@ class Server(object):
         Waits for a connection on `self.port` before going into listen mode.
         """
         # Wait for a connection
-        self.log.debug("Waiting for a connection.")
+        self.log.debug("Waiting for a connection from Harmony client...")
         self.connection, client_address = self.socket.accept()
 
-        self.log.debug("Connection from: {}".format(client_address))
+        self.log.debug("Connection from Harmony client: {}"
+                       .format(client_address))
 
         self.receive()
 
     def stop(self):
         """Shutdown socket server gracefully."""
-        self.log.debug("Shutting down server.")
+        self.log.debug("Shutting down Python server.")
         if self.connection is None:
             self.log.debug("Connect to shutdown.")
             socket.socket(
@@ -178,7 +188,8 @@ class Server(object):
 
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.log.debug(
-            "Sending [{}][{}]: {}".format(self.message_id, timestamp, message))
+            "Sending to Harmony client [{}][{}]: \n{}"
+                .format(self.message_id, timestamp, message))
         self.connection.sendall(message.encode("utf-8"))
         self.message_id += 1
 
@@ -193,7 +204,9 @@ class Server(object):
         request["message_id"] = self.message_id
         self._send(json.dumps(request))
         if request.get("reply"):
-            self.log.debug("sent reply, not waiting for anything.")
+            self.log.debug(
+                "Sent reply to Harmony client, not waiting for anything."
+            )
             return None
         result = None
         current_time = time.time()
@@ -213,7 +226,7 @@ class Server(object):
                 result = self.queue[request["message_id"]]
                 self.log.debug(("  - got request id {}, "
                                 "removing from queue").format(
-                                    request["message_id"]))
+                    request["message_id"]))
                 del self.queue[request["message_id"]]
                 break
             except KeyError:
