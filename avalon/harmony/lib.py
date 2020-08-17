@@ -51,8 +51,8 @@ def launch(application_path):
     from avalon import api, harmony
 
     api.install(harmony)
-    # app = QtWidgets.QApplication(sys.argv)
-    # app.setQuitOnLastWindowClosed(False)
+    app = QtWidgets.QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
 
     self.port = random.randrange(5000, 6000)
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
@@ -166,6 +166,13 @@ def zip_and_move(source, destination):
     shutil.move(os.path.basename(source) + ".zip", destination)
     self.log.debug("Saved \"{}\" to \"{}\"".format(source, destination))
 
+def get_main_window():
+    # Global function to find the (open) QMainWindow in application
+    app = QtWidgets.QApplication.instance()
+    for widget in app.topLevelWidgets():
+        if isinstance(widget, QtWidgets.QMainWindow):
+            return widget
+    return None
 
 def show(module_name):
     """Call show on "module_name".
@@ -184,10 +191,10 @@ def show(module_name):
     # Import and show tool.
     module = importlib.import_module(module_name)
 
-    # app = QtWidgets.QApplication(sys.argv)
+    window = get_main_window()
 
     if "loader" in module_name:
-        module.show(parent=QtWidgets.QMainWindow(), use_context=True)
+        module.show(parent=window, use_context=True)
     else:
         module.show()
 
