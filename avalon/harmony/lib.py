@@ -164,13 +164,6 @@ def zip_and_move(source, destination):
     shutil.move(os.path.basename(source) + ".zip", destination)
     self.log.debug("Saved \"{}\" to \"{}\"".format(source, destination))
 
-def get_main_window():
-    # Global function to find the (open) QMainWindow in application
-    app = QtWidgets.QApplication.instance()
-    for widget in app.topLevelWidgets():
-        if isinstance(widget, QtWidgets.QMainWindow):
-            return widget
-    return None
 
 def show(module_name):
     """Call show on "module_name".
@@ -186,12 +179,15 @@ def show(module_name):
     # requests to be received properly.
     time.sleep(1)
 
+    # Need to have an existing QApplication.
+    app = QtWidgets.QApplication.instance()
+    if not app:
+        app = QtWidgets.QApplication(sys.argv)
+
     # Import and show tool.
     module = importlib.import_module(module_name)
-    app = QtWidgets.QApplication(sys.argv)
-    app.setQuitOnLastWindowClosed(False)
-    if "loader" in module_name:
 
+    if "loader" in module_name:
         module.show(use_context=True)
     else:
         module.show()
@@ -290,7 +286,6 @@ def imprint(node_id, data, remove=False):
             scene_data[node_id].update(data)
         else:
             scene_data[node_id] = data
-
 
     set_scene_data(scene_data)
 
