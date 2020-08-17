@@ -50,8 +50,7 @@ function Client() {
                     result = func(request.args);
                 }
             } catch (error) {
-                result = "Error processing request.\nRequest:\n" +
-                    prettifyJson(request) + "\nError:\n" + error;
+                result = "Error processing request.\nRequest:\n" + prettifyJson(request) + "\nError:\n" + error;
             }
         }
 
