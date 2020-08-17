@@ -190,7 +190,7 @@ def show(module_name):
     if "loader" in module_name:
         module.show(parent=self.app, use_context=True)
     else:
-        module.show(parent=self.app)
+        module.show()
 
     # QApplication needs to always execute.
     if "publish" in module_name:
