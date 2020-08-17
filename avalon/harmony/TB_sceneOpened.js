@@ -14,30 +14,31 @@ function Client() {
     self.received = "";
     self.log_debug = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        MessageLog.trace("(DEBUG): " + message.toString());
+        log("(DEBUG): " + message.toString());
     };
 
 
     self.log_info = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        MessageLog.trace("(INFO): " + message.toString());
+        log("(INFO): " + message.toString());
     };
 
 
     self.log_warning = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        MessageLog.trace("(WARNING): " + message.toString());
+        log("(WARNING): " + message.toString());
     };
 
 
     self.log_error = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
-        MessageLog.trace("(ERROR): " + message.toString());
+        log("(ERROR): " + message.toString());
     };
 
     self.process_request = function (request) {
 
-        self.log_debug("Processing: " + JSON.stringify(request));
+        self.log_debug("Processing Request from Python server: \n"
+            + prettifyJson(request));
         var result = null;
 
         if (request["function"] != null) {
@@ -50,7 +51,7 @@ function Client() {
                 }
             } catch (error) {
                 result = "Error processing request.\nRequest:\n" +
-                    JSON.stringify(request) + "\nError:\n" + error;
+                    prettifyJson(request) + "\nError:\n" + error;
             }
         }
 
@@ -69,10 +70,13 @@ function Client() {
             }
         }
 
-        self.log_debug("Received: " + self.received);
+        self.log_debug("Received request from Python Server: "
+            + prettifyJson(self.received));
 
         request = JSON.parse(self.received);
-        self.log_debug("Request: " + JSON.stringify(request));
+
+        self.log_debug("Request from Python server: \n "
+            + prettifyJson(request));
 
         request.result = self.process_request(request);
 
@@ -90,7 +94,7 @@ function Client() {
     };
 
     self._send = function (message) {
-        self.log_debug("Sending: " + message);
+        self.log_debug("Sending to Python server: " + message);
 
         var data = new QByteArray();
         outstr = new QDataStream(data, QIODevice.WriteOnly);
