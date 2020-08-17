@@ -188,10 +188,10 @@ def show(module_name):
 
     # Import and show tool.
     module = importlib.import_module(module_name)
-
+    app = QtWidgets.QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
     if "loader" in module_name:
-        app = QtWidgets.QApplication(sys.argv)
-        app.setQuitOnLastWindowClosed(False)
+
         window = get_main_window()
         module.show(parent=window,use_context=True)
     else:
@@ -201,7 +201,7 @@ def show(module_name):
     if "publish" in module_name:
         return
 
-    self.app.exec_()
+    app.exec_()
 
 
 def get_scene_data():
