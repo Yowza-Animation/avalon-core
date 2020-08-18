@@ -25,7 +25,7 @@ Separator = "---separator---"
 class SubsetNameValidator(QtGui.QRegExpValidator):
 
     invalid = QtCore.Signal(set)
-    pattern = "^[a-zA-Z0-9_.]*$"
+    pattern = "^[a-zA-Z0-9]*$"
 
     def __init__(self):
         reg = QtCore.QRegExp(self.pattern)
@@ -63,8 +63,7 @@ class SubsetNameLineEdit(QtWidgets.QLineEdit):
 
         validator = SubsetNameValidator()
         self.setValidator(validator)
-        self.setToolTip("Only alphanumeric characters (A-Z a-z 0-9), "
-                        "'_' and '.' are allowed.")
+        self.setToolTip("Only alphanumeric characters (A-Z a-z 0-9)")
 
         self._status_color = self.colors["empty"][0]
 
@@ -308,16 +307,20 @@ class Window(QtWidgets.QDialog):
             regex = "{}*".format(family)
             existed_subset_split = family
 
+            task = io.Session.get('AVALON_TASK', '')
+            sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
+            if sanitized_task:
+                sanitized_task = sanitized_task[0].upper() + sanitized_task[1:]
+
             if family in self.taskSubsetFamilies:
-                task = io.Session.get('AVALON_TASK', '')
-                sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
+
                 regex = "{}{}*".format(
                     family,
-                    sanitized_task.capitalize()
+                    sanitized_task
                 )
                 existed_subset_split = "{}{}".format(
                     family,
-                    sanitized_task.capitalize()
+                    sanitized_task
                 )
 
             # Get all subsets of the current asset
@@ -348,7 +351,7 @@ class Window(QtWidgets.QDialog):
             if family in self.taskSubsetFamilies:
                 result.setText("{}{}{}".format(
                     family,
-                    sanitized_task.capitalize(),
+                    sanitized_task,
                     subset_name
                 ))
             else:
