@@ -130,7 +130,7 @@ class CreateRender(harmony.Creator):
         {
             node.setTextAttr(args[0], "DRAWING_TYPE", 1, "PNG4");
         }
-        //func
+        func
         """
         harmony.send(
             {"function": func, "args": [node]}
