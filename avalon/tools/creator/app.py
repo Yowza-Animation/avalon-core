@@ -312,11 +312,11 @@ class Window(QtWidgets.QDialog):
                 sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
                 regex = "{}{}*".format(
                     family,
-                    sanitized_task.capitalize()
+                    sanitized_task
                 )
                 existed_subset_split = "{}{}".format(
                     family,
-                    sanitized_task.capitalize()
+                    sanitized_task
                 )
 
             # Get all subsets of the current asset
@@ -341,21 +341,20 @@ class Window(QtWidgets.QDialog):
             self._build_menu(defaults)
 
             # Update the result
-            # if subset_name:
-            #     subset_name = subset_name[0].upper() + subset_name[1:]
+            if subset_name:
+                subset_name = subset_name[0].upper() + subset_name[1:]
 
             if family in self.taskSubsetFamilies:
                 result.setText("{}{}{}".format(
                     family,
-                    sanitized_task.capitalize(),
+                    sanitized_task,
                     subset_name
                 ))
             else:
-                # result.setText("{}{}".format(
-                #     family,
-                #     subset_name
-                # ))
-                result.setText(subset_name)
+                result.setText("{}{}".format(
+                    family,
+                    subset_name
+                ))
 
             # Indicate subset existence
             if not subset_name:
