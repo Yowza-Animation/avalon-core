@@ -308,14 +308,14 @@ class Window(QtWidgets.QDialog):
             existed_subset_split = family
             task = io.Session.get('AVALON_TASK', '')
             sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
-
+            sanitized_task = sanitized_task[0].upper() + sanitized_task[1:]
             if family in self.taskSubsetFamilies:
 
-                regex = "{}.{}*".format(
+                regex = "{}{}*".format(
                     family,
                     sanitized_task
                 )
-                existed_subset_split = "{}.{}".format(
+                existed_subset_split = "{}{}".format(
                     family,
                     sanitized_task
                 )
@@ -346,13 +346,13 @@ class Window(QtWidgets.QDialog):
                 subset_name = subset_name[0].upper() + subset_name[1:]
 
             if family in self.taskSubsetFamilies:
-                result.setText("{}.{}.{}".format(
+                result.setText("{}{}{}".format(
                     family,
                     sanitized_task,
                     subset_name
                 ))
             else:
-                result.setText("{}.{}".format(
+                result.setText("{}{}".format(
                     family,
                     subset_name
                 ))
