@@ -349,8 +349,8 @@ class Window(QtWidgets.QDialog):
             if family in self.taskSubsetFamilies:
                 result.setText("{}{}{}".format(
                     family,
-                    subset_name,
-                    sanitized_task
+                    sanitized_task,
+                    subset_name
                 ))
             else:
                 result.setText("{}{}".format(
