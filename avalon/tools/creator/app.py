@@ -306,10 +306,12 @@ class Window(QtWidgets.QDialog):
             family = plugin.family.rsplit(".", 1)[-1]
             regex = "{}*".format(family)
             existed_subset_split = family
+            task = io.Session.get('AVALON_TASK', '')
+            sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
+            sanitized_task = sanitized_task[0].upper() + sanitized_task[1:]
 
             if family in self.taskSubsetFamilies:
-                task = io.Session.get('AVALON_TASK', '')
-                sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
+
                 regex = "{}{}*".format(
                     family,
                     sanitized_task
