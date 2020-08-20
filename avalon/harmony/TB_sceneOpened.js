@@ -2,16 +2,17 @@ var LIB_OPENHARMONY_PATH = System.getenv('LIB_OPENHARMONY_PATH');
 include(LIB_OPENHARMONY_PATH + '\\openHarmony.js');
 this.__proto__["$"] = $;
 
-function prettifyJson(request) {
-    var jsonString = JSON.stringify(request)
-    return JSON.stringify(JSON.parse(jsonString),null,2);
-}
-
 function Client() {
 
     var self = this;
     self.socket = new QTcpSocket(this);
     self.received = "";
+
+    self.prettifyJson = function(request){
+        var jsonString = JSON.stringify(request)
+        return JSON.stringify(JSON.parse(jsonString),null,2);
+    };
+
     self.log_debug = function (data) {
         message = typeof (data.message) != "undefined" ? data.message : data;
         MessageLog.trace("(DEBUG): " + message.toString());
@@ -49,7 +50,7 @@ function Client() {
                     result = func(request.args);
                 }
             } catch (error) {
-                result = "Error processing request.\nRequest:\n" + prettifyJson(request) + "\nError:\n" + error;
+                result = "Error processing request.\nRequest:\n" + JSON.stringify(request) + "\nError:\n" + error;
             }
         }
 
