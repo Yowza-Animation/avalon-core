@@ -100,7 +100,12 @@ def launch_zip_file(filepath):
     if os.path.exists(scene_path):
         # Check remote scene is newer than local.
         if os.path.getmtime(scene_path) < os.path.getmtime(filepath):
-            shutil.rmtree(temp_path)
+            try:
+                # this may fail if the harmony log file is currently being read
+                shutil.rmtree(temp_path)
+            except Exception as err:
+                print(err)
+
             unzip = True
     else:
         unzip = True
