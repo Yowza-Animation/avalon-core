@@ -254,8 +254,6 @@ class IconicFont(QtCore.QObject):
             size for the font
         """
         font = QtGui.QFont(self.fontname[prefix])
-        if prefix[-1] == 's':  # solid style
-            font.setWeight(900)
         font.setPixelSize(size)
         return font
 
