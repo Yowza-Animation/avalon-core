@@ -58,8 +58,7 @@ class NameWindow(QtWidgets.QDialog):
             "task": session["AVALON_TASK"],
             "version": 1,
             "user": getpass.getuser(),
-            "comment": "",
-            "subset": "main"
+            "comment": ""
         }
 
         # Define work files template
@@ -69,7 +68,6 @@ class NameWindow(QtWidgets.QDialog):
         self.widgets = {
             "preview": QtWidgets.QLabel("Preview filename"),
             "comment": QtWidgets.QLineEdit(),
-            "subset": QtWidgets.QLineEdit(),
             "version": QtWidgets.QWidget(),
             "versionValue": QtWidgets.QSpinBox(),
             "versionCheck": QtWidgets.QCheckBox("Next Available Version"),
@@ -96,7 +94,6 @@ class NameWindow(QtWidgets.QDialog):
         # Build inputs
         layout = QtWidgets.QFormLayout(self.widgets["inputs"])
         layout.addRow("Version:", self.widgets["version"])
-        layout.addRow("Subset:", self.widgets["subset"])
         layout.addRow("Comment:", self.widgets["comment"])
         layout.addRow("Preview:", self.widgets["preview"])
 
@@ -112,16 +109,15 @@ class NameWindow(QtWidgets.QDialog):
             self.on_version_checkbox_changed
         )
         self.widgets["comment"].textChanged.connect(self.on_comment_changed)
-        self.widgets["subset"].textChanged.connect(self.on_subset_changed)
         self.widgets["okButton"].pressed.connect(self.on_ok_pressed)
         self.widgets["cancelButton"].pressed.connect(self.on_cancel_pressed)
 
         # Allow "Enter" key to accept the save.
         self.widgets["okButton"].setDefault(True)
 
-        # Force default focus to subset, some hosts didn't automatically
+        # Force default focus to comment, some hosts didn't automatically
         # apply focus to this line edit (e.g. Houdini)
-        self.widgets["subset"].setFocus()
+        self.widgets["comment"].setFocus()
 
         self.refresh()
 
@@ -134,10 +130,6 @@ class NameWindow(QtWidgets.QDialog):
 
     def on_comment_changed(self, text):
         self.data["comment"] = text
-        self.refresh()
-
-    def on_subset_changed(self, text):
-        self.data["subset"] = text
         self.refresh()
 
     def on_ok_pressed(self):
@@ -168,9 +160,6 @@ class NameWindow(QtWidgets.QDialog):
         if not data["comment"]:
             data.pop("comment", None)
 
-        if not data["subset"]:
-            data.pop("subset", None)
-
         return api.format_template_with_optional_keys(data, template)
 
     def refresh(self):
@@ -185,10 +174,6 @@ class NameWindow(QtWidgets.QDialog):
             # todo: hide the full row
             self.widgets["comment"].setVisible(False)
 
-        if "{subset}" not in self.template:
-            # todo: hide the full row
-            self.widgets["subset"].setVisible(False)
-
         if self.widgets["versionCheck"].isChecked():
             self.widgets["versionValue"].setEnabled(False)
 
@@ -198,9 +183,6 @@ class NameWindow(QtWidgets.QDialog):
 
             if not data["comment"]:
                 data.pop("comment", None)
-
-            if not data["subset"]:
-                data.pop("subset", None)
 
             version = api.last_workfile_with_version(
                 self.root, template, data, extensions

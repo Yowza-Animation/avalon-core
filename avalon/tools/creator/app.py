@@ -404,7 +404,7 @@ class Window(QtWidgets.QDialog):
         if plugin.defaults and isinstance(plugin.defaults, list):
             default = plugin.defaults[0]
         else:
-            default = "Main"
+            default = "main"
 
         name.setText(default)
 
