@@ -49,7 +49,7 @@ def index():
 <html>
 <head>
     <style>
-      button {{width: 100%;}}
+      button {{width: 100%; background-color:#1e1e1e; color:#f0f0f0;}}
       body {{margin:0; padding:0; height: 100%;}}
       html {{height: 100%;}}
     </style>
