@@ -352,10 +352,11 @@ class Window(QtWidgets.QDialog):
                     subset_name
                 ))
             else:
-                result.setText("{}{}".format(
-                    family,
-                    subset_name
-                ))
+                # result.setText("{}{}".format(
+                #     family,
+                #     subset_name
+                # ))
+                result.setText(subset_name)
 
             # Indicate subset existence
             if not subset_name:
