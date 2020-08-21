@@ -58,7 +58,8 @@ class NameWindow(QtWidgets.QDialog):
             "task": session["AVALON_TASK"],
             "version": 1,
             "user": getpass.getuser(),
-            "comment": ""
+            "comment": "",
+            "subset": "main"
         }
 
         # Define work files template
@@ -118,9 +119,9 @@ class NameWindow(QtWidgets.QDialog):
         # Allow "Enter" key to accept the save.
         self.widgets["okButton"].setDefault(True)
 
-        # Force default focus to comment, some hosts didn't automatically
+        # Force default focus to subset, some hosts didn't automatically
         # apply focus to this line edit (e.g. Houdini)
-        self.widgets["comment"].setFocus()
+        self.widgets["subset"].setFocus()
 
         self.refresh()
 
@@ -184,6 +185,10 @@ class NameWindow(QtWidgets.QDialog):
             # todo: hide the full row
             self.widgets["comment"].setVisible(False)
 
+        if "{subset}" not in self.template:
+            # todo: hide the full row
+            self.widgets["subset"].setVisible(False)
+
         if self.widgets["versionCheck"].isChecked():
             self.widgets["versionValue"].setEnabled(False)
 
@@ -193,6 +198,9 @@ class NameWindow(QtWidgets.QDialog):
 
             if not data["comment"]:
                 data.pop("comment", None)
+
+            if not data["subset"]:
+                data.pop("subset", None)
 
             version = api.last_workfile_with_version(
                 self.root, template, data, extensions
