@@ -59,7 +59,7 @@ class NameWindow(QtWidgets.QDialog):
             "version": 1,
             "user": getpass.getuser(),
             "comment": "",
-            "subset": "main"
+            "subset": ""
         }
 
         # Define work files template
