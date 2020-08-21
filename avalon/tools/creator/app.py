@@ -357,7 +357,6 @@ class Window(QtWidgets.QDialog):
                     subset_name
                 ))
 
-
             # Indicate subset existence
             if not subset_name:
                 subset.as_empty()
@@ -405,7 +404,7 @@ class Window(QtWidgets.QDialog):
         if plugin.defaults and isinstance(plugin.defaults, list):
             default = plugin.defaults[0]
         else:
-            default = "main"
+            default = "Main"
 
         name.setText(default)
 
