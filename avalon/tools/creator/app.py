@@ -341,9 +341,9 @@ class Window(QtWidgets.QDialog):
 
             self._build_menu(defaults)
 
-            # Update the result
-            if subset_name:
-                subset_name = subset_name[0].upper() + subset_name[1:]
+            # # Update the result
+            # if subset_name:
+            #     subset_name = subset_name[0].upper() + subset_name[1:]
 
             if family in self.taskSubsetFamilies:
                 result.setText("{}{}{}".format(
