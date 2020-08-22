@@ -1,24 +1,24 @@
-import contextlib
-import getpass
-import importlib
-import json
-import logging
-import os
-import queue
-import random
-import shutil
-import signal
+import socket
 import subprocess
 import threading
+import os
+import random
 import zipfile
-
 import sys
+import importlib
+import queue
+import shutil
+import logging
+import contextlib
+import json
+import signal
 import time
+import getpass
 
 from .server import Server
+from ..vendor.Qt import QtWidgets
 from ..tools import workfiles
 from ..toonboom import setup_startup_scripts, setup_libs
-from ..vendor.Qt import QtWidgets
 
 self = sys.modules[__name__]
 self.server = None
@@ -41,7 +41,6 @@ def main_thread_listen():
     callback = self.callback_queue.get()
     callback()
 
-
 def launch(application_path):
     """Setup for Harmony launch.
 
@@ -57,7 +56,7 @@ def launch(application_path):
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
 
     # set IP address env using socket.gethostbyname() method
-    os.environ["LOCALHOST_IP"] = "127.0.0.1"  # socket.gethostbyname(socket.gethostname())
+    os.environ["LOCALHOST_IP"] = "127.0.0.1" #socket.gethostbyname(socket.gethostname())
 
     self.application_path = application_path
 
@@ -109,7 +108,10 @@ def launch_zip_file(filepath):
         if os.path.getmtime(scene_path) < os.path.getmtime(filepath):
             try:
                 # this may fail if the harmony log file is currently being read
-                shutil.rmtree(temp_path)
+                if temp_path.endswith("harmony"):
+                    shutil.rmtree(os.path.join(temp_path, "temp"))
+                else:
+                    shutil.rmtree(temp_path)
             except Exception as err:
                 print(err)
 
