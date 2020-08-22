@@ -71,6 +71,12 @@ def launch(application_path):
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
+        if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+            new_path = get_local_harmony_path(
+                os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
+            send(
+                {"function": "scene.saveAs", "args": [new_path]}
+            )
 
     self.callback_queue = queue.Queue()
     while True:
@@ -80,6 +86,8 @@ def launch(application_path):
 def get_local_harmony_path(filepath):
     """From the provided path get the equivalent local Harmony path."""
     basename = os.path.splitext(os.path.basename(filepath))[0]
+    if filepath.endswith("temp.zip"):
+        basename = ""
     harmony_path = os.path.join(
         os.getenv("YOWZA_PIPE_PATH"),
         "users",
