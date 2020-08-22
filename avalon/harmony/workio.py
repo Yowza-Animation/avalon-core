@@ -48,7 +48,7 @@ def save_file(filepath):
             {"function": func, "args": [scene_path]}
         )
     else:
-        os.environ["HARMONY_NEW_WORKFILE_PATH"] = filepath.replace("\\", "/")
+        os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = filepath.replace("\\", "/")
 
 
 def open_file(filepath):
