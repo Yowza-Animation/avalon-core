@@ -72,18 +72,11 @@ def launch(application_path):
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
 
-    new_work_path = get_local_harmony_path(
-                os.getenv("AVALON_HARMONY_NEW_WORKFILE_PATH", "")).replace("\\", "/")
     self.callback_queue = queue.Queue()
 
     while True:
         main_thread_listen()
 
-        # This must be here to prevent race conditions
-        if new_work_path:
-            save_scene_as(new_work_path)
-            os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = None
-            new_work_path = ""
 
 def get_local_harmony_path(filepath):
     """From the provided path get the equivalent local Harmony path."""
@@ -151,6 +144,15 @@ def on_file_changed(path, threaded=True):
     """
 
     self.log.debug("File changed: " + path)
+
+    new_work_path = get_local_harmony_path(
+        os.getenv("AVALON_HARMONY_NEW_WORKFILE_PATH", "")
+    ).replace("\\", "/")
+    # This must be here to prevent race conditions
+    if new_work_path:
+        save_scene_as(new_work_path)
+        os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = None
+        new_work_path = ""
 
     if self.workfile_path is None:
         return
