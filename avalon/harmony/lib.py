@@ -75,7 +75,11 @@ def launch(application_path):
         if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
             new_path = get_local_harmony_path(
                 os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-            save_scene_as(new_path)
+            scene_dir = os.path.dirname(new_path)
+            send(
+                {"function": "scene.saveAs", "args": [scene_dir]}
+            )["result"]
+
             os.environ["HARMONY_NEW_WORKFILE_PATH"] = None
 
     self.callback_queue = queue.Queue()
@@ -108,11 +112,7 @@ def launch_zip_file(filepath):
         if os.path.getmtime(scene_path) < os.path.getmtime(filepath):
             try:
                 # this may fail if the harmony log file is currently being read
-                print(temp_path)
-                if temp_path.endswith("harmony"):
-                    shutil.rmtree(os.path.join(temp_path, "temp"))
-                else:
-                    shutil.rmtree(temp_path)
+                shutil.rmtree(temp_path)
             except Exception as err:
                 print(err)
 
