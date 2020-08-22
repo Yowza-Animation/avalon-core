@@ -75,9 +75,9 @@ def launch(application_path):
         if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
             new_path = get_local_harmony_path(
                 os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-            scene_dir = os.path.dirname(new_path)
+
             send(
-                {"function": "scene.saveAs", "args": [scene_dir]}
+                {"function": "scene.saveAs", "args": [new_path]}
             )
 
             os.environ["HARMONY_NEW_WORKFILE_PATH"] = None
