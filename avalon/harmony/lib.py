@@ -1,24 +1,24 @@
-import socket
+import contextlib
+import getpass
+import importlib
+import json
+import logging
+import os
+import queue
+import random
+import shutil
+import signal
 import subprocess
 import threading
-import os
-import random
 import zipfile
+
 import sys
-import importlib
-import queue
-import shutil
-import logging
-import contextlib
-import json
-import signal
 import time
-import getpass
 
 from .server import Server
-from ..vendor.Qt import QtWidgets
 from ..tools import workfiles
 from ..toonboom import setup_startup_scripts, setup_libs
+from ..vendor.Qt import QtWidgets
 
 self = sys.modules[__name__]
 self.server = None
@@ -41,6 +41,7 @@ def main_thread_listen():
     callback = self.callback_queue.get()
     callback()
 
+
 def launch(application_path):
     """Setup for Harmony launch.
 
@@ -56,7 +57,7 @@ def launch(application_path):
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
 
     # set IP address env using socket.gethostbyname() method
-    os.environ["LOCALHOST_IP"] = "127.0.0.1" #socket.gethostbyname(socket.gethostname())
+    os.environ["LOCALHOST_IP"] = "127.0.0.1"  # socket.gethostbyname(socket.gethostname())
 
     self.application_path = application_path
 
@@ -67,17 +68,16 @@ def launch(application_path):
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
         workfiles.show(save=True)
 
-    # No launch through Workfiles happened or save as was used
-    save_as_path = os.getenv("HARMONY_NEW_WORKFILE_PATH").replace("\\", "/")
-    if not self.workfile_path or self.workfile_path.replace("\\", "/")  == save_as_path:
+    # No launch through Workfiles happened or save as was used on launch
+    if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
-        if save_as_path:
+
+        if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
             new_path = get_local_harmony_path(
-                os.getenv("HARMONY_NEW_WORKFILE_PATH"))
-            send(
-                {"function": "scene.saveAs", "args": [new_path]}
-            )
+                os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
+            save_scene_as(new_path)
+            os.environ["HARMONY_NEW_WORKFILE_PATH"] = None
 
     self.callback_queue = queue.Queue()
     while True:
