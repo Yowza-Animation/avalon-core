@@ -73,7 +73,7 @@ def launch(application_path):
         launch_zip_file(zip_file)
 
     new_work_path = get_local_harmony_path(
-                os.getenv("HARMONY_NEW_WORKFILE_PATH"), "").replace("\\", "/")
+                os.getenv("HARMONY_NEW_WORKFILE_PATH", "")).replace("\\", "/")
     self.callback_queue = queue.Queue()
 
     while True:
