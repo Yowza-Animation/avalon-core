@@ -436,7 +436,11 @@ def save_scene_as(filepath):
     )
 
     if os.path.exists(scene_dir):
-        shutil.rmtree(scene_dir)
+        try:
+            # this may fail if the harmony log file is currently being read
+            shutil.rmtree(scene_dir)
+        except Exception as err:
+            print(err)
 
     send(
         {"function": "scene.saveAs", "args": [scene_dir]}
