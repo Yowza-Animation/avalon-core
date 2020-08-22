@@ -145,17 +145,14 @@ def on_file_changed(path, threaded=True):
 
     self.log.debug("File changed: " + path)
 
+    # This must be here to prevent race conditions
     new_work_path = get_local_harmony_path(
         os.getenv("AVALON_HARMONY_NEW_WORKFILE_PATH", "")
     ).replace("\\", "/")
-    # This must be here to prevent race conditions
     if new_work_path:
         save_scene_as(new_work_path)
-        os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = None
+        os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = ""
         new_work_path = ""
-        send(
-            {"function": "scene.saveAs", "args": [new_work_path]}
-        )["result"]
 
     if self.workfile_path is None:
         return
