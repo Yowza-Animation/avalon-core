@@ -79,6 +79,7 @@ def launch(application_path):
             send(
                 {"function": "scene.saveAs", "args": [new_path]}
             )
+            save_scene_as(new_path)
 
             os.environ["HARMONY_NEW_WORKFILE_PATH"] = None
 
