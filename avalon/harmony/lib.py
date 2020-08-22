@@ -65,14 +65,14 @@ def launch(application_path):
     setup_libs()
 
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
-        workfiles.show(save=True)
+        workfiles.show(save=False)
 
     # No launch through Workfiles happened or save as was used on launch
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
 
-    new_work_path = os.getenv("AVALON_HARMONY_NEW_WORKFILE_PATH", "")
+    new_work_path = None #os.getenv("AVALON_HARMONY_NEW_WORKFILE_PATH", "")
     self.callback_queue = queue.Queue()
 
     while True:
@@ -80,7 +80,9 @@ def launch(application_path):
         # This must be here to prevent race conditions
         if new_work_path:
             localized_path = get_local_harmony_path(new_work_path)
-            save_scene_as(os.path.dirname(localized_path))
+            send(
+                {"function": "scene.saveAs", "args": [localized_path]}
+            )["result"]
             os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = ""
             new_work_path = None
             self.workfile_path = localized_path
