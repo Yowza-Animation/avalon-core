@@ -81,9 +81,6 @@ def launch(application_path):
 
         # This must be here to prevent race conditions
         if new_work_path:
-            send(
-                {"function": "scene.saveAs", "args": [new_work_path]}
-            )["result"]
             save_scene_as(new_work_path)
             os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = None
             new_work_path = ""
