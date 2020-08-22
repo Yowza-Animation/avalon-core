@@ -67,13 +67,14 @@ def launch(application_path):
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
         workfiles.show(save=True)
 
-    # No launch through Workfiles happened.
-    if not self.workfile_path:
+    # No launch through Workfiles happened or save as was used
+    save_as_path = os.getenv("HARMONY_NEW_WORKFILE_PATH").replace("\\", "/")
+    if not self.workfile_path or self.workfile_path.replace("\\", "/")  == save_as_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
-        if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+        if save_as_path:
             new_path = get_local_harmony_path(
-                os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
+                os.getenv("HARMONY_NEW_WORKFILE_PATH"))
             send(
                 {"function": "scene.saveAs", "args": [new_path]}
             )
@@ -86,8 +87,6 @@ def launch(application_path):
 def get_local_harmony_path(filepath):
     """From the provided path get the equivalent local Harmony path."""
     basename = os.path.splitext(os.path.basename(filepath))[0]
-    if filepath.endswith("temp.zip"):
-        basename = ""
     harmony_path = os.path.join(
         os.getenv("YOWZA_PIPE_PATH"),
         "users",
