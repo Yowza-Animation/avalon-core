@@ -71,6 +71,14 @@ def launch(application_path):
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
+        if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+
+            new_path = get_local_harmony_path(
+                os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
+
+            send(
+                {"function": "scene.saveAs", "args": [new_path]}
+            )
 
     self.callback_queue = queue.Queue()
     while True:
@@ -135,14 +143,6 @@ def launch_zip_file(filepath):
     process = subprocess.Popen([self.application_path, scene_path])
     self.pid = process.pid
 
-    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-        time.sleep(5)
-        new_path = get_local_harmony_path(
-            os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-
-        send(
-            {"function": "scene.saveAs", "args": [new_path]}
-        )
 
 def on_file_changed(path, threaded=True):
     """Threaded zipping and move of the project directory.
