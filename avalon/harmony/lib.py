@@ -71,14 +71,6 @@ def launch(application_path):
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
-        if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
-
-            new_path = get_local_harmony_path(
-                os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
-
-            send(
-                {"function": "scene.saveAs", "args": [new_path]}
-            )
 
     self.callback_queue = queue.Queue()
     while True:
@@ -149,11 +141,10 @@ def on_file_changed(path, threaded=True):
 
     This method is called when the `.xstage` file is changed.
     """
-    new_launch_workfile = os.getenv("HARMONY_NEW_WORKFILE_PATH")
 
     self.log.debug("File changed: " + path)
 
-    if self.workfile_path is None and not new_launch_workfile:
+    if self.workfile_path is None:
         return
 
     if threaded:
@@ -165,8 +156,6 @@ def on_file_changed(path, threaded=True):
     else:
         zip_and_move(os.path.dirname(path), self.workfile_path)
 
-    if new_launch_workfile:
-        os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
 
 def zip_and_move(source, destination):
     """Zip a directory and move to `destination`
