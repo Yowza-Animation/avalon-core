@@ -72,21 +72,19 @@ def launch(application_path):
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
 
+    self.callback_queue = queue.Queue()
+    while True:
+        main_thread_listen()
+
         if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
             new_path = get_local_harmony_path(
                 os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
 
             send(
                 {"function": "scene.saveAs", "args": [new_path]}
-            )
+            )["result"]
             save_scene_as(new_path)
-
             os.environ["HARMONY_NEW_WORKFILE_PATH"] = None
-
-    self.callback_queue = queue.Queue()
-    while True:
-        main_thread_listen()
-
 
 def get_local_harmony_path(filepath):
     """From the provided path get the equivalent local Harmony path."""
