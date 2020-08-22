@@ -80,7 +80,11 @@ def launch(application_path):
         main_thread_listen()
         # This must be here to prevent race conditions
         if new_work_path:
-            save_scene_as(get_local_harmony_path(new_work_path))
+            localized_path = get_local_harmony_path(new_work_path)
+            send(
+                {"function": "scene.saveAs", "args": [localized_path]}
+            )["result"]
+            save_scene()
             os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = ""
             new_work_path = None
 
