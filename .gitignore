@@ -14,3 +14,4 @@ build
 *.diff
 .idea/
 venv/
+/avalon/harmony/temp/
