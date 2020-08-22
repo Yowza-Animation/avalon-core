@@ -87,6 +87,8 @@ def launch(application_path):
             save_scene()
             os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = ""
             new_work_path = None
+            self.workfile_path = localized_path
+            save_scene_as(localized_path)
 
 def get_local_harmony_path(filepath):
     """From the provided path get the equivalent local Harmony path."""
