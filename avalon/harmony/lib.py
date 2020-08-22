@@ -72,7 +72,6 @@ def launch(application_path):
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
         launch_zip_file(zip_file)
 
-
     new_work_path = os.getenv("AVALON_HARMONY_NEW_WORKFILE_PATH", "")
     self.callback_queue = queue.Queue()
 
