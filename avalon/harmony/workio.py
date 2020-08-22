@@ -20,31 +20,35 @@ def has_unsaved_changes():
 def save_file(filepath):
     temp_path = lib.get_local_harmony_path(filepath)
 
-    if os.path.exists(temp_path):
-        shutil.rmtree(temp_path)
+    if lib.server:
 
-    lib.server.send(
-        {"function": "scene.saveAs", "args": [temp_path]}
-    )["result"]
+        if os.path.exists(temp_path):
+            shutil.rmtree(temp_path)
 
-    lib.zip_and_move(temp_path, filepath)
+        lib.server.send(
+            {"function": "scene.saveAs", "args": [temp_path]}
+        )["result"]
 
-    lib.workfile_path = filepath
+        lib.zip_and_move(temp_path, filepath)
 
-    func = """function add_path(path)
-    {
-        var app = QCoreApplication.instance();
-        app.watcher.addPath(path);
-    }
-    add_path
-    """
+        lib.workfile_path = filepath
 
-    scene_path = os.path.join(
-        temp_path, os.path.basename(temp_path) + ".xstage"
-    )
-    lib.server.send(
-        {"function": func, "args": [scene_path]}
-    )
+        func = """function add_path(path)
+        {
+            var app = QCoreApplication.instance();
+            app.watcher.addPath(path);
+        }
+        add_path
+        """
+
+        scene_path = os.path.join(
+            temp_path, os.path.basename(temp_path) + ".xstage"
+        )
+        lib.server.send(
+            {"function": func, "args": [scene_path]}
+        )
+    else:
+        os.environ["HARMONY_NEW_WORKFILE_PATH"] = filepath.replace("\\", "/")
 
 
 def open_file(filepath):

@@ -65,7 +65,7 @@ def launch(application_path):
     setup_libs()
 
     if os.environ.get("AVALON_HARMONY_WORKFILES_ON_LAUNCH", False):
-        workfiles.show(save=False)
+        workfiles.show(save=True)
 
     # No launch through Workfiles happened.
     if not self.workfile_path:
@@ -135,26 +135,36 @@ def launch_zip_file(filepath):
     process = subprocess.Popen([self.application_path, scene_path])
     self.pid = process.pid
 
+    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+        time.sleep(5)
+        new_path = get_local_harmony_path(
+            os.getenv("HARMONY_NEW_WORKFILE_PATH")).replace("\\", "/")
+
+        send(
+            {"function": "scene.saveAs", "args": [new_path]}
+        )
 
 def on_file_changed(path, threaded=True):
     """Threaded zipping and move of the project directory.
 
     This method is called when the `.xstage` file is changed.
     """
-
-    self.log.debug("File changed: " + path)
-
-    if self.workfile_path is None:
-        return
-
-    if threaded:
-        thread = threading.Thread(
-            target=zip_and_move,
-            args=(os.path.dirname(path), self.workfile_path)
-        )
-        thread.start()
+    if os.getenv("HARMONY_NEW_WORKFILE_PATH"):
+        os.environ["HARMONY_NEW_WORKFILE_PATH"] = ""
     else:
-        zip_and_move(os.path.dirname(path), self.workfile_path)
+        self.log.debug("File changed: " + path)
+
+        if self.workfile_path is None:
+            return
+
+        if threaded:
+            thread = threading.Thread(
+                target=zip_and_move,
+                args=(os.path.dirname(path), self.workfile_path)
+            )
+            thread.start()
+        else:
+            zip_and_move(os.path.dirname(path), self.workfile_path)
 
 
 def zip_and_move(source, destination):
