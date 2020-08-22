@@ -153,6 +153,9 @@ def on_file_changed(path, threaded=True):
         save_scene_as(new_work_path)
         os.environ["AVALON_HARMONY_NEW_WORKFILE_PATH"] = None
         new_work_path = ""
+        send(
+            {"function": "scene.saveAs", "args": [new_work_path]}
+        )["result"]
 
     if self.workfile_path is None:
         return
