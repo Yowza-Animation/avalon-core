@@ -108,6 +108,7 @@ def launch_zip_file(filepath):
         if os.path.getmtime(scene_path) < os.path.getmtime(filepath):
             try:
                 # this may fail if the harmony log file is currently being read
+                print(temp_path)
                 if temp_path.endswith("harmony"):
                     shutil.rmtree(os.path.join(temp_path, "temp"))
                 else:
