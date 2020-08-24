@@ -22,7 +22,6 @@ def index():
         "loader": "load...",
         "publish": "publish...",
         "sceneinventory": "manage...",
-        "projectmanager": "project manager",
     }
     for name, label in tools.items():
         scripts_html += """
