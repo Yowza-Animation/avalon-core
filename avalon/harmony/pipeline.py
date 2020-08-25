@@ -24,7 +24,7 @@ def ls():
     Yields:
         dict: container
     """
-    objects = lib.get_scene_data()
+    objects = lib.get_scene_data() or {}
     for _, data in objects.items():
         # Skip non-tagged objects.
         if not data:
