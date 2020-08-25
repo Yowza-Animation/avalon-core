@@ -33,7 +33,7 @@ def ls():
             continue
 
         # Filter to only containers.
-        if "container" not in data.get("id"):
+        if "container" not in data["id"]:
             continue
 
         # Append transient data
