@@ -31,7 +31,7 @@ def ls():
             continue
 
         # Filter to only containers.
-        if "container" not in data["id"]:
+        if "container" not in data.get("id"):
             continue
 
         yield data
