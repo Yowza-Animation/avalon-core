@@ -14,11 +14,12 @@ import json
 import signal
 import time
 import getpass
+from uuid import uuid4
 
 from .server import Server
 from ..vendor.Qt import QtWidgets
 from ..tools import workfiles
-from ..toonboom import setup_startup_scripts, setup_libs
+from ..toonboom import setup_startup_scripts
 
 self = sys.modules[__name__]
 self.server = None
@@ -33,6 +34,30 @@ self.log = logging.getLogger(__name__)
 self.log.setLevel(logging.DEBUG)
 
 
+def signature(postfix="func") -> str:
+    """Return random ECMA6 compatible function name.
+
+    Args;
+        postfix (str): name to append to random string.
+
+    Returns:
+        str: random function name.
+
+    """
+    return "f{}_{}".format(str(uuid4()).replace("-", "_"), postfix)
+
+
+class _ZipFile(zipfile.ZipFile):
+    """Extended check for windows invalid characters."""
+    # this is extending default zipfile table for few invalid characters
+    # that can come from Mac
+    _windows_illegal_characters = ":<>|\"?*\r\n\x00"
+    _windows_illegal_name_trans_table = str.maketrans(
+        _windows_illegal_characters,
+        "_" * len(_windows_illegal_characters)
+    )
+
+
 def execute_in_main_thread(func_to_call_from_main_thread):
     self.callback_queue.put(func_to_call_from_main_thread)
 
@@ -40,6 +65,7 @@ def execute_in_main_thread(func_to_call_from_main_thread):
 def main_thread_listen():
     callback = self.callback_queue.get()
     callback()
+
 
 def launch(application_path):
     """Setup for Harmony launch.
@@ -54,10 +80,6 @@ def launch(application_path):
 
     self.port = random.randrange(5000, 6000)
     os.environ["AVALON_HARMONY_PORT"] = str(self.port)
-
-    # set IP address env using socket.gethostbyname() method
-    os.environ["LOCALHOST_IP"] = "127.0.0.1" #socket.gethostbyname(socket.gethostname())
-
     self.application_path = application_path
 
     # Launch Harmony.
@@ -70,6 +92,15 @@ def launch(application_path):
     # No launch through Workfiles happened.
     if not self.workfile_path:
         zip_file = os.path.join(os.path.dirname(__file__), "temp.zip")
+        temp_path = get_local_harmony_path(zip_file)
+        if os.path.exists(temp_path):
+            self.log.info(f"removing existing {temp_path}")
+            try:
+                shutil.rmtree(temp_path)
+            except Exception as e:
+                self.log.critical(f"cannot clear {temp_path}")
+                raise Exception(f"cannot clear {temp_path}") from e
+
         launch_zip_file(zip_file)
 
     self.callback_queue = queue.Queue()
@@ -111,7 +142,7 @@ def launch_zip_file(filepath):
         unzip = True
 
     if unzip:
-        with zipfile.ZipFile(filepath, "r") as zip_ref:
+        with _ZipFile(filepath, "r") as zip_ref:
             zip_ref.extractall(temp_path)
 
     # Close existing scene.
@@ -130,6 +161,39 @@ def launch_zip_file(filepath):
 
     # Save workfile path for later.
     self.workfile_path = filepath
+
+    # find any xstage files is directory, prefer the one with the same name
+    # as directory (plus extension)
+    xstage_files = []
+    for _, _, files in os.walk(temp_path):
+        for file in files:
+            if os.path.splitext(file)[1] == ".xstage":
+                xstage_files.append(file)
+
+    if not os.path.basename("temp.zip"):
+        if not xstage_files:
+            self.server.stop()
+            print("no xstage file was found")
+            return
+
+    # try to use first available
+    scene_path = os.path.join(
+        temp_path, xstage_files[0]
+    )
+
+    # prefer the one named as zip file
+    zip_based_name = "{}.xstage".format(
+        os.path.splitext(os.path.basename(filepath))[0])
+
+    if zip_based_name in xstage_files:
+        scene_path = os.path.join(
+            temp_path, zip_based_name
+        )
+
+    if not os.path.exists(scene_path):
+        print("error: cannot determine scene file")
+        self.server.stop()
+        return
 
     print("Launching {}".format(scene_path))
     process = subprocess.Popen([self.application_path, scene_path])
@@ -166,6 +230,9 @@ def zip_and_move(source, destination):
     """
     os.chdir(os.path.dirname(source))
     shutil.make_archive(os.path.basename(source), "zip", source)
+    with _ZipFile(os.path.basename(source) + ".zip") as zr:
+        if zr.testzip() is not None:
+            raise Exception("File archive is corrupted.")
     shutil.move(os.path.basename(source) + ".zip", destination)
     self.log.debug("Saved \"{}\" to \"{}\"".format(source, destination))
 
@@ -205,7 +272,8 @@ def show(module_name):
 
 
 def get_scene_data():
-    func = """function func(args)
+    sig = signature("get_scene_data")
+    func = """function %s(args)
     {
         var metadata = scene.metadata("avalon");
         if (metadata){
@@ -214,24 +282,22 @@ def get_scene_data():
             return {};
         }
     }
-    func
-    """
+    %s
+    """ % (sig, sig)
     try:
         return self.send({"function": func})["result"]
     except json.decoder.JSONDecodeError:
-        # Means no scene metadata has been made before.
+        # Means no sceen metadata has been made before.
         return {}
     except KeyError:
         # Means no existing scene metadata has been made.
-        return {}
-    except Exception as err:
-        self.log.warning(err)
         return {}
 
 
 def set_scene_data(data):
     # Write scene data.
-    func = """function func(args)
+    sig = signature("set_scene_data")
+    func = """function %s(args)
     {
         scene.setMetadata({
           "name"       : "avalon",
@@ -241,8 +307,8 @@ def set_scene_data(data):
           "value"      : JSON.stringify(args[0])
         });
     }
-    func
-    """
+    %s
+    """ % (sig, sig)
     self.send({"function": func, "args": [data]})
 
 
@@ -298,8 +364,8 @@ def imprint(node_id, data, remove=False):
 @contextlib.contextmanager
 def maintained_selection():
     """Maintain selection during context."""
-
-    func = """function get_selection_nodes()
+    sig = signature("get_selection_nodes")
+    func = """function %s()
     {
         var selection_length = selection.numberOfNodesSelected();
         var selected_nodes = [];
@@ -309,11 +375,12 @@ def maintained_selection():
         }
         return selected_nodes
     }
-    get_selection_nodes
-    """
+    %s
+    """ % (sig, sig)
     selected_nodes = self.send({"function": func})["result"]
 
-    func = """function select_nodes(node_paths)
+    sig = signature("select_nodes")
+    func = """function %s(node_paths)
     {
         selection.clearSelection();
         for (var i = 0 ; i < node_paths.length; i++)
@@ -321,8 +388,8 @@ def maintained_selection():
             selection.addNodeToSelection(node_paths[i]);
         }
     }
-    select_nodes
-    """
+    %s
+    """ % (sig, sig)
     try:
         yield selected_nodes
     finally:
@@ -349,19 +416,20 @@ def maintained_nodes_state(nodes):
         )
 
     # Disable all nodes.
-    func = """function func(nodes)
+    sig = signature("disable_all_nodes")
+    func = """function %s(nodes)
     {
         for (var i = 0 ; i < nodes.length; i++)
         {
             node.setEnable(nodes[i], false);
         }
     }
-    func
-    """
+    %s
+    """ % (sig, sig)
     self.send({"function": func, "args": [nodes]})
-
+    sig = signature("restore")
     # Restore state after yield.
-    func = """function func(args)
+    func = """function %s(args)
     {
         var nodes = args[0];
         var states = args[1];
@@ -370,8 +438,8 @@ def maintained_nodes_state(nodes):
             node.setEnable(nodes[i], states[i]);
         }
     }
-    func
-    """
+    %s
+    """ % (sig, sig)
 
     try:
         yield
@@ -380,7 +448,7 @@ def maintained_nodes_state(nodes):
 
 
 def save_scene():
-    """Saves the Harmony scene safely.
+    """Save the Harmony scene safely.
 
     The built-in (to Avalon) background zip and moving of the Harmony scene
     folder, interfers with server/client communication by sending two requests
@@ -389,7 +457,8 @@ def save_scene():
     """
     # Need to turn off the backgound watcher else the communication with
     # the server gets spammed with two requests at the same time.
-    func = """function func()
+    sig = signature("save_scene")
+    func = """function %s()
     {
         var app = QCoreApplication.instance();
         app.avalon_on_file_changed = false;
@@ -399,27 +468,27 @@ def save_scene():
             scene.currentVersionName() + ".xstage"
         );
     }
-    func
-    """
+    %s
+    """ % (sig, sig)
     scene_path = self.send({"function": func})["result"]
 
     # Manually update the remote file.
     self.on_file_changed(scene_path, threaded=False)
 
     # Re-enable the background watcher.
-    func = """function func()
+    sig = signature("enable_watcher")
+    func = """function %s()
     {
         var app = QCoreApplication.instance();
         app.avalon_on_file_changed = true;
     }
-    func
-    """
+    %s
+    """ % (sig, sig)
     self.send({"function": func})
 
 
 def save_scene_as(filepath):
     """Save Harmony scene as `filepath`."""
-
     scene_dir = os.path.dirname(filepath)
     destination = os.path.join(
         os.path.dirname(self.workfile_path),
@@ -427,11 +496,7 @@ def save_scene_as(filepath):
     )
 
     if os.path.exists(scene_dir):
-        try:
-            # this may fail if the harmony log file is currently being read
-            shutil.rmtree(scene_dir)
-        except Exception as err:
-            print(err)
+        shutil.rmtree(scene_dir)
 
     send(
         {"function": "scene.saveAs", "args": [scene_dir]}
@@ -440,14 +505,14 @@ def save_scene_as(filepath):
     zip_and_move(scene_dir, destination)
 
     self.workfile_path = destination
-
-    func = """function add_path(path)
+    sig = signature("add_path")
+    func = """function %s(path)
     {
         var app = QCoreApplication.instance();
         app.watcher.addPath(path);
     }
-    add_path
-    """
+    %s
+    """ % (sig, sig)
     send(
         {"function": func, "args": [filepath]}
     )

@@ -1,8 +1,7 @@
-import os
 import sys
 import time
 
-from .io_nonsingleton import DbConnector
+from ...api import AvalonMongoDB
 from ...vendor.Qt import QtWidgets, QtCore
 from ... import style
 from .. import lib as tools_lib
@@ -50,9 +49,9 @@ class Window(QtWidgets.QDialog):
 
         container = QtWidgets.QWidget()
 
-        self.dbcon = DbConnector()
+        self.dbcon = AvalonMongoDB()
         self.dbcon.install()
-        self.dbcon.activate_project(None)
+        self.dbcon.Session["AVALON_PROJECT"] = None
 
         self.show_projects = show_projects
         self.show_libraries = show_libraries
@@ -191,11 +190,10 @@ class Window(QtWidgets.QDialog):
         return projects
 
     def on_project_change(self):
-        projects = self.get_filtered_projects()
         project_name = self.combo_projects.currentText()
         if not project_name:
             return
-        self.dbcon.activate_project(project_name)
+        self.dbcon.Session["AVALON_PROJECT"] = project_name
 
         _config = lib.find_config(self.dbcon)
         if hasattr(_config, "install"):

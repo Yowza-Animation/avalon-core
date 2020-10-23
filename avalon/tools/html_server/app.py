@@ -22,6 +22,7 @@ def index():
         "loader": "load...",
         "publish": "publish...",
         "sceneinventory": "manage...",
+        "projectmanager": "project manager",
     }
     for name, label in tools.items():
         scripts_html += """
@@ -48,8 +49,8 @@ def index():
 <html>
 <head>
     <style>
-      button {{width: 100%; background-color:#535353; color:#f0f0f0; font-family: "Segoe UI"}}
-      body {{margin:0; padding:0; height: 100%; background-color:#535353;}}
+      button {{width: 100%;}}
+      body {{margin:0; padding:0; height: 100%;}}
       html {{height: 100%;}}
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
@@ -87,6 +88,6 @@ class thread_server(WSGIRefServer):
 
 def start_server(port):
     """Starts the Bottle server at 'http://localhost:{port}'"""
-    server = thread_server(host="127.0.0.1", port=port)
+    server = thread_server(host="localhost", port=port)
     Thread(target=run, kwargs={"server": server}).start()
     return server

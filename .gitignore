@@ -12,6 +12,4 @@ _site
 build
 *.patch
 *.diff
-.idea/
-venv/
-/avalon/harmony/temp/
+Thumbs.db

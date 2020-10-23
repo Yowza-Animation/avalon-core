@@ -25,7 +25,7 @@ Separator = "---separator---"
 class SubsetNameValidator(QtGui.QRegExpValidator):
 
     invalid = QtCore.Signal(set)
-    pattern = "^[a-zA-Z0-9]*$"
+    pattern = "^[a-zA-Z0-9_.]*$"
 
     def __init__(self):
         reg = QtCore.QRegExp(self.pattern)
@@ -63,7 +63,8 @@ class SubsetNameLineEdit(QtWidgets.QLineEdit):
 
         validator = SubsetNameValidator()
         self.setValidator(validator)
-        self.setToolTip("Only alphanumeric characters (A-Z a-z 0-9)")
+        self.setToolTip("Only alphanumeric characters (A-Z a-z 0-9), "
+                        "'_' and '.' are allowed.")
 
         self._status_color = self.colors["empty"][0]
 
@@ -306,18 +307,17 @@ class Window(QtWidgets.QDialog):
             family = plugin.family.rsplit(".", 1)[-1]
             regex = "{}*".format(family)
             existed_subset_split = family
-            task = io.Session.get('AVALON_TASK', '')
-            sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
-            sanitized_task = sanitized_task[0].upper() + sanitized_task[1:]
-            if family in self.taskSubsetFamilies:
 
+            if family in self.taskSubsetFamilies:
+                task = io.Session.get('AVALON_TASK', '')
+                sanitized_task = re.sub('[^0-9a-zA-Z]+', '', task)
                 regex = "{}{}*".format(
                     family,
-                    sanitized_task
+                    sanitized_task.capitalize()
                 )
                 existed_subset_split = "{}{}".format(
                     family,
-                    sanitized_task
+                    sanitized_task.capitalize()
                 )
 
             # Get all subsets of the current asset
@@ -348,7 +348,7 @@ class Window(QtWidgets.QDialog):
             if family in self.taskSubsetFamilies:
                 result.setText("{}{}{}".format(
                     family,
-                    sanitized_task,
+                    sanitized_task.capitalize(),
                     subset_name
                 ))
             else:
@@ -404,7 +404,7 @@ class Window(QtWidgets.QDialog):
         if plugin.defaults and isinstance(plugin.defaults, list):
             default = plugin.defaults[0]
         else:
-            default = "main"
+            default = "Default"
 
         name.setText(default)
 

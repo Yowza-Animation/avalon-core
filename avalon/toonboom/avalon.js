@@ -146,7 +146,7 @@ function Client()
 function start()
 {
   var self = this;
-  var host = System.getenv("LOCALHOST_IP");
+  var host = "127.0.0.1";
   var port = parseInt(System.getenv("AVALON_TOONBOOM_PORT"));
 
   // Attach the client to the QApplication to preserve.
