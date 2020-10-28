@@ -116,7 +116,7 @@ class Server(object):
             self.log.debug("Connect to shutdown.")
             socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM
-            ).connect("127.0.0.1", self.port)
+            ).connect(("127.0.0.1", self.port))
 
         self.connection.close()
         self.connection = None
