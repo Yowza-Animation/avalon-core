@@ -10,6 +10,7 @@ import subprocess
 import importlib
 import logging
 import filecmp
+import getpass
 from uuid import uuid4
 
 from .server import Server
@@ -96,6 +97,7 @@ def check_libs():
         https://github.com/cfourney/OpenHarmony
 
     """
+    pass
     if not os.getenv("LIB_OPENHARMONY_PATH"):
 
         if os.getenv("TOONBOOM_GLOBAL_SCRIPT_LOCATION"):
@@ -157,8 +159,10 @@ def get_local_path(filepath):
     """From the provided path get the equivalent local path."""
     basename = os.path.splitext(os.path.basename(filepath))[0]
     harmony_path = os.path.join(
-        os.path.expanduser("~"), ".avalon", self.application_name
-    )
+        os.getenv("YOWZA_PIPE_PATH"),
+        "users",
+        getpass.getuser(),
+        self.application_name)
     return os.path.join(harmony_path, basename)
 
 

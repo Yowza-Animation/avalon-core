@@ -14,6 +14,8 @@ import contextlib
 import json
 import signal
 import time
+import getpass
+from uuid import uuid4
 
 from .server import Server
 from ..vendor.Qt import QtWidgets
@@ -108,7 +110,11 @@ def launch(application_path):
 def get_local_harmony_path(filepath):
     """From the provided path get the equivalent local Harmony path."""
     basename = os.path.splitext(os.path.basename(filepath))[0]
-    harmony_path = os.path.join(os.path.expanduser("~"), ".avalon", "harmony")
+    harmony_path = os.path.join(
+        os.getenv("YOWZA_PIPE_PATH"),
+        "users",
+        getpass.getuser(),
+        "harmony")
     return os.path.join(harmony_path, basename)
 
 
