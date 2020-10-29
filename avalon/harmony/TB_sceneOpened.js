@@ -354,16 +354,15 @@ function start() {
     app.avalonMenu = null;
 
     for (var i = 0 ; i < actions.length; i++) {
-        if (actions[i].text == 'Avalon') {
+        if (actions[i].text == 'Yowza') {
             app.avalonMenu = true;
         }
     }
 
     var menu = null;
     if (app.avalonMenu == null) {
-        menu = menuBar.addMenu('Avalon');
+        menu = menuBar.addMenu('Yowza');
     }
-    menu = menuBar.addMenu('Avalon');
 
     /**
      * Show creator
