@@ -10,7 +10,7 @@ gap between Python and QtScript.
 // include openharmony path
 var LD_OPENHARMONY_PATH = System.getenv('LIB_OPENHARMONY_PATH');
 include(LD_OPENHARMONY_PATH + '/openHarmony.js');
-this.__proto__["$"] = $;
+// this.__proto__["$"] = $;
 
 
 function Client() {
@@ -354,15 +354,16 @@ function start() {
     app.avalonMenu = null;
 
     for (var i = 0 ; i < actions.length; i++) {
-        if (actions[i].text == 'Yowza') {
+        if (actions[i].text == 'Avalon') {
             app.avalonMenu = true;
         }
     }
 
     var menu = null;
     if (app.avalonMenu == null) {
-        menu = menuBar.addMenu('Yowza');
+        menu = menuBar.addMenu('Avalon');
     }
+    menu = menuBar.addMenu('Avalon');
 
     /**
      * Show creator
