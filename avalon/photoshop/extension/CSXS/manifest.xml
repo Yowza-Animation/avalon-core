@@ -32,7 +32,7 @@
 		</Lifecycle>
         <UI>
           <Type>Panel</Type>
-          <Menu>Avalon</Menu>
+          <Menu>Yowza</Menu>
           <Geometry>
             <Size>
               <Width>300</Width>
