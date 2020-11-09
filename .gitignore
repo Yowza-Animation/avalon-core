@@ -13,3 +13,4 @@ build
 *.patch
 *.diff
 Thumbs.db
+!/avalon/photoshop/extension/.rnd
