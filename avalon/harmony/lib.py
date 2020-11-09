@@ -266,6 +266,7 @@ def zip_dir_helper(path,
         if is_path_valid(path, ignore_dirs, ignore_exts):
             relative_path = os.path.relpath(path, root_dir)
             zf.write(path, relative_path)
+            zf.close()
         return
 
     ls = os.listdir(path)
