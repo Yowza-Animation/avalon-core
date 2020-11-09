@@ -266,7 +266,6 @@ def zip_dir_helper(path,
         if is_path_valid(path, ignore_dirs, ignore_exts):
             relative_path = os.path.relpath(path, root_dir)
             zf.write(path, relative_path)
-            zf.close()
         return
 
     ls = os.listdir(path)
@@ -277,12 +276,11 @@ def zip_dir_helper(path,
         joined_path = os.path.join(path, subFileOrDir)
         zip_dir_helper(joined_path, root_dir, zf, ignore_dirs, ignore_exts)
 
+    zf.close()
 
 def zip_dir(path, zf, ignore_dirs=None, ignore_exts=None):
     root_dir = path if os.path.isdir(path) else os.path.dirname(path)
     zip_dir_helper(path, root_dir, zf, ignore_dirs, ignore_exts)
-    pass
-
 
 def zip_and_move(source, destination):
     """Zip a directory and move to `destination`.
