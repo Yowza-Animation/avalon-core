@@ -290,12 +290,13 @@ def zip_and_move(source, destination):
         destination (str): Destination file path to zip file.
 
     """
-    os.chdir(os.path.dirname(source))
-    # shutil.make_archive(os.path.basename(source), "zip", source)
-
     zip_filename = os.path.basename(source) + ".zip"
-    zip_file = zipfile.ZipFile(zip_filename, 'w')
-    zip_dir(source, zip_file, ["frames"], [".psd", ".zip"])
+    os.chdir(os.path.dirname(source))
+
+    shutil.make_archive(os.path.basename(source), "zip", source)
+
+    # zip_file = zipfile.ZipFile(zip_filename, 'w')
+    # zip_dir(source, zip_file, ["frames"], [".psd", ".zip"])
 
     with _ZipFile(zip_filename) as zr:
         if zr.testzip() is not None:
