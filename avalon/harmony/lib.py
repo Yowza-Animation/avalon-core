@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 """Utility functions used for Avalon - Harmony integration."""
-import subprocess
-import threading
-import os
-import random
-import zipfile
-import sys
-import importlib
-import queue
-import shutil
-import logging
 import contextlib
-import json
-import signal
-import time
 import getpass
+import importlib
+import json
+import os
+import queue
+import random
+import signal
+import subprocess
+
+import logging
+import shutil
+import sys
+import threading
+import time
+import zipfile
 from uuid import uuid4
 
 from .server import Server
-from ..vendor.Qt import QtWidgets
 from ..tools import workfiles
-from ..toonboom import setup_startup_scripts, check_libs
+from ..toonboom import check_libs, setup_startup_scripts
+from ..vendor.Qt import QtWidgets
 
 self = sys.modules[__name__]
 self.server = None
@@ -235,6 +236,53 @@ def on_file_changed(path, threaded=True):
         zip_and_move(os.path.dirname(path), self.workfile_path)
 
 
+def is_path_valid(path, ignore_dirs, ignore_exts):
+    base_dir = None
+    if os.path.isfile(path):
+        if ignore_exts:
+            _, ext = os.path.splitext(path)
+            if ext in ignore_exts:
+                return False
+
+        base_dir = os.path.dirname(path).split('\\/')
+    else:
+        if not ignore_dirs:
+            return True
+        base_dir = path.split('\\/')
+
+    for s in base_dir:
+        if s in ignore_dirs:  # You can also use set.intersection or [x for],
+            return False
+
+    return True
+
+
+def zip_dir_helper(path,
+                   root_dir,
+                   zip_basename,
+                   ignore_dirs=None,
+                   ignore_exts=None):
+    if os.path.isfile(path):
+        if is_path_valid(path, ignore_dirs, ignore_exts):
+            relative_path = os.path.relpath(path, root_dir)
+            zip_basename.write(path, relative_path)
+        return
+
+    ls = os.listdir(path)
+    for subFileOrDir in ls:
+        if not is_path_valid(subFileOrDir, ignore_dirs, ignore_exts):
+            continue
+
+        joined_path = os.path.join(path, subFileOrDir)
+        zip_dir_helper(joined_path, root_dir, zip_basename, ignore_dirs, ignore_exts)
+
+
+def zip_dir(path, zip_basename, ignore_dirs=None, ignore_exts=None):
+    root_dir = path if os.path.isdir(path) else os.path.dirname(path)
+    zip_dir_helper(path, root_dir, zip_basename, ignore_dirs, ignore_exts)
+    pass
+
+
 def zip_and_move(source, destination):
     """Zip a directory and move to `destination`.
 
@@ -244,7 +292,8 @@ def zip_and_move(source, destination):
 
     """
     os.chdir(os.path.dirname(source))
-    shutil.make_archive(os.path.basename(source), "zip", source)
+    # shutil.make_archive(os.path.basename(source), "zip", source)
+    zip_dir(source, os.path.basename(source), ["frames"], ["psd", "zip"])
     with _ZipFile(os.path.basename(source) + ".zip") as zr:
         if zr.testzip() is not None:
             raise Exception("File archive is corrupted.")
@@ -433,7 +482,7 @@ def save_scene():
     self.on_file_changed(scene_path, threaded=False)
 
     # Re-enable the background watcher.
-    self.send({"function": "AvalonHarmony.enableFileWather"})
+    self.send({"function": "AvalonHarmony.enableFileWatcher"})
 
 
 def save_scene_as(filepath):
