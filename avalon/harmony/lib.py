@@ -276,7 +276,6 @@ def zip_dir_helper(path,
         joined_path = os.path.join(path, subFileOrDir)
         zip_dir_helper(joined_path, root_dir, zf, ignore_dirs, ignore_exts)
 
-    zf.close()
 
 def zip_dir(path, zf, ignore_dirs=None, ignore_exts=None):
     root_dir = path if os.path.isdir(path) else os.path.dirname(path)
@@ -293,10 +292,11 @@ def zip_and_move(source, destination):
     zip_filename = os.path.basename(source) + ".zip"
     os.chdir(os.path.dirname(source))
 
-    shutil.make_archive(os.path.basename(source), "zip", source)
+    # shutil.make_archive(os.path.basename(source), "zip", source)
 
-    # zip_file = zipfile.ZipFile(zip_filename, 'w')
-    # zip_dir(source, zip_file, ["frames"], [".psd", ".zip"])
+    zip_file = zipfile.ZipFile(zip_filename, 'w')
+    zip_dir(source, zip_file, ["frames"], [".psd", ".zip"])
+    zip_file.close()
 
     with _ZipFile(zip_filename) as zr:
         if zr.testzip() is not None:
