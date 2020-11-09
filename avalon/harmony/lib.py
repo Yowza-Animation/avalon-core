@@ -259,13 +259,13 @@ def is_path_valid(path, ignore_dirs, ignore_exts):
 
 def zip_dir_helper(path,
                    root_dir,
-                   zip_basename,
+                   zf,
                    ignore_dirs=None,
                    ignore_exts=None):
     if os.path.isfile(path):
         if is_path_valid(path, ignore_dirs, ignore_exts):
             relative_path = os.path.relpath(path, root_dir)
-            zip_basename.write(path, relative_path)
+            zf.write(path, relative_path)
         return
 
     ls = os.listdir(path)
@@ -274,12 +274,12 @@ def zip_dir_helper(path,
             continue
 
         joined_path = os.path.join(path, subFileOrDir)
-        zip_dir_helper(joined_path, root_dir, zip_basename, ignore_dirs, ignore_exts)
+        zip_dir_helper(joined_path, root_dir, zf, ignore_dirs, ignore_exts)
 
 
-def zip_dir(path, zip_basename, ignore_dirs=None, ignore_exts=None):
+def zip_dir(path, zf, ignore_dirs=None, ignore_exts=None):
     root_dir = path if os.path.isdir(path) else os.path.dirname(path)
-    zip_dir_helper(path, root_dir, zip_basename, ignore_dirs, ignore_exts)
+    zip_dir_helper(path, root_dir, zf, ignore_dirs, ignore_exts)
     pass
 
 
@@ -293,10 +293,15 @@ def zip_and_move(source, destination):
     """
     os.chdir(os.path.dirname(source))
     # shutil.make_archive(os.path.basename(source), "zip", source)
-    zip_dir(source, os.path.basename(source), ["frames"], ["psd", "zip"])
-    with _ZipFile(os.path.basename(source) + ".zip") as zr:
+
+    zip_filename = os.path.basename(source) + ".zip"
+    zip_file = zipfile.ZipFile(zip_filename, 'w')
+    zip_dir(source, zip_file, ["frames"], [".psd", ".zip"])
+
+    with _ZipFile(zip_filename) as zr:
         if zr.testzip() is not None:
             raise Exception("File archive is corrupted.")
+
     shutil.move(os.path.basename(source) + ".zip", destination)
     self.log.debug(f"Saved '{source}' to '{destination}'")
 
