@@ -5,7 +5,7 @@ from ...vendor.Qt import QtWidgets, QtCore
 from ... import api, io, style
 
 from ..models import AssetModel
-from ..widgets import AssetWidget
+from ..widgets import AssetWidget, Toast
 from .. import lib
 
 from .widgets import (
@@ -115,6 +115,8 @@ class Window(QtWidgets.QDialog):
 
         # Defaults
         self.resize(1330, 700)
+
+        self.toast = Toast(self)
 
     # -------------------------------
     # Delay calling blocking methods

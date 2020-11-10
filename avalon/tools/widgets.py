@@ -1,15 +1,14 @@
 import logging
+import time
 
 from . import lib
-
+from .loader.delegates import AssetDelegate
 from .models import AssetModel, RecursiveSortFilterProxyModel
 from .views import AssetsView
-from .loader.delegates import AssetDelegate
-from ..vendor import qtawesome, qargparse
-from ..vendor.Qt import QtWidgets, QtCore, QtGui
-
-from .. import style
 from .. import io
+from .. import style
+from ..vendor import qargparse, qtawesome
+from ..vendor.Qt import QtCore, QtGui, QtWidgets
 
 log = logging.getLogger(__name__)
 
@@ -85,7 +84,7 @@ class AssetWidget(QtWidgets.QWidget):
 
     def _refresh_model(self):
         with lib.preserve_states(
-            self.view, column=0, role=self.model.ObjectIdRole
+                self.view, column=0, role=self.model.ObjectIdRole
         ):
             self.model.refresh()
 
@@ -150,7 +149,7 @@ class AssetWidget(QtWidgets.QWidget):
         # Select
         mode = selection_model.Select | selection_model.Rows
         for index in lib.iter_model_rows(
-            self.proxy, column=0, include_root=False
+                self.proxy, column=0, include_root=False
         ):
             # stop iteration if there are no assets to process
             if not assets:
@@ -364,3 +363,105 @@ class OptionDialog(QtWidgets.QDialog):
 
     def parse(self):
         return self._options.copy()
+
+
+class Toast(QtWidgets.QLabel):
+    """Animated Toast Notification for within an App like Workfiles or Loader"""
+
+    def __init__(self, parent):
+        """Toast Constructor
+        Args:
+            parent:
+        """
+        super(Toast, self).__init__(parent)
+
+        self._toast_height = 32
+        self._start_time = 0
+        self._anim_duration = 350
+        self._display_time = 8000
+        self._animation = QtCore.QSequentialAnimationGroup(self)
+
+        # This should start hidden
+        self.hide()
+
+    def _create_geo(self):
+        """
+
+        Returns:
+
+        """
+        window_size = self.window().size()
+        toast_width = window_size.width() * 0.5
+
+        return QtCore.QRect(
+            (window_size.width() - toast_width) / 2,
+            0,
+            toast_width,
+            self._toast_height
+            )
+
+    def show_toast(self,
+                   message,
+                   display_time=None,
+                   bg_color=None,
+                   txt_color=None):
+        """
+
+        Args:
+            message:
+            display_time:
+            bg_color:
+            txt_color:
+
+        Returns:
+
+        """
+        if not bg_color:
+            bg_color = self.palette().highlight().color().name()
+        if not txt_color:
+            txt_color = self.palette().text().color().name()
+        if display_time:
+            self._display_time = display_time
+
+        self.setStyleSheet(
+            """
+            background-color: {bg_color};
+            color: {txt_color};
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            """.format(bg_color=bg_color, txt_color=txt_color)
+        )
+
+        if self.parentWidget() != self.window():
+            self.setParent(self.window())
+
+        self._animation.clear()
+
+        self.setGeometry(self._create_geo())
+        self.setText(message)
+        self.show()
+        self._start_time = time.time()
+
+    def hide_toast(self):
+        """
+
+        Returns:
+
+        """
+        time_elapsed = (time.time() - self._start_time) * 1000
+
+        self._anim_pause = self._animation.addPause(
+            max(int(self._display_time - time_elapsed), 0)
+        )
+
+        expanded_pos = self._create_geo()
+        minimized_pos = expanded_pos.translated(0, - self._toast_height)
+
+        # Animate the slide out of toast
+        self._slide_out = QtCore.QPropertyAnimation(self, b"geometry")
+        self._slide_out.setDuration(self._anim_duration)
+        self._slide_out.setStartValue(expanded_pos)
+        self._slide_out.setEndValue(minimized_pos)
+        self._animation.addAnimation(self._slide_out)
+
+        self._animation.start()

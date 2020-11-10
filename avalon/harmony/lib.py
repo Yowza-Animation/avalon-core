@@ -236,50 +236,84 @@ def on_file_changed(path, threaded=True):
         zip_and_move(os.path.dirname(path), self.workfile_path)
 
 
-def is_path_valid(path, ignore_dirs, ignore_exts):
+def is_path_valid(path, ignored_dirs, ignored_exts):
+    """Returns True if the given path should be included in a zip file. Returns
+    False if the path should be ignored according to given ignored lists.
+    
+    Args:
+        path: 
+        ignored_dirs: 
+        ignored_exts: 
+
+    Returns:
+
+    """
     base_dir = None
     if os.path.isfile(path):
-        if ignore_exts:
+        if ignored_exts:
             _, ext = os.path.splitext(path)
-            if ext in ignore_exts:
+            if ext in ignored_exts:
                 return False
 
         base_dir = os.path.dirname(path).split('\\/')
     else:
-        if not ignore_dirs:
+        if not ignored_dirs:
             return True
         base_dir = path.split('\\/')
 
     for s in base_dir:
-        if s in ignore_dirs:  # You can also use set.intersection or [x for],
+        if s in ignored_dirs:
             return False
 
     return True
 
 
-def zip_dir_helper(path,
-                   root_dir,
-                   zf,
-                   ignore_dirs=None,
-                   ignore_exts=None):
+def add_to_zip_filtered(path,
+                        root_dir,
+                        zip_file_object,
+                        ignored_dirs=None,
+                        ignored_exts=None):
+    """Add a path to a zip file with filters.
+    
+    Args:
+        path: 
+        root_dir: 
+        zip_file_object: 
+        ignored_dirs: 
+        ignored_exts: 
+
+    Returns:
+
+    """
     if os.path.isfile(path):
-        if is_path_valid(path, ignore_dirs, ignore_exts):
+        if is_path_valid(path, ignored_dirs, ignored_exts):
             relative_path = os.path.relpath(path, root_dir)
-            zf.write(path, relative_path)
+            zip_file_object.write(path, relative_path)
         return
 
     ls = os.listdir(path)
     for subFileOrDir in ls:
-        if not is_path_valid(subFileOrDir, ignore_dirs, ignore_exts):
+        if not is_path_valid(subFileOrDir, ignored_dirs, ignored_exts):
             continue
 
         joined_path = os.path.join(path, subFileOrDir)
-        zip_dir_helper(joined_path, root_dir, zf, ignore_dirs, ignore_exts)
+        add_to_zip_filtered(joined_path, root_dir, zip_file_object, ignored_dirs, ignored_exts)
 
 
-def zip_dir(path, zf, ignore_dirs=None, ignore_exts=None):
+def zip_dir(path, zip_file_object, ignored_dirs=None, ignored_exts=None):
+    """
+    
+    Args:
+        path: 
+        zip_file_object: 
+        ignored_dirs: 
+        ignored_exts: 
+
+    Returns:
+
+    """
     root_dir = path if os.path.isdir(path) else os.path.dirname(path)
-    zip_dir_helper(path, root_dir, zf, ignore_dirs, ignore_exts)
+    add_to_zip_filtered(path, root_dir, zip_file_object, ignored_dirs, ignored_exts)
 
 def zip_and_move(source, destination):
     """Zip a directory and move to `destination`.
@@ -289,14 +323,19 @@ def zip_and_move(source, destination):
         destination (str): Destination file path to zip file.
 
     """
+
+    # Setup filename, change current directory to source's parent directory
     zip_filename = os.path.basename(source) + ".zip"
     os.chdir(os.path.dirname(source))
 
-    # shutil.make_archive(os.path.basename(source), "zip", source)
+    # We must first create a zip file object to work with
+    zip_file_object = zipfile.ZipFile(zip_filename, 'w')
 
-    zip_file = zipfile.ZipFile(zip_filename, 'w')
-    zip_dir(source, zip_file, ["frames"], [".psd", ".zip"])
-    zip_file.close()
+    # We don't need to zip frames or psd files that have already been imported
+    zip_dir(source, zip_file_object, ["frames"], [".psd", ".zip"])
+
+    # We must close the file or the archive will be corrupted in some cases.
+    zip_file_object.close()
 
     with _ZipFile(zip_filename) as zr:
         if zr.testzip() is not None:

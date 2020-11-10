@@ -147,7 +147,7 @@ AvalonHarmony.saveScene = function() {
  * Enable Harmony file-watcher.
  * @function
  */
-AvalonHarmony.enableFileWather = function() {
+AvalonHarmony.enableFileWatcher = function() {
     var app = QCoreApplication.instance();
     app.avalon_on_file_changed = true;
 };
