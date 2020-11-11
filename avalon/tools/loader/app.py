@@ -117,7 +117,7 @@ class Window(QtWidgets.QDialog):
         self.resize(1330, 700)
 
         self.toast = Toast(self)
-
+        self.toast.show_toast("This is a test!", 150000, "red", "white")
     # -------------------------------
     # Delay calling blocking methods
     # -------------------------------
