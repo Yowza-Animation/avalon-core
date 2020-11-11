@@ -375,7 +375,7 @@ class Toast(QtWidgets.QLabel):
         """
         super(Toast, self).__init__(parent)
 
-        self._toast_height = 32
+        self._toast_height = 24
         self._start_time = 0
         self._anim_duration = 350
         self._display_time = 8000
@@ -427,8 +427,9 @@ class Toast(QtWidgets.QLabel):
             """
             background-color: {bg_color};
             color: {txt_color};
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
+            padding: 8px;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
             """.format(bg_color=bg_color, txt_color=txt_color)
         )
 

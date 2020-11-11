@@ -25,7 +25,7 @@ class Window(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
         self.setWindowTitle(
-            "Asset Loader 2.1 - {}".format(api.Session.get("AVALON_PROJECT"))
+            "Asset Loader 2.1.1 - {}".format(api.Session.get("AVALON_PROJECT"))
         )
 
         # Enable minimize and maximize for app
@@ -117,7 +117,12 @@ class Window(QtWidgets.QDialog):
         self.resize(1330, 700)
 
         self.toast = Toast(self)
-        self.toast.show_toast("This is a test!", 150000, "red", "white")
+        self.toast.show_toast(
+            message="This is an example of the toast notification!",
+            display_time=8000,
+            bg_color="red",
+            txt_color="white")
+
     # -------------------------------
     # Delay calling blocking methods
     # -------------------------------
