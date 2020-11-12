@@ -117,11 +117,6 @@ class Window(QtWidgets.QDialog):
         self.resize(1330, 700)
 
         self.toast = Toast(self)
-        self.toast.show_toast(
-            message="This is an example of the toast notification!",
-            display_time=8000,
-            bg_color="red",
-            txt_color="white")
 
     # -------------------------------
     # Delay calling blocking methods

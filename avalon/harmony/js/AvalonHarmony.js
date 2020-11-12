@@ -15,11 +15,11 @@ var AvalonHarmony = {};
  * @function
  * @return {object} Scene metadata.
  */
-AvalonHarmony.getSceneData = function() {
+AvalonHarmony.getSceneData = function () {
     var metadata = scene.metadata('avalon');
-    if (metadata){
+    if (metadata) {
         return JSON.parse(metadata.value);
-    }else {
+    } else {
         return {};
     }
 };
@@ -30,14 +30,38 @@ AvalonHarmony.getSceneData = function() {
  * @function
  * @param {object} metadata Object containing metadata.
  */
-AvalonHarmony.setSceneData = function(metadata) {
+AvalonHarmony.setSceneData = function (metadata) {
     scene.setMetadata({
-        'name'       : 'avalon',
-        'type'       : 'string',
-        'creator'    : 'Avalon',
-        'version'    : '1.0',
-        'value'      : JSON.stringify(metadata)
+        'name': 'avalon',
+        'type': 'string',
+        'creator': 'Avalon',
+        'version': '1.0',
+        'value': JSON.stringify(metadata)
     });
+};
+
+/**
+ * Get the current group in Harmony
+ * @function
+ * @return {String} A string representing the currently open group in the
+ * Node View, else "Top" if no Node View is currently open
+ */
+AvalonHarmony.getCurrentGroup = function () {
+    nodeView = '';
+    for (i = 0; i < 200; i++) {
+        nodeView = 'View' + (i);
+        if (view.type(nodeView) == 'Node View') {
+            break;
+        }
+    }
+
+    var currentGroup = "Top"
+    if (nodeView) {
+        currentGroup = view.group(nodeView);
+    }
+
+    return currentGroup;
+
 };
 
 
@@ -49,7 +73,7 @@ AvalonHarmony.setSceneData = function(metadata) {
 AvalonHarmony.getSelectedNodes = function () {
     var selectionLength = selection.numberOfNodesSelected();
     var selectedNodes = [];
-    for (var i = 0 ; i < selectionLength; i++) {
+    for (var i = 0; i < selectionLength; i++) {
         selectedNodes.push(selection.selectedNode(i));
     }
     return selectedNodes;
@@ -61,9 +85,9 @@ AvalonHarmony.getSelectedNodes = function () {
  * @function
  * @param {array} nodes Arrya containing node paths to add to selection.
  */
-AvalonHarmony.selectNodes = function(nodes) {
+AvalonHarmony.selectNodes = function (nodes) {
     selection.clearSelection();
-    for (var i = 0 ; i < nodes.length; i++) {
+    for (var i = 0; i < nodes.length; i++) {
         selection.addNodeToSelection(nodes[i]);
     }
 };
@@ -75,7 +99,7 @@ AvalonHarmony.selectNodes = function(nodes) {
  * @param {string} node Node path.
  * @return {boolean} state
  */
-AvalonHarmony.isEnabled = function(node) {
+AvalonHarmony.isEnabled = function (node) {
     return node.getEnable(node);
 };
 
@@ -86,9 +110,9 @@ AvalonHarmony.isEnabled = function(node) {
  * @param {array} nodes Array of node paths.
  * @return {array} array of boolean states.
  */
-AvalonHarmony.areEnabled = function(nodes) {
+AvalonHarmony.areEnabled = function (nodes) {
     var states = [];
-    for (var i = 0 ; i < nodes.length; i++) {
+    for (var i = 0; i < nodes.length; i++) {
         states.push(node.getEnable(nodes[i]));
     }
     return states;
@@ -100,14 +124,14 @@ AvalonHarmony.areEnabled = function(nodes) {
  * @function
  * @param {array} args Array of nodes array and states array.
  */
-AvalonHarmony.setState = function(args) {
+AvalonHarmony.setState = function (args) {
     var nodes = args[0];
     var states = args[1];
     // length of both arrays must be equal.
     if (nodes.length !== states.length) {
         return false;
     }
-    for (var i = 0 ; i < nodes.length; i++) {
+    for (var i = 0; i < nodes.length; i++) {
         node.setEnable(nodes[i], states[i]);
     }
     return true;
@@ -119,9 +143,8 @@ AvalonHarmony.setState = function(args) {
  * @function
  * @param {array} nodes Array of nodes.
  */
-AvalonHarmony.disableNodes = function(nodes) {
-    for (var i = 0 ; i < nodes.length; i++)
-    {
+AvalonHarmony.disableNodes = function (nodes) {
+    for (var i = 0; i < nodes.length; i++) {
         node.setEnable(nodes[i], false);
     }
 };
@@ -132,13 +155,13 @@ AvalonHarmony.disableNodes = function(nodes) {
  * @function
  * @return {string} Scene path.
  */
-AvalonHarmony.saveScene = function() {
+AvalonHarmony.saveScene = function () {
     var app = QCoreApplication.instance();
     app.avalon_on_file_changed = false;
     scene.saveAll();
     return (
         scene.currentProjectPath() + '/' +
-          scene.currentVersionName() + '.xstage'
+        scene.currentVersionName() + '.xstage'
     );
 };
 
@@ -147,7 +170,7 @@ AvalonHarmony.saveScene = function() {
  * Enable Harmony file-watcher.
  * @function
  */
-AvalonHarmony.enableFileWatcher = function() {
+AvalonHarmony.enableFileWatcher = function () {
     var app = QCoreApplication.instance();
     app.avalon_on_file_changed = true;
 };
@@ -158,7 +181,7 @@ AvalonHarmony.enableFileWatcher = function() {
  * @function
  * @param {string} path Path to watch.
  */
-AvalonHarmony.addPathToWatcher = function(path) {
+AvalonHarmony.addPathToWatcher = function (path) {
     var app = QCoreApplication.instance();
     app.watcher.addPath(path);
 };
@@ -169,7 +192,7 @@ AvalonHarmony.addPathToWatcher = function(path) {
  * @function
  * @param {string} node Node path.
  */
-AvalonHarmony.setupNodeForCreator = function(node) {
+AvalonHarmony.setupNodeForCreator = function (node) {
     node.setTextAttr(node, 'COMPOSITE_MODE', 1, 'Pass Through');
 };
 
@@ -180,7 +203,7 @@ AvalonHarmony.setupNodeForCreator = function(node) {
  * @param {string} nodeType Node type.
  * @return {array} Node names.
  */
-AvalonHarmony.getNodesNamesByType = function(nodeType) {
+AvalonHarmony.getNodesNamesByType = function (nodeType) {
     var nodes = node.getNodes(nodeType);
     var nodeNames = [];
     for (var i = 0; i < nodes.length; ++i) {
@@ -204,7 +227,7 @@ AvalonHarmony.getNodesNamesByType = function(nodeType) {
  *  selection
  * ];
  */
-AvalonHarmony.createContainer = function(args) {
+AvalonHarmony.createContainer = function (args) {
     var resultNode = node.add('Top', args[0], args[1], 0, 0, 0);
     if (args.length > 2) {
         node.link(args[2], 0, resultNode, 0, false, true);
