@@ -331,8 +331,9 @@ def zip_and_move(source, destination):
     # We must first create a zip file object to work with
     zip_file_object = zipfile.ZipFile(zip_filename, 'w')
 
-    # We don't need to zip frames or psd files that have already been imported
-    zip_dir(source, zip_file_object, ["frames"], [".psd", ".zip"])
+    # We don't need to zip frames or zip files...
+    # @TODO: can there be logic to tell if a .psd is used in the scene here?
+    zip_dir(source, zip_file_object, ["frames"], [".zip"])
 
     # We must close the file or the archive will be corrupted in some cases.
     zip_file_object.close()
