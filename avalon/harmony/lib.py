@@ -527,7 +527,7 @@ def save_scene():
     self.on_file_changed(scene_path, threaded=False)
 
     # Re-enable the background watcher.
-    self.send({"function": "AvalonHarmony.enableFileWatcher"})
+    # self.send({"function": "AvalonHarmony.enableFileWatcher"})
 
 
 def save_scene_as(filepath):
@@ -553,9 +553,9 @@ def save_scene_as(filepath):
 
     self.workfile_path = destination
 
-    send(
-        {"function": "AvalonHarmony.addPathToWatcher", "args": filepath}
-    )
+    # send(
+    #     {"function": "AvalonHarmony.addPathToWatcher", "args": filepath}
+    # )
 
 
 def find_node_by_name(name, node_type):

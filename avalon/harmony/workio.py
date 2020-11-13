@@ -50,9 +50,9 @@ def save_file(filepath):
         scene_path = os.path.join(
             temp_path, os.path.basename(temp_path) + ".xstage"
         )
-        lib.server.send(
-            {"function": "AvalonHarmony.addPathToWatcher", "args": scene_path}
-        )
+        # lib.server.send(
+        #     {"function": "AvalonHarmony.addPathToWatcher", "args": scene_path}
+        # )
     else:
         os.environ["HARMONY_NEW_WORKFILE_PATH"] = filepath.replace("\\", "/")
 
