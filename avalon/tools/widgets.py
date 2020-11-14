@@ -2,13 +2,15 @@ import logging
 import time
 
 from . import lib
-from .loader.delegates import AssetDelegate
+
 from .models import AssetModel, RecursiveSortFilterProxyModel
 from .views import AssetsView
-from .. import io
+from .loader.delegates import AssetDelegate
+from ..vendor import qtawesome, qargparse
+from ..vendor.Qt import QtWidgets, QtCore, QtGui
+
 from .. import style
-from ..vendor import qargparse, qtawesome
-from ..vendor.Qt import QtCore, QtGui, QtWidgets
+from .. import io
 
 log = logging.getLogger(__name__)
 
@@ -84,7 +86,7 @@ class AssetWidget(QtWidgets.QWidget):
 
     def _refresh_model(self):
         with lib.preserve_states(
-                self.view, column=0, role=self.model.ObjectIdRole
+            self.view, column=0, role=self.model.ObjectIdRole
         ):
             self.model.refresh()
 
@@ -149,7 +151,7 @@ class AssetWidget(QtWidgets.QWidget):
         # Select
         mode = selection_model.Select | selection_model.Rows
         for index in lib.iter_model_rows(
-                self.proxy, column=0, include_root=False
+            self.proxy, column=0, include_root=False
         ):
             # stop iteration if there are no assets to process
             if not assets:
