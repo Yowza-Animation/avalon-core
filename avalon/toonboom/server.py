@@ -24,7 +24,7 @@ class Server(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = ("127.0.0.1", port)
+        server_address = ("localhost", port)
         self.log.debug("Starting up on {}".format(server_address))
         self.socket.bind(server_address)
 
