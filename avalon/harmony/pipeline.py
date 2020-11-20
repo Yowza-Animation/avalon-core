@@ -120,7 +120,6 @@ def containerise(name,
                  context,
                  loader=None,
                  suffix=None,
-                 nodes = None,
                  data={}):
     """Imprint node with metadata.
 
@@ -134,7 +133,6 @@ def containerise(name,
         context (dict): Asset information.
         loader (str, optional): Name of loader used to produce this container.
         suffix (str, optional): Suffix of container, defaults to `_CON`.
-        nodes (list, optional): A list of the top-level nodes of the container
         data (dict, optional): A dict of extra info used for actions
     Returns:
         container (str): Path of container assembly.
@@ -146,7 +144,6 @@ def containerise(name,
         "namespace": namespace,
         "loader": str(loader),
         "representation": str(context["representation"]["_id"]),
-        "nodes": nodes,
         "data": data,
         "objectName": node,
     }
