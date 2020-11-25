@@ -30,8 +30,8 @@ function Client() {
      * @param   {int} num 32 bit integer
      * @return  {string}
      */
-    self.pack = function(num) {
-        var ascii='';
+    self.pack = function (num) {
+        var ascii = '';
         for (var i = 3; i >= 0; i--) {
             ascii += String.fromCharCode((num >> (8 * i)) & 255);
         }
@@ -44,8 +44,8 @@ function Client() {
      * @param   {string} numString bytes to unpack
      * @return  {int} 32bit unsigned integer.
      */
-    self.unpack = function(numString) {
-        var result=0;
+    self.unpack = function (numString) {
+        var result = 0;
         for (var i = 3; i >= 0; i--) {
             result += numString.charCodeAt(3 - i) << (8 * i);
         }
@@ -58,7 +58,7 @@ function Client() {
      * @param   {object} json json to process
      * @return  {string} prettified json string
      */
-    self.prettifyJson = function(json) {
+    self.prettifyJson = function (json) {
         var jsonString = JSON.stringify(json);
         return JSON.stringify(JSON.parse(jsonString), null, 2);
     };
@@ -68,8 +68,8 @@ function Client() {
      * @function
      * @param {string} data - message
      */
-    self.logDebug = function(data) {
-        var message = typeof(data.message) != 'undefined' ? data.message : data;
+    self.logDebug = function (data) {
+        var message = typeof (data.message) != 'undefined' ? data.message : data;
         MessageLog.trace('(DEBUG): ' + message.toString());
     };
 
@@ -78,8 +78,8 @@ function Client() {
      * @function
      * @param {string} data - message
      */
-    self.logInfo = function(data) {
-        var message = typeof(data.message) != 'undefined' ? data.message : data;
+    self.logInfo = function (data) {
+        var message = typeof (data.message) != 'undefined' ? data.message : data;
         MessageLog.trace('(DEBUG): ' + message.toString());
     };
 
@@ -88,8 +88,8 @@ function Client() {
      * @function
      * @param {string} data - message
      */
-    self.logWarning = function(data) {
-        var message = typeof(data.message) != 'undefined' ? data.message : data;
+    self.logWarning = function (data) {
+        var message = typeof (data.message) != 'undefined' ? data.message : data;
         MessageLog.trace('(INFO): ' + message.toString());
     };
 
@@ -98,9 +98,9 @@ function Client() {
      * @function
      * @param {string} data - message
      */
-    self.logError = function(data) {
-        var message = typeof(data.message) != 'undefined' ? data.message : data;
-        MessageLog.trace('(ERROR): ' +message.toString());
+    self.logError = function (data) {
+        var message = typeof (data.message) != 'undefined' ? data.message : data;
+        MessageLog.trace('(ERROR): ' + message.toString());
     };
 
     /**
@@ -108,7 +108,7 @@ function Client() {
      * @function
      * @param {string} msg - message
      */
-    self.showMessage = function(msg) {
+    self.showMessage = function (msg) {
         MessageBox.information(msg);
     };
 
@@ -120,7 +120,7 @@ function Client() {
      * @param {int}      interval interval in milliseconds.
      * @param {boolean}  single   behave as setTimeout or setInterval.
      */
-    self.setTimeout = function(fc, interval, single) {
+    self.setTimeout = function (fc, interval, single) {
         var timer = new QTimer();
         if (!single) {
             timer.singleShot = true; // in-case if setTimout and false in-case of setInterval
@@ -129,7 +129,7 @@ function Client() {
         }
         timer.interval = interval; // set the time in milliseconds
         timer.singleShot = true; // in-case if setTimout and false in-case of setInterval
-        timer.timeout.connect(this, function(){
+        timer.timeout.connect(this, function () {
             fc.call();
         });
         timer.start();
@@ -142,13 +142,13 @@ function Client() {
      * @param  {object} request - recieved request JSON
      * @return {object} result of evaled function.
      */
-    self.processRequest = function(request) {
+    self.processRequest = function (request) {
         var mid = request.message_id;
         if (typeof request.reply !== 'undefined') {
-            self.logDebug('['+ mid +'] *** received reply.');
+            self.logDebug('[' + mid + '] *** received reply.');
             return;
         }
-        self.logDebug('['+ mid +'] - Processing: ' + self.prettifyJson(request));
+        self.logDebug('[' + mid + '] - Processing: ' + self.prettifyJson(request));
         var result = null;
 
         if (typeof request.script !== 'undefined') {
@@ -169,9 +169,9 @@ function Client() {
                 }
             } catch (error) {
                 result = 'Error processing request.\n' +
-                         'Request:\n' +
-                         self.prettifyJson(request) + '\n' +
-                         'Error:\n' + error;
+                    'Request:\n' +
+                    self.prettifyJson(request) + '\n' +
+                    'Error:\n' + error;
             }
         } else {
             self.logError('Command type not implemented.');
@@ -184,9 +184,9 @@ function Client() {
      * This gets called when socket received new data.
      * @function
      */
-    self.onReadyRead = function() {
+    self.onReadyRead = function () {
         var currentSize = self.buffer.size();
-        self.logDebug('--- Receiving data ( '+ currentSize + ' )...');
+        self.logDebug('--- Receiving data ( ' + currentSize + ' )...');
         var newData = self.socket.readAll();
         var newSize = newData.size();
         self.buffer.append(newData);
@@ -199,7 +199,7 @@ function Client() {
      * This detects messages by looking for header and message length.
      * @function
      */
-    self.processBuffer = function() {
+    self.processBuffer = function () {
         var length = self.waitingForData;
         if (self.waitingForData == 0) {
             // read header from the buffer and remove it
@@ -262,7 +262,7 @@ function Client() {
      * Run when Harmony connects to server.
      * @function
      */
-    self.onConnected = function() {
+    self.onConnected = function () {
         self.logDebug('Connected to server ...');
         self.lock = false;
         self.socket.readyRead.connect(self.onReadyRead);
@@ -276,7 +276,7 @@ function Client() {
             }, false);
     };
 
-    self._send = function(message) {
+    self._send = function (message) {
         var data = new QByteArray();
         var outstr = new QDataStream(data, QIODevice.WriteOnly);
         outstr.writeInt(0);
@@ -292,7 +292,7 @@ function Client() {
         self.logDebug('Sent.');
     };
 
-    self.waitForLock = function() {
+    self.waitForLock = function () {
         if (self._lock === false) {
             self.logDebug('>>> Unlocking ...');
             return;
@@ -306,7 +306,7 @@ function Client() {
      * Send request to server.
      * @param {object} request - json encoded request.
      */
-    self.send = function(request) {
+    self.send = function (request) {
         request.message_id = self.messageId;
         if (typeof request.reply == 'undefined') {
             self.logDebug("[" + self.messageId + "] sending:\n" + self.prettifyJson(request));
@@ -317,14 +317,14 @@ function Client() {
     /**
      * Executed on disconnection.
      */
-    self.onDisconnected = function() {
+    self.onDisconnected = function () {
         self.socket.close();
     };
 
     /**
      * Disconnect from server.
      */
-    self.disconnect = function() {
+    self.disconnect = function () {
         self.socket.close();
     };
 
@@ -353,7 +353,7 @@ function start() {
     var actions = menuBar.actions();
     app.avalonMenu = null;
 
-    for (var i = 0 ; i < actions.length; i++) {
+    for (var i = 0; i < actions.length; i++) {
         if (actions[i].text == 'Yowza') {
             app.avalonMenu = true;
         }
@@ -368,7 +368,7 @@ function start() {
     /**
      * Show creator
      */
-    self.onCreator = function() {
+    self.onCreator = function () {
         app.avalonClient.send({
             'module': 'avalon.harmony.lib',
             'method': 'show',
@@ -383,7 +383,7 @@ function start() {
     /**
      * Show Workfiles
      */
-    self.onWorkfiles = function() {
+    self.onWorkfiles = function () {
         app.avalonClient.send({
             'module': 'avalon.harmony.lib',
             'method': 'show',
@@ -398,7 +398,7 @@ function start() {
     /**
      * Show Loader
      */
-    self.onLoad = function() {
+    self.onLoad = function () {
         app.avalonClient.send({
             'module': 'avalon.harmony.lib',
             'method': 'show',
@@ -414,7 +414,7 @@ function start() {
     /**
      * Show Publisher
      */
-    self.onPublish = function() {
+    self.onPublish = function () {
         app.avalonClient.send({
             'module': 'avalon.harmony.lib',
             'method': 'show',
@@ -430,7 +430,7 @@ function start() {
     /**
      * Show Scene Manager
      */
-    self.onManage = function() {
+    self.onManage = function () {
         app.avalonClient.send({
             'module': 'avalon.harmony.lib',
             'method': 'show',
@@ -446,8 +446,8 @@ function start() {
     /**
      * Sync Scene Settings
      */
-    self.onSyncScene = function() {
-       ensureSceneSettings();
+    self.onSyncScene = function () {
+        ensureSceneSettings();
     };
     // add Sync Scene Settings item to menu
     if (app.avalonMenu == null) {
@@ -484,25 +484,25 @@ function start() {
 	app.watcher.fileChanged.connect(app.onFileChanged);
   app.avalonOnFileChanged = true;
   */
-    app.onFileChanged = function(path) {
+    app.onFileChanged = function (path) {
         // empty stub
         return path;
     };
 }
 
 function ensureSceneSettings() {
-  var app = QCoreApplication.instance();
-  app.avalon_client.send(
-    {
-      "module": "pype.hosts.harmony",
-      "method": "ensure_scene_settings",
-      "args": []
-    },
-    false
-  );
+    MessageLog.trace("Syncing Scene Settings...")
+    var app = QCoreApplication.instance();
+    app.avalon_client.send(
+        {
+            "module": "pype.hosts.harmony",
+            "method": "ensure_scene_settings",
+            "args": []
+        },
+        false
+    );
 }
 
-function TB_sceneOpened()
-{
-  start();
+function TB_sceneOpened() {
+    start();
 }
