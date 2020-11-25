@@ -443,6 +443,18 @@ function start() {
         action.triggered.connect(self.onManage);
     }
 
+    /**
+     * Sync Scene Settings
+     */
+    self.onSyncScene = function() {
+       ensureSceneSettings();
+    };
+    // add Sync Scene Settings item to menu
+    if (app.avalonMenu == null) {
+        action = menu.addAction('Sync Scene Settings...');
+        action.triggered.connect(self.onSyncScene);
+    }
+
     // FIXME(antirotor): We need to disable `on_file_changed` now as is wreak
     // havoc when "Save" is called multiple times and zipping didn't finished yet
     /*
