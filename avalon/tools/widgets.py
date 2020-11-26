@@ -25,15 +25,14 @@ class AssetWidget(QtWidgets.QWidget):
 
     """
 
-    assets_refreshed = QtCore.Signal()   # on model refresh
+    refresh_triggered = QtCore.Signal()   # on model refresh
+    refreshed = QtCore.Signal()
     selection_changed = QtCore.Signal()  # on view selection change
     current_changed = QtCore.Signal()    # on view current index change
 
-    def __init__(self, multiselection=False, dbcon=None, parent=None):
+    def __init__(self, dbcon, multiselection=False, parent=None):
         super(AssetWidget, self).__init__(parent=parent)
 
-        if dbcon is None:
-            dbcon = io
         self.dbcon = dbcon
 
         self.setContentsMargins(0, 0, 0, 0)
@@ -84,13 +83,29 @@ class AssetWidget(QtWidgets.QWidget):
         self.proxy = proxy
         self.view = view
 
-    def _refresh_model(self):
-        with lib.preserve_states(
-            self.view, column=0, role=self.model.ObjectIdRole
-        ):
-            self.model.refresh()
+        self.model_selection = {}
 
-        self.assets_refreshed.emit()
+    def _refresh_model(self):
+        # Store selection
+        self._store_model_selection()
+        time_start = time.time()
+
+        self.set_loading_state(
+            loading=True,
+            empty=True
+        )
+        # Refresh model
+        self.model.refresh()
+
+        def on_refreshed(has_item):
+            self.set_loading_state(loading=False, empty=not has_item)
+            self._restore_model_selection()
+            self.model.refreshed.disconnect()
+            self.refreshed.emit()
+            print("Duration: %.3fs" % (time.time() - time_start))
+
+        self.model.refreshed.connect(on_refreshed)
+        self.refresh_triggered.emit()
 
     def refresh(self):
         self._refresh_model()
@@ -171,6 +186,100 @@ class AssetWidget(QtWidgets.QWidget):
 
             # Set the currently active index
             self.view.setCurrentIndex(index)
+
+    def set_loading_state(self, loading, empty):
+        if self.view.is_loading != loading:
+            if loading:
+                self.view.spinner.repaintNeeded.connect(
+                    self.view.viewport().update
+                )
+            else:
+                self.view.spinner.repaintNeeded.disconnect()
+
+        self.view.is_loading = loading
+        self.view.is_empty = empty
+
+    def _store_model_selection(self):
+        index = self.view.currentIndex()
+        current = None
+        if index and index.isValid():
+            current = index.data(self.model.ObjectIdRole)
+
+        expanded = set()
+        model = self.view.model()
+        for index in lib.iter_model_rows(
+            model, column=0, include_root=False
+        ):
+            if self.view.isExpanded(index):
+                value = index.data(self.model.ObjectIdRole)
+                expanded.add(value)
+
+        selection_model = self.view.selectionModel()
+
+        selected = None
+        selected_rows = selection_model.selectedRows()
+        if selected_rows:
+            selected = set(
+                row.data(self.model.ObjectIdRole)
+                for row in selected_rows
+            )
+
+        self.model_selection = {
+            "expanded": expanded,
+            "selected": selected,
+            "current": current
+        }
+
+    def _restore_model_selection(self):
+        model = self.view.model()
+        not_set = object()
+        expanded = self.model_selection.pop("expanded", not_set)
+        selected = self.model_selection.pop("selected", not_set)
+        current = self.model_selection.pop("current", not_set)
+
+        if (
+            expanded is not_set
+            or selected is not_set
+            or current is not_set
+        ):
+            return
+
+        if expanded:
+            for index in lib.iter_model_rows(
+                model, column=0, include_root=False
+            ):
+                is_expanded = index.data(self.model.ObjectIdRole) in expanded
+                self.view.setExpanded(index, is_expanded)
+
+        if selected or current:
+            current_index = None
+            selected_indexes = []
+            # Go through all indices, select the ones with similar data
+            for index in lib.iter_model_rows(
+                model, column=0, include_root=False
+            ):
+                object_id = index.data(self.model.ObjectIdRole)
+                if object_id in selected:
+                    selected_indexes.append(index)
+
+                if not current_index and object_id == current:
+                    current_index = index
+
+            if current_index:
+                self.view.setCurrentIndex(current_index)
+
+            if not selected_indexes:
+                return
+            selection_model = self.view.selectionModel()
+            flags = selection_model.Select | selection_model.Rows
+            for index in selected_indexes:
+                # Ensure item is visible
+                self.view.scrollTo(index)
+                selection_model.select(index, flags)
+        else:
+            asset_name = self.dbcon.Session.get("AVALON_ASSET")
+            if asset_name:
+                self.select_assets([asset_name])
 
 
 class OptionalMenu(QtWidgets.QMenu):
@@ -365,106 +474,3 @@ class OptionDialog(QtWidgets.QDialog):
 
     def parse(self):
         return self._options.copy()
-
-
-class Toast(QtWidgets.QLabel):
-    """Animated Toast Notification for within an App like Workfiles or Loader"""
-
-    def __init__(self, parent):
-        """Toast Constructor
-        Args:
-            parent:
-        """
-        super(Toast, self).__init__(parent)
-
-        self._toast_height = 24
-        self._start_time = 0
-        self._anim_duration = 350
-        self._display_time = 8000
-        self._animation = QtCore.QSequentialAnimationGroup(self)
-
-        # This should start hidden
-        self.hide()
-
-    def _create_geo(self):
-        """
-
-        Returns:
-
-        """
-        window_size = self.window().size()
-        toast_width = window_size.width() * 0.5
-
-        return QtCore.QRect(
-            (window_size.width() - toast_width) / 2,
-            0,
-            toast_width,
-            self._toast_height
-            )
-
-    def show_toast(self,
-                   message,
-                   display_time=None,
-                   bg_color=None,
-                   txt_color=None):
-        """
-
-        Args:
-            message:
-            display_time:
-            bg_color:
-            txt_color:
-
-        Returns:
-
-        """
-        if not bg_color:
-            bg_color = self.palette().highlight().color().name()
-        if not txt_color:
-            txt_color = self.palette().text().color().name()
-        if display_time:
-            self._display_time = display_time
-
-        self.setStyleSheet(
-            """
-            background-color: {bg_color};
-            color: {txt_color};
-            padding: 8px;
-            border-bottom-left-radius: 6px;
-            border-bottom-right-radius: 6px;
-            """.format(bg_color=bg_color, txt_color=txt_color)
-        )
-
-        if self.parentWidget() != self.window():
-            self.setParent(self.window())
-
-        self._animation.clear()
-
-        self.setGeometry(self._create_geo())
-        self.setText(message)
-        self.show()
-        self._start_time = time.time()
-
-    def hide_toast(self):
-        """
-
-        Returns:
-
-        """
-        time_elapsed = (time.time() - self._start_time) * 1000
-
-        self._anim_pause = self._animation.addPause(
-            max(int(self._display_time - time_elapsed), 0)
-        )
-
-        expanded_pos = self._create_geo()
-        minimized_pos = expanded_pos.translated(0, - self._toast_height)
-
-        # Animate the slide out of toast
-        self._slide_out = QtCore.QPropertyAnimation(self, b"geometry")
-        self._slide_out.setDuration(self._anim_duration)
-        self._slide_out.setStartValue(expanded_pos)
-        self._slide_out.setEndValue(minimized_pos)
-        self._animation.addAnimation(self._slide_out)
-
-        self._animation.start()
