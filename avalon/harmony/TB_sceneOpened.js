@@ -447,16 +447,7 @@ function start() {
      * Sync Scene Settings
      */
     self.onSyncScene = function () {
-        MessageLog.trace("Syncing Scene Settings...")
-        var app = QCoreApplication.instance();
-        app.avalon_client.send(
-            {
-                "module": "pype.hosts.harmony",
-                "method": "ensure_scene_settings",
-                "args": []
-            },
-            false
-        );
+        ensureSceneSettings()
     };
     // add Sync Scene Settings item to menu
     if (app.avalonMenu == null) {
@@ -502,7 +493,7 @@ function start() {
 function ensureSceneSettings() {
     MessageLog.trace("Syncing Scene Settings...")
     var app = QCoreApplication.instance();
-    app.avalon_client.send(
+    app.avalonClient.send(
         {
             "module": "pype.hosts.harmony",
             "method": "ensure_scene_settings",
