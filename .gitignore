@@ -19,3 +19,7 @@ node_modules/
 package-lock.json
 
 Thumbs.db
+
+#Jetbrains Pycharm
+######################
+.idea/
