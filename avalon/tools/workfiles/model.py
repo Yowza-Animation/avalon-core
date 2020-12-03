@@ -1,23 +1,29 @@
-import os
 import logging
+import os
+import subprocess
+import sys
 
+from ..models import Item, TreeModel
 from ... import style
-from ...vendor.Qt import QtCore
 from ...vendor import qtawesome
+from ...vendor.Qt import QtCore
 
-from ..models import TreeModel, Item
+from avalon.api import AvalonMongoDB
+from avalon import io
 
 log = logging.getLogger(__name__)
 
 
 class FilesModel(TreeModel):
     """Model listing files with specified extensions in a root folder"""
-    Columns = ["filename", "date"]
+    Columns = ["filename", "date", "modified_by"] #, "publish_version"]
 
     FileNameRole = QtCore.Qt.UserRole + 2
     DateModifiedRole = QtCore.Qt.UserRole + 3
     FilePathRole = QtCore.Qt.UserRole + 4
     IsEnabled = QtCore.Qt.UserRole + 5
+    ModifiedByRole = QtCore.Qt.UserRole + 6
+    PublishVersionRole = QtCore.Qt.UserRole + 7
 
     def __init__(self, file_extensions, parent=None):
         super(FilesModel, self).__init__(parent=parent)
@@ -26,6 +32,8 @@ class FilesModel(TreeModel):
         self._file_extensions = file_extensions
         self._icons = {"file": qtawesome.icon("fa.file-o",
                                               color=style.colors.default)}
+
+        self.dbcon = AvalonMongoDB()
 
     def set_root(self, root):
         self._root = root
@@ -62,6 +70,8 @@ class FilesModel(TreeModel):
             item = Item({
                 "filename": message,
                 "date": None,
+                "modified_by": None,
+                "publish_version": None,
                 "filepath": None,
                 "enabled": False,
                 "icon": qtawesome.icon("fa.times",
@@ -82,16 +92,70 @@ class FilesModel(TreeModel):
                 continue
 
             modified = os.path.getmtime(path)
+            modified_by = self.get_file_owner(path)
+            publish_version = None#self.get_published_version(path)
 
             item = Item({
                 "filename": f,
                 "date": modified,
+                "modified_by": modified_by,
+                "publish_version": publish_version,
                 "filepath": path
             })
 
             self.add_child(item)
 
         self.endResetModel()
+
+    def get_file_owner(self, path):
+
+        if sys.platform == "win32":
+            try:
+                import win32security
+                sd = win32security.GetFileSecurity(path, win32security.OWNER_SECURITY_INFORMATION)
+                owner_sid = sd.GetSecurityDescriptorOwner()
+                name, domain, type = win32security.LookupAccountSid(None, owner_sid)
+                return name
+            except:
+                pass
+            #
+            # dirname, basename = os.path.split(path)
+            # log.info(path)
+            # cmd = ["cmd", "/c", "dir", path, "/q"]
+            # session = subprocess.Popen(
+            #     cmd,
+            #     stdin=subprocess.PIPE,
+            #     stdout=subprocess.PIPE,
+            #     stderr=subprocess.PIPE
+            # )
+            # result = session.communicate()[0].decode('utf8')
+            # lines = result.split('\n')
+            # for line in lines:
+            #     columns = [x.rstrip("\r") for x in line.split(" ") if x]
+            #     if len(columns) == 6:
+            #         if basename == columns[5]:
+            #             return columns[4].split("\\")[-1]
+
+        else:
+            from os import stat
+            from pwd import getpwuid
+            return getpwuid(stat(path).st_uid).pw_name
+
+        return "..."
+
+    def get_published_version(self, path):
+
+        path = os.path.normpath(
+            path
+            ).replace(
+                os.path.splitdrive(path)[0],
+                "{root}"
+                ).replace("\\", "/")
+
+        version = io.find_one({"data.source": path})
+        log.info(version)
+
+        return str(version)
 
     def data(self, index, role):
 
@@ -112,6 +176,11 @@ class FilesModel(TreeModel):
         if role == self.DateModifiedRole:
             item = index.internalPointer()
             return item["date"]
+        if role == self.ModifiedByRole:
+            item = index.internalPointer()
+            return item["modified_by"]
+        if role == self.PublishVersionRole:
+            return item["publish_version"]
         if role == self.FilePathRole:
             item = index.internalPointer()
             return item["filepath"]
@@ -130,5 +199,9 @@ class FilesModel(TreeModel):
                 return "Name"
             elif section == 1:
                 return "Date modified"
+            elif section == 2:
+                return "User"
+            elif section == 3:
+                return "Published Version"
 
         return super(FilesModel, self).headerData(section, orientation, role)
