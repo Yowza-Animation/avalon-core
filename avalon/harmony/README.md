@@ -438,21 +438,7 @@ import_files = """function %s_import_files()
   var LayeredPSDTransparencyMode = 1;  // Straight
   var FlatPSDTransparencyMode = 2;  // Premultiplied wih White
 
-  function getUniqueColumnName( column_prefix )
-  {
-      var suffix = 0;
-      // finds if unique name for a column
-      var column_name = column_prefix;
-      while(suffix < 2000)
-      {
-          if(!column.type(column_name))
-          break;
-
-          suffix = suffix + 1;
-          column_name = column_prefix + "_" + suffix;
-      }
-      return column_name;
-  }
+   
 
   function import_files(args)
   {
@@ -492,7 +478,7 @@ import_files = """function %s_import_files()
           return null; // no read to add.
       }
 
-      var uniqueColumnName = getUniqueColumnName(name);
+      var uniqueColumnName = AvalonHarmony.getUniqueColumnName(name);
       column.add(uniqueColumnName , "DRAWING");
       column.setElementIdOfDrawing(uniqueColumnName, elemId);
 

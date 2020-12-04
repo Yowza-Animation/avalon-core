@@ -47,6 +47,7 @@ AvalonHarmony.setSceneData = function (metadata) {
  * Node View, else "Top" if no Node View is currently open
  */
 AvalonHarmony.getCurrentGroup = function () {
+    var doc = $.scn;
     nodeView = '';
     for (i = 0; i < 200; i++) {
         nodeView = 'View' + (i);
@@ -55,13 +56,22 @@ AvalonHarmony.getCurrentGroup = function () {
         }
     }
 
-    var currentGroup = "Top"
-    if (nodeView) {
-        currentGroup = view.group(nodeView);
+    if (!nodeView) {
+        $.alert('You must have a Node View open!',
+            'No Node View is currently open!\n' +
+            'Open a Node View and Try Again.',
+            'OK!');
+        return;
+    }
+
+    var currentGroup;
+    if (!nodeView) {
+        currentGroup = doc.root;
+    } else {
+        currentGroup = doc.$node(view.group(nodeView));
     }
 
     return currentGroup;
-
 };
 
 
@@ -225,13 +235,73 @@ AvalonHarmony.getNodesNamesByType = function (nodeType) {
  * ];
  */
 AvalonHarmony.getChildren = function (args) {
-    nodeName = args[0]
+    nodePath = args[0]
     recursive = args[1]
-    _node = $.scn.$node(nodeName)
-    _group = _node.children[0].group
-    return _group.subNodes(recursive)
+    _node = $.scn.$node(nodePath);
+    var children = _node.subNodes(recursive)
+    var nodes = [];
+    for (n in children){
+        nodes.push(children[n].path)
+    }
+    return nodes
 };
 
+/**
+ * Get unique column name.
+ * @function
+ * @param  {string}  columnPrefix Column name.
+ * @return {string}  Unique column name.
+ */
+AvalonHarmony.getUniqueColumnName = function(columnPrefix) {
+    var suffix = 0;
+    // finds if unique name for a column
+    var columnName = columnPrefix;
+    while (suffix < 2000) {
+        if (!column.type(columnName)) {
+            break;
+        }
+
+        suffix = suffix + 1;
+        columnName = columnPrefix + '_' + suffix;
+    }
+    return columnName;
+};
+
+/**
+ * Create container node in Harmony.
+ * @function
+ * @param {array} args Arguments, see example.
+ * @return {string} Resulting node.
+ *
+ * @example
+ * // arguments are in following order:
+ * var args = [
+ *  nodeName,
+ *  nodeType,
+ *  groupPath,
+ *  x,
+ *  y,
+ *  z
+ * ];
+ */
+AvalonHarmony.createNode = function (args) {
+    nodeName = args[0]
+    nodeType = args[1]
+    groupPath = args[2]
+    x = args[3]
+    y = args[4]
+    z = args[5]
+
+    var resultNode = node.add(
+        groupPath,
+        nodeName,
+        nodeType,
+        x,
+        y,
+        z
+    );
+    return resultNode;
+};
 
 /**
  * Create container node in Harmony.

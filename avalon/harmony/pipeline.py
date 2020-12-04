@@ -1,11 +1,12 @@
+import logging
+import pyblish.api
 from pathlib import Path
 
-from .. import api, pipeline
 from . import lib
+from .. import api, pipeline
 
-import pyblish.api
-import logging
 log = logging.getLogger(__name__)
+
 
 def inject_avalon_js():
     """Inject AvalonHarmony.js into Harmony."""
@@ -24,8 +25,8 @@ def install():
     pyblish.api.register_host("harmony")
     api.on("application.launched", inject_avalon_js)
 
-def _ls():
 
+def _ls():
     containers = []
     containers_dict = dict(ls())
     for name, container in containers_dict.items():
@@ -33,6 +34,7 @@ def _ls():
             containers.append(container["objectName"])
 
     return containers
+
 
 def ls():
     """Yields containers from Harmony scene.
@@ -162,6 +164,7 @@ def containerise(name,
 
     return node
 
+
 def update_hierarchy(containers):
     """Hierarchical container support
 
@@ -173,10 +176,12 @@ def update_hierarchy(containers):
     """
 
     container_names = ls()
+    log.info("-=" * 80)
+    log.info(f"containers: {containers}")
 
     for container in containers:
         # Find parent
-        parent = container["objectName"] or []
+        parent = container.get("objectName", [])
         for node in parent:
             if node in container_names:
                 container["parent"] = node
@@ -184,13 +189,16 @@ def update_hierarchy(containers):
 
         # List children
         children = lib.send(
-                    {
-                        "function": "AvalonHarmony.getChildren",
-                        "args": [container["objectName"], True]
-                    }
-                )["result"]
+            {
+                "function": "AvalonHarmony.getChildren",
+                "args": [container.get("objectName"), False]
+            }
+        )["result"]
 
         container["children"] = [child for child in children
                                  if child in container_names]
+
+        log.info("===================================")
         log.info(children)
+        log.info(container_names)
         yield container
