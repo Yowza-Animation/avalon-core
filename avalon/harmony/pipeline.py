@@ -4,7 +4,8 @@ from .. import api, pipeline
 from . import lib
 
 import pyblish.api
-
+import logging
+log = logging.getLogger(__name__)
 
 def inject_avalon_js():
     """Inject AvalonHarmony.js into Harmony."""
@@ -23,6 +24,15 @@ def install():
     pyblish.api.register_host("harmony")
     api.on("application.launched", inject_avalon_js)
 
+def _ls():
+
+    containers = []
+    containers_dict = dict(ls())
+    for name, container in containers_dict.items():
+        if container.get("schema"):
+            containers.append(container["objectName"])
+
+    return containers
 
 def ls():
     """Yields containers from Harmony scene.
@@ -151,3 +161,36 @@ def containerise(name,
     lib.imprint(node, data)
 
     return node
+
+def update_hierarchy(containers):
+    """Hierarchical container support
+
+    This is the function to support Scene Inventory to draw hierarchical
+    view for containers.
+
+    We need both parent and children to visualize the graph.
+
+    """
+
+    container_names = ls()
+
+    for container in containers:
+        # Find parent
+        parent = container["objectName"] or []
+        for node in parent:
+            if node in container_names:
+                container["parent"] = node
+                break
+
+        # List children
+        children = lib.send(
+                    {
+                        "function": "AvalonHarmony.getChildren",
+                        "args": [container["objectName"], True]
+                    }
+                )["result"]
+
+        container["children"] = [child for child in children
+                                 if child in container_names]
+        log.info(children)
+        yield container

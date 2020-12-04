@@ -212,6 +212,26 @@ AvalonHarmony.getNodesNamesByType = function (nodeType) {
     return nodeNames;
 };
 
+/**
+ * Get get children for specified group node.
+ * @function
+ * @param {array} args Arguments, see example.
+ *
+ * @example
+ * // arguments are in following order:
+ * var args = [
+ *  nodeName,
+ *  recursive,
+ * ];
+ */
+AvalonHarmony.getChildren = function (args) {
+    nodeName = args[0]
+    recursive = args[1]
+    _node = $.scn.$node(nodeName)
+    _group = _node.children[0].group
+    return _group.subNodes(recursive)
+};
+
 
 /**
  * Create container node in Harmony.

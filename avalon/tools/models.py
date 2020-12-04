@@ -208,7 +208,7 @@ class TasksModel(TreeModel):
         self._num_assets = 0
         self._icons = {
             "__default__": qtawesome.icon(
-                "fa.male",
+                "fa.calendar-check-o",
                 color=style.colors.default
             ),
             "__no_task__": qtawesome.icon(
