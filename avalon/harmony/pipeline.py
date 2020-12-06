@@ -190,13 +190,13 @@ def update_hierarchy(containers):
         # List children
         children = lib.send(
             {
-                "function": "AvalonHarmony.getChildren",
+                "function": "PypeHarmony.getChildren",
                 "args": [container.get("objectName"), False]
             }
         )["result"]
 
-        container["children"] = [child for child in children
-                                 if child in container_names]
+        container["children"] = children# [child for child in children
+                                # if child in container_names]
 
         log.info("===================================")
         log.info(children)

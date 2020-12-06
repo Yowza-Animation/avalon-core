@@ -212,11 +212,7 @@ def launch_zip_file(filepath):
         return
 
     print("Launching {}".format(scene_path))
-    process = subprocess.Popen([self.application_path, scene_path],
-                               # stdout=subprocess.PIPE,
-                               # stderr=subprocess.PIPE,
-                               # shell=False
-                               )
+    process = subprocess.Popen([self.application_path, scene_path])
     self.pid = process.pid
 
 
