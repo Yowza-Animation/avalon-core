@@ -5,7 +5,7 @@ from ...vendor.Qt import QtWidgets, QtCore
 from ... import api, io, style
 
 from ..models import AssetModel
-from ..widgets import AssetWidget
+from ..widgets import AssetWidget, Notifier
 from .. import lib
 
 from .widgets import (
@@ -123,6 +123,10 @@ class Window(QtWidgets.QDialog):
 
         # Defaults
         self.resize(1330, 700)
+
+        # Toast notifications
+        self.notifier = Notifier(self)
+        container_layout.addWidget(self.notifier)
 
     # -------------------------------
     # Delay calling blocking methods

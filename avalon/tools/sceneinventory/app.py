@@ -299,11 +299,22 @@ class View(QtWidgets.QTreeView):
 
         # These two actions should be able to work without selection
         # expand all items
-        expandall_action = QtWidgets.QAction(menu, text="Expand all items")
+        expand_icon = qtawesome.icon("fa.expand", color="white")
+
+        expandall_action = QtWidgets.QAction(
+            expand_icon,
+            "Expand all items",
+            menu
+        )
         expandall_action.triggered.connect(self.expandAll)
 
         # collapse all items
-        collapse_action = QtWidgets.QAction(menu, text="Collapse all items")
+        collapse_icon = qtawesome.icon("fa.compress", color="white")
+        collapse_action = QtWidgets.QAction(
+            collapse_icon,
+            "Collapse all items",
+            menu
+        )
         collapse_action.triggered.connect(self.collapseAll)
 
         menu.addAction(expandall_action)

@@ -35,6 +35,10 @@ from . import (
 from .vendor import six, acre
 from pypeapp import Anatomy
 
+from . import (Session, _registered_config, _registered_event_handlers, _registered_host, _registered_plugin_paths,
+               _registered_plugins, _registered_root, io, lib)
+from .vendor import acre, six
+
 self = sys.modules[__name__]
 self._is_installed = False
 self._config = None
@@ -82,10 +86,10 @@ def install(host):
             missing.append(key)
 
     assert not missing, (
-        "%s missing from environment, %s" % (
-            ", ".join(missing),
-            json.dumps(Session, indent=4, sort_keys=True)
-        ))
+            "%s missing from environment, %s" % (
+        ", ".join(missing),
+        json.dumps(Session, indent=4, sort_keys=True)
+    ))
 
     project = Session["AVALON_PROJECT"]
     log.info("Activating %s.." % project)
@@ -199,6 +203,15 @@ class Loader(list):
             root = anatomy.roots_obj
 
         self.fname = get_representation_path(representation, root)
+        self._notifier = None
+
+    @property
+    def notifier(self):
+        return self._notifier
+
+    @notifier.setter
+    def notifier(self, notifier):
+        self._notifier = notifier
 
     def load(self, context, name=None, namespace=None, options=None):
         """Load asset via database
@@ -360,9 +373,9 @@ def compile_list_of_regexes(in_list):
                 regexes.append(re.compile(item))
             except TypeError:
                 log.warning((
-                    "Invalid type \"{}\" value \"{}\"."
-                    " Expected string based object. Skipping."
-                ).format(str(type(item)), str(item)))
+                                "Invalid type \"{}\" value \"{}\"."
+                                " Expected string based object. Skipping."
+                            ).format(str(type(item)), str(item)))
     return regexes
 
 
@@ -399,9 +412,9 @@ def should_start_last_workfile(project_name, host_name, task_name):
         from pype.api import config
         startup_presets = (
             config.get_presets(project_name)
-            .get("tools", {})
-            .get("workfiles", {})
-            .get("last_workfile_on_startup")
+                .get("tools", {})
+                .get("workfiles", {})
+                .get("last_workfile_on_startup")
         )
     except Exception:
         startup_presets = None
@@ -516,9 +529,9 @@ class Application(Action):
         )
 
         if (
-            start_last_workfile
-            and last_workfile_path
-            and os.path.exists(last_workfile_path)
+                start_last_workfile
+                and last_workfile_path
+                and os.path.exists(last_workfile_path)
         ):
             session["AVALON_LAST_WORKFILE"] = last_workfile_path
 
@@ -551,11 +564,11 @@ class Application(Action):
     def find_tools(self, entity):
         tools = []
         if ('data' in entity and 'tools_env' in entity['data'] and
-        len(entity['data']['tools_env']) > 0):
+                len(entity['data']['tools_env']) > 0):
             tools = entity['data']['tools_env']
 
         elif ('data' in entity and 'visualParent' in entity['data'] and
-        entity['data']['visualParent'] is not None):
+              entity['data']['visualParent'] is not None):
             tmp = io.find_one({
                 "_id": entity['data']['visualParent']
             })
@@ -564,7 +577,7 @@ class Application(Action):
         project = io.find_one({"_id": entity['parent']})
 
         if ('data' in project and 'tools_env' in project['data'] and
-        len(project['data']['tools_env']) > 0):
+                len(project['data']['tools_env']) > 0):
             tools = project['data']['tools_env']
 
         return tools
@@ -685,7 +698,6 @@ class ThumbnailResolver(object):
 
 
 class TemplateResolver(ThumbnailResolver):
-
     priority = 90
 
     def process(self, thumbnail_entity, thumbnail_type):
@@ -717,8 +729,8 @@ class TemplateResolver(ThumbnailResolver):
             filepath = os.path.normpath(template.format(**template_data))
         except KeyError:
             log.warning((
-                "Missing template data keys for template <{0}> || Data: {1}"
-            ).format(template, str(template_data)))
+                            "Missing template data keys for template <{0}> || Data: {1}"
+                        ).format(template, str(template_data)))
             return
 
         if not os.path.exists(filepath):
@@ -1469,8 +1481,13 @@ def _make_backwards_compatible_loader(Loader):
 
 
 def load_with_repre_context(
-    Loader, repre_context, namespace=None, name=None, options=None, **kwargs
-):
+        Loader,
+        repre_context,
+        namespace=None,
+        name=None,
+        options=None,
+        notifier=None,
+        **kwargs):
     Loader = _make_backwards_compatible_loader(Loader)
 
     # Ensure the Loader is compatible for the representation
@@ -1498,6 +1515,7 @@ def load_with_repre_context(
     )
 
     loader = Loader(repre_context)
+    loader.notifier = notifier
     return loader.load(repre_context, name, namespace, options)
 
 
@@ -1529,6 +1547,7 @@ def load(Loader, representation, namespace=None, name=None, options=None,
         namespace=namespace,
         name=name,
         options=options,
+        notifier=None,
         **kwargs
     )
 
@@ -1805,9 +1824,9 @@ def get_representation_path(representation, root=None, dbcon=None):
                 return os.path.normpath(path)
 
     return (
-        path_from_represenation() or
-        path_from_config() or
-        path_from_data()
+            path_from_represenation() or
+            path_from_config() or
+            path_from_data()
     )
 
 
@@ -1823,12 +1842,12 @@ def get_thumbnail_binary(thumbnail_entity, thumbnail_type, dbcon=None):
     for Resolver in resolvers:
         available_types = Resolver.thumbnail_types
         if (
-            thumbnail_type not in available_types
-            and "*" not in available_types
-            and (
+                thumbnail_type not in available_types
+                and "*" not in available_types
+                and (
                 isinstance(available_types, (list, tuple))
                 and len(available_types) == 0
-            )
+        )
         ):
             continue
         try:
@@ -1971,7 +1990,7 @@ def last_workfile_with_version(workdir, file_template, fill_data, extensions):
 
 
 def last_workfile(
-    workdir, file_template, fill_data, extensions, full_path=False
+        workdir, file_template, fill_data, extensions, full_path=False
 ):
     """Return last workfile filename.
 

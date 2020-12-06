@@ -166,7 +166,7 @@ class AssetWidget(QtWidgets.QWidget):
         # Select
         mode = selection_model.Select | selection_model.Rows
         for index in lib.iter_model_rows(
-            self.proxy, column=0, include_root=False
+                self.proxy, column=0, include_root=False
         ):
             # stop iteration if there are no assets to process
             if not assets:
@@ -208,7 +208,7 @@ class AssetWidget(QtWidgets.QWidget):
         expanded = set()
         model = self.view.model()
         for index in lib.iter_model_rows(
-            model, column=0, include_root=False
+                model, column=0, include_root=False
         ):
             if self.view.isExpanded(index):
                 value = index.data(self.model.ObjectIdRole)
@@ -238,15 +238,15 @@ class AssetWidget(QtWidgets.QWidget):
         current = self.model_selection.pop("current", not_set)
 
         if (
-            expanded is not_set
-            or selected is not_set
-            or current is not_set
+                expanded is not_set
+                or selected is not_set
+                or current is not_set
         ):
             return
 
         if expanded:
             for index in lib.iter_model_rows(
-                model, column=0, include_root=False
+                    model, column=0, include_root=False
             ):
                 is_expanded = index.data(self.model.ObjectIdRole) in expanded
                 self.view.setExpanded(index, is_expanded)
@@ -256,7 +256,7 @@ class AssetWidget(QtWidgets.QWidget):
             selected_indexes = []
             # Go through all indices, select the ones with similar data
             for index in lib.iter_model_rows(
-                model, column=0, include_root=False
+                    model, column=0, include_root=False
             ):
                 object_id = index.data(self.model.ObjectIdRole)
                 if object_id in selected:
@@ -474,3 +474,113 @@ class OptionDialog(QtWidgets.QDialog):
 
     def parse(self):
         return self._options.copy()
+
+
+class Notifier(QtWidgets.QLabel):
+    """Animated Notification for within an App like Workfiles or Loader"""
+
+    def __init__(self, parent):
+        """notice Constructor
+        Args:
+            parent:
+        """
+        super(Notifier, self).__init__(parent)
+
+        self._notice_height = 32
+        self._start_time = 0
+        self._anim_duration = 1000
+        self._display_time = 10000
+        self._animation = QtCore.QSequentialAnimationGroup(self)
+        self._expanded_y = 0
+        # This should start hidden
+        self.hide()
+
+    def _create_geo(self):
+        """
+
+        Returns:
+
+        """
+        window_size = self.window().size()
+        notice_width = window_size.width() * 0.5
+
+        return QtCore.QRect(
+            (window_size.width() - notice_width) / 2,
+            self._expanded_y,
+            notice_width,
+            self._notice_height
+        )
+
+    def show_notice(self,
+                    message,
+                    display_time=None,
+                    bg_color=None,
+                    txt_color=None,
+                    display_top=False):
+        """
+
+        Args:
+            message:
+            display_time:
+            bg_color:
+            txt_color:
+            display_top:
+        Returns:
+
+        """
+        if not bg_color:
+            bg_color = self.palette().highlight().color().name()
+        if not txt_color:
+            txt_color = self.palette().text().color().name()
+        if display_time:
+            self._display_time = display_time
+
+        self.setStyleSheet(
+            """
+            background-color: {bg_color};
+            color: {txt_color};
+            padding: 8px;
+            border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
+            """.format(bg_color=bg_color, txt_color=txt_color)
+        )
+
+        if self.parentWidget() != self.window():
+            self.setParent(self.window())
+
+        self._animation.clear()
+
+        if not display_top:
+            self._expanded_y = self.window().size().height() - self._notice_height
+
+        expanded_pos = self._create_geo()
+        self.setGeometry(expanded_pos)
+
+        self.setText(message)
+
+        self.show()
+
+        if self._expanded_y == 0:
+            min_y = - self._notice_height
+        else:
+            min_y = self.window().size().height()
+
+        minimized_pos = expanded_pos.translated(0, min_y)
+
+        # Animate the slide out of notice
+        self._slide_out = QtCore.QPropertyAnimation(self, b"geometry")
+        self._slide_out.setDuration(self._anim_duration)
+        self._slide_out.setStartValue(minimized_pos)
+        self._slide_out.setEndValue(expanded_pos)
+        self._animation.addAnimation(self._slide_out)
+
+        self._start_time = time.time()
+
+        # Animate the slide in of notice
+        self._slide_in = QtCore.QPropertyAnimation(self, b"geometry")
+        self._slide_in.setDuration(self._anim_duration)
+        self._slide_in.setStartValue(expanded_pos)
+        self._slide_in.setEndValue(minimized_pos)
+        self._animation.addPause(int(self._display_time))
+        self._animation.addAnimation(self._slide_in)
+        self._animation.start()

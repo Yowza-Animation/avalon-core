@@ -108,16 +108,17 @@ class SubsetWidget(QtWidgets.QWidget):
     )
 
     def __init__(
-        self,
-        dbcon,
-        groups_config,
-        family_config_cache,
-        enable_grouping=True,
-        tool_name=None,
-        parent=None
+            self,
+            dbcon,
+            groups_config,
+            family_config_cache,
+            enable_grouping=True,
+            tool_name=None,
+            parent=None
     ):
         super(SubsetWidget, self).__init__(parent=parent)
 
+        self.parent = parent
         self.dbcon = dbcon
         self.tool_name = tool_name
 
@@ -334,8 +335,8 @@ class SubsetWidget(QtWidgets.QWidget):
             for loader in available_loaders:
                 if hasattr(loader, "tool_names"):
                     if not (
-                        "*" in loader.tool_names or
-                        self.tool_name in loader.tool_names
+                            "*" in loader.tool_names or
+                            self.tool_name in loader.tool_names
                     ):
                         available_loaders.remove(loader)
 
@@ -359,8 +360,8 @@ class SubsetWidget(QtWidgets.QWidget):
             for repre_doc in repre_docs:
                 repre_context = repre_context_by_id[repre_doc["_id"]]
                 for loader in pipeline.loaders_from_repre_context(
-                    available_loaders,
-                    repre_context
+                        available_loaders,
+                        repre_context
                 ):
                     # skip multiple select variant if one is selected
                     if one_item_selected:
@@ -514,7 +515,8 @@ class SubsetWidget(QtWidgets.QWidget):
                 pipeline.load_with_repre_context(
                     loader,
                     repre_context,
-                    options=options
+                    options=options,
+                    notifier=self.parent.notifier
                 )
 
             except pipeline.IncompatibleLoaderError as exc:
@@ -686,17 +688,17 @@ class VersionTextEdit(QtWidgets.QTextEdit):
         }
 
         self.setHtml((
-            "<h2>{subset}</h2>"
-            "<h3>{version}</h3>"
-            "<b>Comment</b><br>"
-            "{comment}<br><br>"
+                         "<h2>{subset}</h2>"
+                         "<h3>{version}</h3>"
+                         "<b>Comment</b><br>"
+                         "{comment}<br><br>"
 
-            "<b>Created</b><br>"
-            "{created}<br><br>"
+                         "<b>Created</b><br>"
+                         "{created}<br><br>"
 
-            "<b>Source</b><br>"
-            "{source}"
-        ).format(**data))
+                         "<b>Source</b><br>"
+                         "{source}"
+                     ).format(**data))
 
     def contextMenuEvent(self, event):
         """Context menu with additional actions"""
