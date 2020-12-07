@@ -487,7 +487,6 @@ class Notifier(QtWidgets.QLabel):
         super(Notifier, self).__init__(parent)
 
         self._notice_height = 32
-        self._start_time = 0
         self._anim_duration = 1000
         self._display_time = 10000
         self._animation = QtCore.QSequentialAnimationGroup(self)
@@ -496,10 +495,9 @@ class Notifier(QtWidgets.QLabel):
         self.hide()
 
     def _create_geo(self):
-        """
+        """Create the geometry for the notification
 
-        Returns:
-
+        Returns: QtCore.QRect
         """
         window_size = self.window().size()
         notice_width = window_size.width() * 0.5
@@ -520,12 +518,13 @@ class Notifier(QtWidgets.QLabel):
         """
 
         Args:
-            message:
-            display_time:
-            bg_color:
-            txt_color:
-            display_top:
-        Returns:
+            message: (string) The message for the notification
+            display_time: (int) The length of time for the notification
+            bg_color: (str) HTML color code for notification background: #ccccc
+            txt_color: (str) HTML color code for notification text: #fffff
+            display_top: (bool) True for notification to appear on top of ui,
+            False for the notification to appear on the bottom of the ui
+        Returns: None
 
         """
         if not bg_color:
@@ -535,15 +534,24 @@ class Notifier(QtWidgets.QLabel):
         if display_time:
             self._display_time = display_time
 
-        self.setStyleSheet(
-            """
+        style = """
             background-color: {bg_color};
             color: {txt_color};
             padding: 8px;
-            border-bottom-left-radius: 2px;
-            border-bottom-right-radius: 2px;
             """.format(bg_color=bg_color, txt_color=txt_color)
-        )
+
+        if display_top:
+            style += """
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            """
+        else:
+            style += """
+                        border-top-left-radius: 4px;
+                        border-top-right-radius: 4px;
+                        """
+
+        self.setStyleSheet(style)
 
         if self.parentWidget() != self.window():
             self.setParent(self.window())
@@ -573,14 +581,11 @@ class Notifier(QtWidgets.QLabel):
         self._slide_out.setStartValue(minimized_pos)
         self._slide_out.setEndValue(expanded_pos)
         self._animation.addAnimation(self._slide_out)
-
-        self._start_time = time.time()
-
+        self._animation.addPause(int(self._display_time))
         # Animate the slide in of notice
         self._slide_in = QtCore.QPropertyAnimation(self, b"geometry")
         self._slide_in.setDuration(self._anim_duration)
         self._slide_in.setStartValue(expanded_pos)
         self._slide_in.setEndValue(minimized_pos)
-        self._animation.addPause(int(self._display_time))
         self._animation.addAnimation(self._slide_in)
         self._animation.start()
