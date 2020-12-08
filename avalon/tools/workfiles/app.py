@@ -6,7 +6,7 @@ import shutil
 import logging
 
 from ...vendor import Qt
-from ...vendor.Qt import QtWidgets, QtCore
+from ...vendor.Qt import QtWidgets, QtCore, QtGui
 from ... import style, io, api, pipeline
 
 from .. import lib as tools_lib
@@ -705,6 +705,15 @@ class Window(QtWidgets.QMainWindow):
         super(Window, self).__init__(parent=parent)
         self.setWindowTitle(self.title)
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint)
+
+        icon = QtGui.QIcon(
+            os.path.join(
+                os.path.dirname(__file__),
+                "workfiles.png"
+            )
+        )
+
+        self.setWindowIcon(icon)
 
         pages = {
             "home": QtWidgets.QWidget()

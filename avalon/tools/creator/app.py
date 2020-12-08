@@ -1,3 +1,4 @@
+import os
 import sys
 import inspect
 import re
@@ -122,6 +123,15 @@ class Window(QtWidgets.QDialog):
         super(Window, self).__init__(parent)
         self.setWindowTitle("Instance Creator")
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
+
+        icon = QtGui.QIcon(
+            os.path.join(
+                os.path.dirname(__file__),
+                "creator.png"
+            )
+        )
+
+        self.setWindowIcon(icon)
 
         # Store the widgets for lookup in here
         self.data = dict()

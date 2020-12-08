@@ -1,16 +1,13 @@
+import os
 import sys
 import time
 
-from ...vendor.Qt import QtWidgets, QtCore
-from ... import api, io, style
-
+from .widgets import (FamilyListWidget, SubsetWidget, ThumbnailWidget, VersionWidget)
+from .. import lib
 from ..models import AssetModel
 from ..widgets import AssetWidget, Notifier
-from .. import lib
-
-from .widgets import (
-    SubsetWidget, VersionWidget, FamilyListWidget, ThumbnailWidget
-)
+from ... import api, io, style
+from ...vendor.Qt import QtCore, QtGui, QtWidgets
 
 module = sys.modules[__name__]
 module.window = None
@@ -25,8 +22,17 @@ class Window(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
         self.setWindowTitle(
-            "Asset Loader 2.1 - {}".format(api.Session.get("AVALON_PROJECT"))
+            "Asset Loader 2.2 - {}".format(api.Session.get("AVALON_PROJECT"))
         )
+
+        icon = QtGui.QIcon(
+            os.path.join(
+                os.path.dirname(__file__),
+                "loader.png"
+            )
+        )
+
+        self.setWindowIcon(icon)
 
         # Groups config
         self.groups_config = lib.GroupsConfig(io)
@@ -297,8 +303,8 @@ class Window(QtWidgets.QDialog):
             if active in rows:
                 item = active.data(subsets.model.ItemRole)
                 if (
-                    item is not None and
-                    not (item.get("isGroup") or item.get("isMerged"))
+                        item is not None and
+                        not (item.get("isGroup") or item.get("isMerged"))
                 ):
                     version_doc = item["version_document"]
 
@@ -309,9 +315,9 @@ class Window(QtWidgets.QDialog):
                     continue
                 item = index.data(subsets.model.ItemRole)
                 if (
-                    item is None
-                    or item.get("isGroup")
-                    or item.get("isMerged")
+                        item is None
+                        or item.get("isGroup")
+                        or item.get("isMerged")
                 ):
                     continue
                 version_docs.append(item["version_document"])
@@ -424,7 +430,6 @@ class Window(QtWidgets.QDialog):
 
 
 class SubsetGroupingDialog(QtWidgets.QDialog):
-
     grouped = QtCore.Signal()
 
     def __init__(self, items, groups_config, parent=None):
@@ -530,8 +535,8 @@ def show(debug=False, parent=None, use_context=False):
                 module.window.setWindowState(QtCore.Qt.WindowActive)
 
             # Raise and activate the window
-            module.window.raise_()             # for MacOS
-            module.window.activateWindow()     # for Windows
+            module.window.raise_()  # for MacOS
+            module.window.activateWindow()  # for Windows
             module.window.refresh()
             return
         except (AttributeError, RuntimeError):
@@ -571,7 +576,6 @@ def show(debug=False, parent=None, use_context=False):
 
 
 def cli(args):
-
     import argparse
 
     parser = argparse.ArgumentParser()

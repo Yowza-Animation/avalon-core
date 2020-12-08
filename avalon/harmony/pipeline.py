@@ -195,8 +195,8 @@ def update_hierarchy(containers):
             }
         )["result"]
 
-        container["children"] = children# [child for child in children
-                                # if child in container_names]
+        container["children"] = [child for child in children
+                                 if child in container_names]
 
         log.info("===================================")
         log.info(children)

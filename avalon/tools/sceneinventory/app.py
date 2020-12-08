@@ -4,7 +4,7 @@ import logging
 import collections
 from functools import partial
 
-from ...vendor.Qt import QtWidgets, QtCore
+from ...vendor.Qt import QtWidgets, QtCore, QtGui
 from ...vendor import qtawesome
 from ... import io, api, style
 from ...lib import MasterVersionType
@@ -27,6 +27,7 @@ class View(QtWidgets.QTreeView):
 
     def __init__(self, parent=None):
         super(View, self).__init__(parent=parent)
+
 
         # view settings
         self.setIndentation(12)
@@ -1435,6 +1436,15 @@ class Window(QtWidgets.QDialog):
         )
         self.setObjectName("SceneInventory")
         self.setProperty("saveWindowPref", True)  # Maya only property!
+
+        icon = QtGui.QIcon(
+            os.path.join(
+                os.path.dirname(__file__),
+                "manager.png"
+            )
+        )
+
+        self.setWindowIcon(icon)
 
         layout = QtWidgets.QVBoxLayout(self)
 
