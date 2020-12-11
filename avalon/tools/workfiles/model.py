@@ -110,31 +110,22 @@ class FilesModel(TreeModel):
     def get_file_owner(self, path):
 
         if sys.platform == "win32":
-            # import win32security
-            # sd = win32security.GetFileSecurity (path, win32security.OWNER_SECURITY_INFORMATION)
-            # owner_sid = sd.GetSecurityDescriptorOwner ()
-            # name, domain, type = win32security.LookupAccountSid (None, owner_sid)
-            # print( "File owned by %s\\%s" % (domain, name))
-
-            dirname, basename = os.path.split(path)
-
-            cmd = ["cmd", "/c", "dir", path, "/q"]
-            session = subprocess.Popen(
-                cmd,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
-            result = session.communicate()[0].decode('utf8')
-            sys.stdout.write(result)
-            lines = result.split('\n')
-            for line in lines:
-                columns = [x.rstrip("\r") for x in line.split(" ") if x]
-                log.info(line+"\n")
-                if len(columns) == 6:
-                    if basename == columns[5]:
-                        return columns[4].split("\\")[-1]
-
+            try:
+                import win32security
+            except:
+                subprocess.Popen([
+                    os.path.expandvars("%PYPE_ENV%/scripts/pip"),
+                    "install",
+                    "pywin32"
+                    ]
+                )
+            try:
+                sd = win32security.GetFileSecurity (path, win32security.OWNER_SECURITY_INFORMATION)
+                owner_sid = sd.GetSecurityDescriptorOwner ()
+                name, domain, type = win32security.LookupAccountSid (None, owner_sid)
+                return name
+            except:
+                pass
         else:
             from os import stat
             from pwd import getpwuid

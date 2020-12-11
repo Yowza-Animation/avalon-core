@@ -8,6 +8,8 @@
         border: 0px;
         margin: 0px;
         overflow: hidden;
+        background-color: #1e1e1e;
+        color: #aaaaaa;
       }
       button {width: 100%; background-color: #1e1e1e; color: #aaaaaa;}
     </style>
@@ -74,17 +76,7 @@
               });
             });
     </script>
-    
-    <script type=text/javascript>
-            $(function() {
-              $("a#projectmanager-button").bind("click", function() {
-                RPC.call('Photoshop.projectmanager_route').then(function (data) {
-                }, function (error) {
-                    alert(error);
-                });
-              });
-            });
-    </script>
+
 </head>
 <body>
   <script type="text/javascript" src="./client/wsrpc.js"></script>

@@ -44,7 +44,7 @@
             </MaxSize>
           </Geometry>
           <Icons>
-            <Icon Type="Normal">./icons/avalon-logo-48.png</Icon>
+            <Icon Type="Normal">./icons/icon_yowza-green.png</Icon>
           </Icons>
         </UI>
       </DispatchInfo>
